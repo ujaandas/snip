@@ -5,43 +5,45 @@ struct CounterModel : Model {
     int count = 0;
 };
 
-struct IncrementMessage : public Message {
+struct IncrementMessage : Message {
+    int amount;
     IncrementMessage(int amt) : amount(amt) {}
-    int amount{};
 };
 
-struct QuitMessage : public Message {
-    QuitMessage(std::string r = "User requested quit") : reason(std::move(r)) {}
+struct QuitMessage : Message {
     std::string reason;
+    QuitMessage(std::string r = "User requested quit") : reason(std::move(r)) {}
 };
 
-void Program::update(Model& m, const Message& msg) {
-    CounterModel& cm = static_cast<CounterModel&>(m);
+void Program::update(const Message& msg) {
+    CounterModel& m = static_cast<CounterModel&>(this->model);
 
     if (auto inc = dynamic_cast<const IncrementMessage*>(&msg)) {
-        cm.count += inc->amount;
+        m.count += inc->amount;
     }
     else if (auto quit = dynamic_cast<const QuitMessage*>(&msg)) {
         std::cout << "Quitting... Reason: " << quit->reason << "\n";
     }
 }
 
-void Program::render(const Model& m) {
-    const CounterModel& model = static_cast<const CounterModel&>(m);
-    std::cout << "Count: " << model.count << std::endl;
+void Program::render() {
+    const CounterModel& m = static_cast<const CounterModel&>(this->model);
+    std::cout << "Count: " << m.count << std::endl;
 }
 
 int main() {
     CounterModel model;
-    Program program(model);
+    Program program(model, true);
 
-    program.update(model, IncrementMessage(1));
-    program.render(model);
+    program.run();
 
-    program.update(model, IncrementMessage(3));
-    program.render(model);
+    // program.update(IncrementMessage(1));
+    // program.render();
 
-    program.update(model, QuitMessage("done"));
+    // program.update(IncrementMessage(3));
+    // program.render();
+
+    // program.update(QuitMessage("done"));
 
     return 0;
 }

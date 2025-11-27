@@ -6,4 +6,9 @@ class Message {
         virtual ~Message() = default;
 };
 
+struct KeypressMessage : Message {
+    int key;
+    KeypressMessage(int key) : key(key) {}
+};
+
 #endif // MESSAGE_H
