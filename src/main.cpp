@@ -24,6 +24,9 @@ void Program::update(const Message& msg) {
     else if (auto quit = dynamic_cast<const QuitMessage*>(&msg)) {
         std::cout << "Quitting... Reason: " << quit->reason << "\n";
     }
+    else if (auto key = dynamic_cast<const KeypressMessage*>(&msg)) {
+        std::cout << "Pressed: " << key->key << std::endl;
+    }
 }
 
 void Program::render() {

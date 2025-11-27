@@ -12,6 +12,18 @@ struct TerminalHelper {
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
     }
 
+    void disableEcho() {
+        termios noecho = original;
+        noecho.c_lflag &= ~ECHO; 
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &noecho);
+    }
+
+    void enableEcho() {
+        termios echo = original;
+        echo.c_lflag |= ECHO; 
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &echo);
+    }
+
     ~TerminalHelper() {
         tcsetattr(STDIN_FILENO, TCSANOW, &original);
     }

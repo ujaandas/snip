@@ -7,27 +7,28 @@
 
 void Program::handleInput() {
     TerminalHelper term;
-    if (raw) term.enableRawMode();
+    if (this->raw) term.enableRawMode();
+    term.disableEcho();
 
-    while (running) {
+    while (this->running) {
         char c;
-        if (raw) {
+        if (this->raw) {
             if (read(STDIN_FILENO, &c, 1) > 0)
-                msgQ.push(KeypressMessage(c));
+                msgQ.push(std::make_unique<KeypressMessage>(c));
         } else {
             int c2 = std::cin.get();
-            msgQ.push(KeypressMessage(c2));
+            msgQ.push(std::make_unique<KeypressMessage>(c2));
         }
     }
 }
 
-
 void Program::handleOutput() {
     while (this->running) {
-        if (!this->msgQ.empty()) {
-            KeypressMessage msg = msgQ.front();
+        if (!msgQ.empty()) {
+            auto msg = std::move(msgQ.front());
             msgQ.pop();
-            std::cout << "rcv: " << msg.key;
+            this->update(*msg);
+            this->render();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -36,7 +37,7 @@ void Program::handleOutput() {
 void Program::run() {
     this->running = true;
     std::thread input (&Program::handleInput, this);
-    std::thread output(&Program::handleOutput, this);
+    std::thread output (&Program::handleOutput, this);
 
     input.join();
     output.join();
