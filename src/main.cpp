@@ -1,36 +1,33 @@
 #include <iostream>
 #include "program.hpp"
 
-class CounterModel : public Model {
-    public:
-        int count = 0;
+struct CounterModel : Model {
+    int count = 0;
 };
 
-enum class CounterMessageType { Increment, Quit };
-
-class CounterMessage : public Message {
-public:
-    CounterMessageType type;
-    CounterMessage(CounterMessageType t) : type(t) {}
+struct IncrementMessage : public Message {
+    IncrementMessage(int amt) : amount(amt) {}
+    int amount{};
 };
 
+struct QuitMessage : public Message {
+    QuitMessage(std::string r = "User requested quit") : reason(std::move(r)) {}
+    std::string reason;
+};
 
 void Program::update(Model& m, const Message& msg) {
     CounterModel& cm = static_cast<CounterModel&>(m);
-    const CounterMessage& cmsg = static_cast<const CounterMessage&>(msg);
 
-   switch (cmsg.type) {
-        case CounterMessageType::Increment:
-            cm.count++;
-            break;
-        case CounterMessageType::Quit:
-            std::cout << "Quitting...\n";
-            break;
+    if (auto inc = dynamic_cast<const IncrementMessage*>(&msg)) {
+        cm.count += inc->amount;
+    }
+    else if (auto quit = dynamic_cast<const QuitMessage*>(&msg)) {
+        std::cout << "Quitting... Reason: " << quit->reason << "\n";
     }
 }
 
 void Program::render(const Model& m) {
-    const auto& model = dynamic_cast<const CounterModel&>(m);
+    const CounterModel& model = static_cast<const CounterModel&>(m);
     std::cout << "Count: " << model.count << std::endl;
 }
 
@@ -38,13 +35,13 @@ int main() {
     CounterModel model;
     Program program(model);
 
-    program.update(model, CounterMessage(CounterMessageType::Increment));
+    program.update(model, IncrementMessage(1));
     program.render(model);
 
-    program.update(model, CounterMessage(CounterMessageType::Increment));
+    program.update(model, IncrementMessage(3));
     program.render(model);
 
-    program.update(model, CounterMessage(CounterMessageType::Quit));
+    program.update(model, QuitMessage("done"));
 
     return 0;
 }
