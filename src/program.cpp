@@ -4,7 +4,7 @@
 #include <thread>
 
 void Program::handleInput() {
-  TerminalHelper term;
+  Terminal term;
   term.init(STDIN_FILENO);
 
   while (this->running) {
