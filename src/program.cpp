@@ -1,23 +1,16 @@
 #include "../include/program.hpp"
 #include "../include/message.hpp"
 #include "../include/terminal.hpp"
-#include <iostream>
 #include <thread>
 
 void Program::handleInput() {
-  // TerminalHelper term;
-  // if (this->raw) term.enableRawMode();
-  // term.disableEcho();
+  TerminalHelper term;
+  term.init(STDIN_FILENO);
 
   while (this->running) {
     char c;
-    if (this->raw) {
-      if (read(STDIN_FILENO, &c, 1) > 0) {
-        msgQ.push(std::make_unique<KeypressMessage>(c));
-      }
-    } else {
-      int c2 = std::cin.get();
-      msgQ.push(std::make_unique<KeypressMessage>(c2));
+    if (read(STDIN_FILENO, &c, 1) > 0) {
+      msgQ.push(std::make_unique<KeypressMessage>(c));
     }
   }
 }

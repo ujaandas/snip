@@ -1,34 +1,18 @@
+#include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
 
 struct TerminalHelper {
-    termios original;
+  struct termios old, new1;
 
-    TerminalHelper() {
-        tcgetattr(STDIN_FILENO, &original);
-    }
+  TerminalHelper() { tcgetattr(STDIN_FILENO, &old); }
 
-    void enableRawMode() {
-        termios raw = original;
-        cfmakeraw(&raw);
-        raw.c_cc[VMIN] = 1;
-        raw.c_cc[VTIME] = 0;
-        tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-    }
+  void init(int echo) {
+    new1 = old;
+    new1.c_lflag &= ~ICANON;
+    new1.c_lflag &= echo ? ECHO : ~ECHO;
+    tcsetattr(0, TCSANOW, &new1);
+  }
 
-    void disableEcho() {
-        termios noecho = original;
-        noecho.c_lflag &= ~ECHO; 
-        tcsetattr(STDIN_FILENO, TCSAFLUSH, &noecho);
-    }
-
-    void enableEcho() {
-        termios echo = original;
-        echo.c_lflag |= ECHO; 
-        tcsetattr(STDIN_FILENO, TCSAFLUSH, &echo);
-    }
-
-    ~TerminalHelper() {
-        tcsetattr(STDIN_FILENO, TCSANOW, &original);
-    }
+  ~TerminalHelper() { tcsetattr(STDIN_FILENO, TCSANOW, &old); }
 };

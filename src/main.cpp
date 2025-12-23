@@ -1,5 +1,6 @@
 #include "../include/program.hpp"
 #include <iostream>
+#include <memory>
 
 struct CounterModel : Model {
   int count = 0;
@@ -20,11 +21,14 @@ void Program::update(const Message &msg) {
 
   if (auto inc = dynamic_cast<const IncrementMessage *>(&msg)) {
     m.count += inc->amount;
+    std::cout << "Count: " << m.count << std::endl << std::flush;
   } else if (auto quit = dynamic_cast<const QuitMessage *>(&msg)) {
     std::cout << "Quitting... Reason: " << quit->reason << "\n";
   } else if (auto key = dynamic_cast<const KeypressMessage *>(&msg)) {
     std::cout << "Pressed: " << key->key << std::endl << std::flush;
-    std::cout << "Count: " << m.count << std::endl << std::flush;
+    if (key->key == 100) {
+      this->msgQ.push(std::make_unique<IncrementMessage>(1));
+    }
   } else if (auto key = dynamic_cast<const KeypressMessage *>(&msg)) {
     std::cout << "Pressed: " << key->key << std::endl;
     if (key->key == 'q') {
@@ -35,13 +39,13 @@ void Program::update(const Message &msg) {
 }
 
 void Program::render() {
-  const CounterModel &m = static_cast<const CounterModel &>(this->model);
-  std::cout << "Count: " << m.count << std::endl;
+  // const CounterModel &m = static_cast<const CounterModel &>(this->model);
+  // std::cout << "Count: " << m.count << std::endl;
 }
 
 int main() {
   CounterModel model;
-  Program program(model, true);
+  Program program(model);
 
   program.run();
 
