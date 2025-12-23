@@ -4,6 +4,10 @@
 struct TerminalHelper {
     termios original;
 
+    TerminalHelper() {
+        tcgetattr(STDIN_FILENO, &original);
+    }
+
     void enableRawMode() {
         termios raw = original;
         cfmakeraw(&raw);
