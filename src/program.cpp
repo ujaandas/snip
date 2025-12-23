@@ -4,9 +4,6 @@
 #include <thread>
 
 void Program::handleInput() {
-  Terminal term;
-  term.init(STDIN_FILENO);
-
   while (this->running) {
     char c;
     if (read(STDIN_FILENO, &c, 1) > 0) {
@@ -28,11 +25,15 @@ void Program::handleOutput() {
 }
 
 void Program::run() {
+  Terminal term;
+  term.init(1);
+
   this->running = true;
   this->render();
+
   std::thread input(&Program::handleInput, this);
   std::thread output(&Program::handleOutput, this);
 
-  input.join();
   output.join();
+  input.join();
 }

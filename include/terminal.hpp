@@ -1,24 +1,32 @@
+#include <cstring>
+#include <fcntl.h>
 #include <stdio.h>
-#include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
 
+#define ENTER_ALTBUF "\x1b[?1049h"
+#define EXIT_ALTBUF "\x1b[?1049l"
+
 class Terminal {
   struct termios old, new1;
-  struct winsize w;
 
 public:
-  Terminal() {
-    tcgetattr(STDIN_FILENO, &old);
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-  }
-
+  Terminal() { tcgetattr(STDIN_FILENO, &old); }
   void init(int echo) {
     new1 = old;
     new1.c_lflag &= ~ICANON;
     new1.c_lflag &= echo ? ECHO : ~ECHO;
-    tcsetattr(0, TCSANOW, &new1);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new1);
+    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+    writeEscapeCode(ENTER_ALTBUF);
   }
 
-  ~Terminal() { tcsetattr(STDIN_FILENO, TCSANOW, &old); }
+  void writeEscapeCode(const char code[]) {
+    write(STDOUT_FILENO, code, strlen(code));
+  }
+
+  ~Terminal() {
+    writeEscapeCode(EXIT_ALTBUF);
+    tcsetattr(STDIN_FILENO, TCSANOW, &old);
+  }
 };

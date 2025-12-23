@@ -21,13 +21,10 @@ void Program::update(Message &msg) {
 
   if (auto inc = as<IncrementMessage>(&msg)) {
     m.count += inc->amount;
-    std::cout << "Count: " << m.count << std::endl << std::flush;
   } else if (auto quit = as<QuitMessage>(&msg)) {
-    std::cout << "Quitting... Reason: " << quit->reason << "\n";
+    this->running = false;
   } else if (auto key = as<KeypressMessage>(&msg)) {
-    std::cout << "Pressed: " << key->key << std::endl << std::flush;
     if (key->key == 'q') {
-      this->running = false;
       msgQ.push(std::make_unique<QuitMessage>());
     } else if (key->key == '+') {
       this->msgQ.push(std::make_unique<IncrementMessage>(1));
@@ -36,8 +33,9 @@ void Program::update(Message &msg) {
 }
 
 void Program::render() {
-  // const CounterModel &m = static_cast<const CounterModel &>(this->model);
-  // std::cout << "Count: " << m.count << std::endl;
+  const CounterModel &m = static_cast<const CounterModel &>(this->model);
+  std::cout << "Count: " << m.count << "\n";
+  std::cout << std::flush;
 }
 
 int main() {
