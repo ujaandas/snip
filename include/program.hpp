@@ -18,9 +18,12 @@ class Program {
 
 public:
   Program(Model &m) : model(m) {}
-  void update(const Message &msg);
+  void update(Message &msg);
   void render();
   void run();
+  template <typename T, typename Base> T *as(Base *msg) {
+    return dynamic_cast<T *>(msg);
+  }
 
 private:
   void handleInput();
