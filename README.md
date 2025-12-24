@@ -4,6 +4,8 @@ snip is a tiny, batteries‑included CLI editor and TUI framework. It’s fast, 
 
 Under the hood, snip follows a TEA‑inspired, Elm‑style architecture: pure state transitions, deferred effects, and a tiny runtime that does the heavy lifting. The result is a predictable, testable foundation for building terminal interfaces.
 
+The underlying TUI framework very, very, VERY heavily inspired by `go/bubbletea`, and the editor is inspired by Vim.
+
 ## Features
 
 - Small, self‑contained C++ codebase
