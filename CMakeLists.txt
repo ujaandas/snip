@@ -13,3 +13,7 @@ file(GLOB SRC_FILES src/*.cpp)
 
 # Build
 add_executable(snip ${SRC_FILES})
+
+# Install
+install(TARGETS snip RUNTIME DESTINATION bin)
+install(DIRECTORY include/ DESTINATION include)
