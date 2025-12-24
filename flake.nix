@@ -14,6 +14,22 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
+        packages.default = pkgs.stdenv.mkDerivation {
+          pname = "snip";
+          version = "0.1.0";
+
+          src = ./.;
+
+          nativeBuildInputs = with pkgs; [
+            cmake
+            clang
+          ];
+
+          cmakeFlags = [
+            "-DCMAKE_BUILD_TYPE=Release"
+          ];
+        };
+
         devShell = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
           buildInputs = with pkgs; [
             gdb
