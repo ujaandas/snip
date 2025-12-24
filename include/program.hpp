@@ -1,26 +1,27 @@
+#include "cmd.hpp"
 #include "message.hpp"
-#include "model.hpp"
-#include <memory>
+#include "state.hpp"
 #include <queue>
 
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
+struct UpdateResult {
+  State newState;
+  std::vector<Cmd> commands;
+};
+
 class Program {
-  Model &model;
-  // pushing KeypressMessage to Message queue will slice it down to base class
-  // thus, we cannot cast it later. instead, we store _pointers_ to Message.
-  // therefore, the actual derived objects (ie; Keypress) stay intact.
-  // we use a smart ptr instead of raw - owns a heap-obj, auto del on OOS,
-  // cannot copy, only mv
-  std::queue<std::unique_ptr<Message>> msgQ;
+  State &model;
+  std::queue<Msg> msgQ;
   bool running = false;
 
 public:
-  Program(Model &m) : model(m) {}
-  void update(Message &msg);
+  Program(State &m) : model(m) {}
+  UpdateResult update(const State &state, Msg &msg);
   void render();
   void run();
+  void execute(const Cmd &cmd);
   template <typename T, typename Base> T *as(Base *msg) {
     return dynamic_cast<T *>(msg);
   }

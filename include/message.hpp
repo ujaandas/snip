@@ -1,14 +1,16 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-class Message {
-public:
-  virtual ~Message() = default;
+struct MsgPayload {
+  char key;
+  int inc = 1;
 };
 
-struct KeypressMessage : Message {
-  int key;
-  KeypressMessage(int key) : key(key) {}
+struct Msg {
+  enum class MsgType { None, Quit, Keypress, Increment };
+
+  MsgType type = MsgType::None;
+  MsgPayload payload = {};
 };
 
 #endif // MESSAGE_H
