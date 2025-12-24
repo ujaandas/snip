@@ -6,7 +6,7 @@ snip
 /build-debug/
 /build-release/
 /out/
-result/
+result
 
 # CMake generated files
 CMakeFiles/
