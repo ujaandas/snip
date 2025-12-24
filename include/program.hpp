@@ -23,14 +23,14 @@ struct UpdateResult {
 
 // Defines input/output handling and core runtime.
 class Program {
-  State &model;
+  State &state;
   std::queue<Msg> msgQ;
   bool running = false;
 
 public:
-  Program(State &m) : model(m) {}
+  Program(State &m) : state(m) {}
   UpdateResult update(const State &state, Msg &msg);
-  void render();
+  std::string render(const State &state);
   void run();
   void execute(const Cmd &cmd);
 

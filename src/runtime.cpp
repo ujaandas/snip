@@ -1,5 +1,6 @@
 #include "../include/program.hpp"
 #include "../include/terminal.hpp"
+#include <iostream>
 #include <thread>
 
 void Program::handleInput() {
@@ -28,7 +29,7 @@ void Program::run() {
   term.init(1);
 
   running = true;
-  render();
+  std::cout << render(state);
 
   std::thread input(&Program::handleInput, this);
 
@@ -36,9 +37,9 @@ void Program::run() {
     if (!msgQ.empty()) {
       auto msg = std::move(msgQ.front());
       msgQ.pop();
-      auto result = update(model, msg);
-      model = result.newState;
-      render();
+      auto result = update(state, msg);
+      state = result.newState;
+      std::cout << render(state);
       for (auto &cmd : result.commands) {
         execute(cmd);
       }

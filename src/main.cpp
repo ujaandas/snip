@@ -1,5 +1,7 @@
 #include "../include/program.hpp"
 #include <iostream>
+#include <sstream>
+#include <string>
 
 UpdateResult Program::update(const State &state, Msg &msg) {
   State newState = state;
@@ -29,10 +31,11 @@ UpdateResult Program::update(const State &state, Msg &msg) {
   return UpdateResult{newState, std::move(cmds)};
 }
 
-void Program::render() {
-  const State &m = static_cast<const State &>(model);
-  std::cout << "Count: " << m.count << "\n";
-  std::cout << std::flush;
+std::string Program::render(const State &state) {
+  std::stringstream buf;
+  buf << "Count: " << state.count << "\n";
+  buf << std::flush;
+  return buf.str();
 }
 
 int main() {
