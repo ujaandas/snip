@@ -3,7 +3,7 @@
 #include <thread>
 
 void Program::handleInput() {
-  while (this->running) {
+  while (running) {
     char c;
     if (read(STDIN_FILENO, &c, 1) > 0) {
       msgQ.push(Msg::Keypress(c));
@@ -27,8 +27,8 @@ void Program::run() {
   Terminal term;
   term.init(1);
 
-  this->running = true;
-  this->render();
+  running = true;
+  render();
 
   std::thread input(&Program::handleInput, this);
 

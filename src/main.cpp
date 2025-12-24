@@ -30,7 +30,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
 }
 
 void Program::render() {
-  const State &m = static_cast<const State &>(this->model);
+  const State &m = static_cast<const State &>(model);
   std::cout << "Count: " << m.count << "\n";
   std::cout << std::flush;
 }
