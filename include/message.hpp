@@ -1,16 +1,16 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-struct MsgPayload {
+struct Msg {
+  enum class MsgType { Quit, Keypress, Increment };
+
+  MsgType type;
   char key;
   int inc = 1;
-};
 
-struct Msg {
-  enum class MsgType { None, Quit, Keypress, Increment };
-
-  MsgType type = MsgType::None;
-  MsgPayload payload = {};
+  static Msg Quit() { return Msg{MsgType::Quit}; }
+  static Msg Keypress(char c) { return Msg{MsgType::Keypress, .key = c}; }
+  static Msg Increment(int i) { return Msg{MsgType::Increment, .inc = i}; }
 };
 
 #endif // MESSAGE_H

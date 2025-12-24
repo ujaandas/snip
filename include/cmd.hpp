@@ -5,14 +5,12 @@
 #include <utility>
 
 struct Cmd {
-  enum class CmdType { None, Quit, SendMessage };
+  enum class CmdType { Quit, SendMessage };
 
-  CmdType type = CmdType::None;
+  CmdType type;
   Msg msg;
 
-  static Cmd NoneCmd() { return Cmd{CmdType::None, Msg::MsgType::None}; }
-
-  static Cmd Quit() { return Cmd{CmdType::Quit, Msg::MsgType::None}; }
+  static Cmd Quit() { return Cmd{CmdType::Quit}; }
 
   static Cmd Send(Msg m) { return Cmd{CmdType::SendMessage, std::move(m)}; }
 };

@@ -6,7 +6,7 @@ void Program::handleInput() {
   while (this->running) {
     char c;
     if (read(STDIN_FILENO, &c, 1) > 0) {
-      msgQ.push(Msg{Msg::MsgType::Keypress, {c}});
+      msgQ.push(Msg::Keypress(c));
     }
   }
 }
@@ -19,10 +19,6 @@ void Program::execute(const Cmd &cmd) {
 
   case Cmd::CmdType::Quit:
     running = false;
-    break;
-
-  case Cmd::CmdType::None:;
-  default:
     break;
   }
 }

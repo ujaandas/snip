@@ -6,21 +6,22 @@ UpdateResult Program::update(const State &state, Msg &msg) {
   std::vector<Cmd> cmds;
 
   switch (msg.type) {
-  case Msg::MsgType::None:
-    break;
   case Msg::MsgType::Quit:
     cmds.push_back(Cmd::Quit());
     break;
+
   case Msg::MsgType::Increment:
-    newState.count += msg.payload.inc;
+    newState.count += msg.inc;
     break;
+
   case Msg::MsgType::Keypress:
-    if (msg.payload.key == 'q') {
+    switch (msg.key) {
+    case 'q':
       cmds.push_back(Cmd::Quit());
-    } else if (msg.payload.key == '+') {
-      cmds.push_back(Cmd::Send(Msg{
-          Msg::MsgType::Increment,
-      }));
+      break;
+    case '+':
+      cmds.push_back(Cmd::Send(Msg::Increment(1)));
+      break;
     }
     break;
   }
