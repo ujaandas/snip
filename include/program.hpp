@@ -1,6 +1,7 @@
 #include "cmd.hpp"
 #include "message.hpp"
 #include "state.hpp"
+#include <condition_variable>
 #include <queue>
 
 /*
@@ -24,9 +25,10 @@ struct UpdateResult {
 // Defines input/output handling and core runtime.
 class Program {
   State &state;
-  std::mutex qMutex;
   std::queue<Msg> msgQ;
-  bool running = false;
+  std::mutex qMutex;
+  std::condition_variable cv;
+  std::atomic<bool> running{true};
 
 public:
   Program(State &m) : state(m) {}
