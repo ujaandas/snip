@@ -17,6 +17,7 @@ buffering, alternative buffer, etc... using termios.
 */
 class Terminal {
   struct termios old, new1;
+  int old_flags;
 
 public:
   Terminal() { tcgetattr(STDIN_FILENO, &old); }
@@ -39,15 +40,12 @@ public:
     // Disable CR-to-NL translation and XON/XOFF
     new1.c_iflag &= ~(ICRNL | IXON);
 
-    // Disable output processing
-    new1.c_oflag &= ~OPOST;
-
     // Make read() return after 1 byte
     new1.c_cc[VMIN] = 1;
     new1.c_cc[VTIME] = 0;
 
     tcsetattr(STDIN_FILENO, TCSANOW, &new1);
-    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+    old_flags = fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 
     writeEscapeCode(ENTER_ALTBUF);
   }
@@ -59,6 +57,7 @@ public:
   ~Terminal() {
     writeEscapeCode(EXIT_ALTBUF);
     tcsetattr(STDIN_FILENO, TCSANOW, &old);
+    fcntl(STDIN_FILENO, F_SETFL, old_flags);
   }
 };
 
