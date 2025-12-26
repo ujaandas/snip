@@ -8,13 +8,6 @@ snip
 /out/
 result
 
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-install_manifest.txt
-
 # Direnv
 .direnv
 
