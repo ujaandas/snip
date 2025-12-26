@@ -17,9 +17,9 @@ struct Msg {
   int inc = 1;
 
   // Static helper functions to build relevant MsgTypes quicker
-  static Msg Quit() { return Msg{MsgType::Quit}; }
-  static Msg Keypress(char c) { return Msg{MsgType::Keypress, .key = c}; }
-  static Msg Increment(int i) { return Msg{MsgType::Increment, .inc = i}; }
+  static Msg Keypress(char c) { return Msg{MsgType::Keypress, c, 1}; }
+  static Msg Increment(int i) { return Msg{MsgType::Increment, 0, i}; }
+  static Msg Quit() { return Msg{MsgType::Quit, 0, 1}; }
 };
 
 #endif // MESSAGE_H
