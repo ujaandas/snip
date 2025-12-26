@@ -24,6 +24,7 @@ struct UpdateResult {
 // Defines input/output handling and core runtime.
 class Program {
   State &state;
+  std::mutex qMutex;
   std::queue<Msg> msgQ;
   bool running = false;
 

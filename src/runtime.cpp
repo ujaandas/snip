@@ -7,6 +7,7 @@ void Program::handleInput() {
   while (running) {
     char c;
     if (read(STDIN_FILENO, &c, 1) > 0) {
+      std::lock_guard<std::mutex> lock(qMutex);
       msgQ.push(Msg::Keypress(c));
     }
   }
@@ -26,23 +27,32 @@ void Program::execute(const Cmd &cmd) {
 
 void Program::run() {
   Terminal term;
-  term.init(1);
+  term.init(0);
 
   running = true;
   std::cout << render(state);
-
   std::thread input(&Program::handleInput, this);
 
   while (running) {
-    if (!msgQ.empty()) {
-      auto msg = std::move(msgQ.front());
-      msgQ.pop();
+    bool hadMessage = false;
+    Msg msg;
+    {
+      std::lock_guard<std::mutex> lock(qMutex);
+      if (!msgQ.empty()) {
+        hadMessage = true;
+        msg = msgQ.front();
+        msgQ.pop();
+      }
+    }
+
+    if (hadMessage) {
       auto result = update(state, msg);
       state = result.newState;
       std::cout << render(state);
-      for (auto &cmd : result.commands) {
+      for (auto &cmd : result.commands)
         execute(cmd);
-      }
+    } else {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
   }
 
