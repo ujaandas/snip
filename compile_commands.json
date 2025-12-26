@@ -1,0 +1,32 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=gnu++17",
+      "-Iinclude",
+      "-Wall",
+      "-o",
+      "snip",
+      "src/main.cpp"
+    ],
+    "directory": "/Users/ooj/Dev/Projects/snip",
+    "file": "/Users/ooj/Dev/Projects/snip/src/main.cpp",
+    "output": "/Users/ooj/Dev/Projects/snip/snip"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=gnu++17",
+      "-Iinclude",
+      "-Wall",
+      "-o",
+      "snip",
+      "src/runtime.cpp"
+    ],
+    "directory": "/Users/ooj/Dev/Projects/snip",
+    "file": "/Users/ooj/Dev/Projects/snip/src/runtime.cpp",
+    "output": "/Users/ooj/Dev/Projects/snip/snip"
+  }
+]
