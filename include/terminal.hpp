@@ -20,12 +20,35 @@ class Terminal {
 
 public:
   Terminal() { tcgetattr(STDIN_FILENO, &old); }
+
   void init(int echo) {
     new1 = old;
+
+    // Disable canonical mode
     new1.c_lflag &= ~ICANON;
-    new1.c_lflag &= echo ? ECHO : ~ECHO;
+
+    // Toggle echo
+    if (echo)
+      new1.c_lflag |= ECHO;
+    else
+      new1.c_lflag &= ~ECHO;
+
+    // Disable signals (Ctrl-C, Ctrl-Z)
+    new1.c_lflag &= ~ISIG;
+
+    // Disable CR-to-NL translation and XON/XOFF
+    new1.c_iflag &= ~(ICRNL | IXON);
+
+    // Disable output processing
+    new1.c_oflag &= ~OPOST;
+
+    // Make read() return after 1 byte
+    new1.c_cc[VMIN] = 1;
+    new1.c_cc[VTIME] = 0;
+
     tcsetattr(STDIN_FILENO, TCSANOW, &new1);
     fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+
     writeEscapeCode(ENTER_ALTBUF);
   }
 
