@@ -6,6 +6,7 @@ snip
 /build-debug/
 /build-release/
 /out/
+.cache
 result
 
 # Direnv

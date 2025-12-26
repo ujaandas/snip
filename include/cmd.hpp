@@ -15,13 +15,15 @@ operation, should be defined here with a Command.
 
 // A deferred action from the core event handling loop.
 struct Cmd {
-  enum class CmdType { Quit, SendMessage };
+  // Should be verbs
+  enum class CmdType { Quit, None, SendMessage };
 
   CmdType type;
   Msg msg;
 
   // Static helper functions to build relevant CmdTypes quicker
   static Cmd Quit() { return Cmd{CmdType::Quit}; }
+  static Cmd None() { return Cmd{CmdType::None}; }
   static Cmd Send(Msg m) { return Cmd{CmdType::SendMessage, std::move(m)}; }
 };
 

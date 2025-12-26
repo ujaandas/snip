@@ -17,17 +17,17 @@
         packages.default = pkgs.stdenv.mkDerivation {
           pname = "snip";
           version = "0.1.0";
-
           src = ./.;
 
           nativeBuildInputs = with pkgs; [
-            cmake
-            clang
+            gnumake
+            "g++"
           ];
 
-          cmakeFlags = [
-            "-DCMAKE_BUILD_TYPE=Release"
-          ];
+          installPhase = ''
+            mkdir -p $out/bin
+            cp snip $out/bin/
+          '';
         };
 
         devShell = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {

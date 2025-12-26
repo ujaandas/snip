@@ -27,6 +27,8 @@ void Program::execute(const Cmd &cmd) {
     running.store(false);
     cv.notify_all();
     break;
+  case Cmd::CmdType::None:
+    break;
   }
 }
 
@@ -35,6 +37,7 @@ void Program::run() {
   term.init(0);
 
   std::thread input(&Program::handleInput, this);
+  execute(init(state));
 
   while (running) {
     Msg msg;

@@ -32,6 +32,7 @@ class Program {
 
 public:
   Program(State &m) : state(m) {}
+  Cmd init(const State &state);
   UpdateResult update(const State &state, Msg &msg);
   std::string render(const State &state);
   void run();

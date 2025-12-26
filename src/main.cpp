@@ -1,7 +1,15 @@
 #include "../include/program.hpp"
+#include <cstddef>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
+
+Cmd Program::init(const State &state) {
+  std::cout << "allo" << std::endl;
+  // return Cmd::Send(Msg::Write("hi there!"));
+  return Cmd::None();
+};
 
 UpdateResult Program::update(const State &state, Msg &msg) {
   State newState = state;
@@ -12,8 +20,8 @@ UpdateResult Program::update(const State &state, Msg &msg) {
     cmds.push_back(Cmd::Quit());
     break;
 
-  case Msg::MsgType::Increment:
-    newState.count += msg.inc;
+  case Msg::MsgType::Integer:
+    newState.count += msg.i;
     break;
 
   case Msg::MsgType::Keypress:
@@ -26,6 +34,9 @@ UpdateResult Program::update(const State &state, Msg &msg) {
       break;
     }
     break;
+  case Msg::MsgType::Text:
+    newState.text = msg.text;
+    break;
   }
 
   return UpdateResult{newState, std::move(cmds)};
@@ -34,6 +45,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
 std::string Program::render(const State &state) {
   std::stringstream buf;
   buf << "Count: " << state.count << "\n";
+  buf << state.text << "\n";
   buf << std::flush;
   return buf.str();
 }
