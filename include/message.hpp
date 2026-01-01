@@ -10,7 +10,7 @@ Message use and structure should emulate commands.
 #include <string>
 struct Msg {
   // These should all be nouns
-  enum class MsgType { Quit, Keypress, Integer, Text };
+  enum class MsgType { Quit, Keypress, Integer, Text, WindowDimensions };
 
   // TODO: Look into using std::variant so we can define a separate struct for
   // each one and not share data like this
@@ -18,12 +18,17 @@ struct Msg {
   char key;
   int i = 1;
   std::string text;
+  int x;
+  int y;
 
   // Static helper functions to build relevant MsgTypes quicker
   static Msg Keypress(char c) { return Msg{MsgType::Keypress, c, 0}; }
   static Msg Write(std::string text) {
     return Msg{MsgType::Text, '\0', 0, text};
   }
+  static Msg WindowDimensions(int x, int y) {
+    return Msg{MsgType::WindowDimensions, '\0', 0, "", x, y};
+  };
   static Msg Increment(int i) { return Msg{MsgType::Integer, '\0', i}; }
   static Msg Quit() { return Msg{MsgType::Quit, 0, 1}; }
 };

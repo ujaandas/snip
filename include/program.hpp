@@ -32,11 +32,11 @@ class Program {
 
 public:
   Program(State &m) : state(m) {}
-  Cmd init(const State &state);
+  std::vector<Cmd> init();
   UpdateResult update(const State &state, Msg &msg);
   std::string render(const State &state);
   void run();
-  void execute(const Cmd &cmd);
+  void addJob(const Cmd &cmd);
 
 private:
   void handleInput();

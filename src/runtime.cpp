@@ -1,21 +1,25 @@
 #include "../include/program.hpp"
 #include "../include/terminal.hpp"
+#include "message.hpp"
 #include <iostream>
 #include <mutex>
+#include <sys/ioctl.h>
 #include <thread>
 
 void Program::handleInput() {
   while (running.load()) {
+    // Read keyboard input
     char c;
     if (read(STDIN_FILENO, &c, 1) > 0) {
       std::unique_lock<std::mutex> lock(qMutex);
+      // Should I return a command here instead?
       msgQ.push(Msg::Keypress(c));
       cv.notify_one();
     }
   }
 }
 
-void Program::execute(const Cmd &cmd) {
+void Program::addJob(const Cmd &cmd) {
   switch (cmd.type) {
   case Cmd::CmdType::SendMessage: {
     std::unique_lock<std::mutex> lock(qMutex);
@@ -37,7 +41,10 @@ void Program::run() {
   term.init(0);
 
   std::thread input(&Program::handleInput, this);
-  execute(init(state));
+
+  for (auto cmd : init()) {
+    addJob(cmd);
+  }
 
   while (running) {
     Msg msg;
@@ -60,7 +67,7 @@ void Program::run() {
     std::cout << render(state);
 
     for (auto &cmd : result.commands) {
-      execute(cmd);
+      addJob(cmd);
     }
   }
 

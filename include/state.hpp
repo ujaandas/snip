@@ -7,9 +7,14 @@ Create a new copy each time to ease testing.
 #ifndef STATE_H
 #define STATE_H
 
+struct Window {
+  int height = 0;
+  int width = 0;
+};
 struct State {
   int count = 0;
   std::string text;
+  Window window;
 };
 
 #endif // STATE_H

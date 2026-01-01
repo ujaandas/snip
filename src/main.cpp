@@ -1,14 +1,29 @@
+#include "../include/file.hpp"
 #include "../include/program.hpp"
 #include <cstddef>
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <stdio.h>
 #include <string>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <vector>
 
-Cmd Program::init(const State &state) {
-  std::cout << "allo" << std::endl;
-  // return Cmd::Send(Msg::Write("hi there!"));
-  return Cmd::None();
+std::vector<Cmd> Program::init() {
+  // Batch commands
+  std::vector<Cmd> cmds;
+
+  // Get window dimensions
+  struct winsize w;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+  cmds.push_back(Cmd::Send(Msg::WindowDimensions(w.ws_col, w.ws_row)));
+
+  // Read input file
+  File f = File("./Makefile");
+  std::cout << f.getText() << std::endl;
+
+  return cmds;
 };
 
 UpdateResult Program::update(const State &state, Msg &msg) {
@@ -34,8 +49,14 @@ UpdateResult Program::update(const State &state, Msg &msg) {
       break;
     }
     break;
+
   case Msg::MsgType::Text:
     newState.text = msg.text;
+    break;
+
+  case Msg::MsgType::WindowDimensions:
+    newState.window.width = msg.x;
+    newState.window.height = msg.y;
     break;
   }
 
@@ -45,7 +66,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
 std::string Program::render(const State &state) {
   std::stringstream buf;
   buf << "Count: " << state.count << "\n";
-  buf << state.text << "\n";
+  buf << state.window.height << " x " << state.window.width << "\n";
   buf << std::flush;
   return buf.str();
 }
