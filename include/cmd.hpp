@@ -8,6 +8,7 @@ We use this to defer operations from our update loop to keep it pure, which
 makes testing a lot easier.
 Any operation the app wants to perform in the update loop, ie; any "reactive"
 operation, should be defined here with a Command.
+Simply put, commands are "things that the program does".
 */
 
 #ifndef CMD_H

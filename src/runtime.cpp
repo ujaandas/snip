@@ -16,6 +16,18 @@ void Program::handleInput() {
       msgQ.push(Msg::Keypress(c));
       cv.notify_one();
     }
+
+    // Check window size
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    if (w.ws_col != state.window.width || w.ws_row != state.window.height) {
+      std::unique_lock<std::mutex> lock(qMutex);
+      msgQ.push(Msg::WindowDimensions(w.ws_col, w.ws_row));
+      cv.notify_one();
+    }
+
+    // Prevent busy-waiting
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 

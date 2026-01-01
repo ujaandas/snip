@@ -28,7 +28,7 @@ class Program {
   std::queue<Msg> msgQ;
   std::mutex qMutex;
   std::condition_variable cv;
-  std::atomic<bool> running{true};
+  std::atomic<bool> running = true;
 
 public:
   Program(State &m) : state(m) {}
