@@ -18,6 +18,7 @@ void Program::handleInput() {
     }
 
     // Check window size
+    // TODO: Replace with SIGINT
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     if (w.ws_col != state.window.width || w.ws_row != state.window.height) {

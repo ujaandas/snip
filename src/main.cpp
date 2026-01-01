@@ -21,7 +21,9 @@ std::vector<Cmd> Program::init() {
 
   // Read input file
   File f = File("./Makefile");
-  std::cout << f.getText() << std::endl;
+  for (auto line : f.readRange(0, 20)) {
+    std::cout << line << "\n";
+  }
 
   return cmds;
 };
