@@ -14,11 +14,6 @@ std::vector<Cmd> Program::init() {
   // Batch commands
   std::vector<Cmd> cmds;
 
-  // Get window dimensions
-  struct winsize w;
-  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-  cmds.push_back(Cmd::Send(Msg::WindowDimensions(w.ws_col, w.ws_row)));
-
   // Read input file
   File f = File("./Makefile");
   for (auto line : f.readRange(0, 20)) {
