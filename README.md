@@ -10,7 +10,7 @@ The underlying TUI framework very, very, VERY heavily inspired by `go/bubbletea`
 
 - Small, self‑contained C++ codebase
 - Message‑driven update loop
-- Pure, testable state transitions
+- Pure, testable state transitions (But do I test them? No.)
 - Deferred commands for all side‑effects
 - Minimal runtime with clean I/O handling
 
@@ -31,8 +31,9 @@ Takes the current state and a message, and returns:
 - a new state
 - a list of commands describing any side‑effects
 
-No mutation, no surprises.
+No direct state mutation happens here, so makes testing and overall reasoning-about easier.
 
 ### Runtime
 
-Handles raw input/output, executes commands, and feeds messages back into the event loop. It’s intentionally tiny-almost all logic lives in pure functions.
+Handles raw input/output, executes commands, and feeds messages back into the event loop. It’s intentionally tiny - almost all logic lives in the above "pure" functions.
+
