@@ -1,6 +1,7 @@
 #include "../include/file.hpp"
 #include "../include/program.hpp"
 #include "message.hpp"
+#include <climits>
 #include <cstddef>
 #include <iostream>
 #include <ostream>
@@ -16,13 +17,8 @@ std::vector<Cmd> Program::init() {
   // Batch commands
   std::vector<Cmd> cmds;
 
-  // Check initial window size
-  struct winsize w;
-  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-
   // Read input file
-  File f = File("./flake.nix");
-  state.buffer = f.readRange(0, 100000);
+  cmds.push_back(OpenFile("./flake.nix"));
 
   return cmds;
 };
@@ -114,7 +110,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
 
         // File opened
         else if constexpr (std::is_same_v<T, FilepathMsg>) {
-          cmds.push_back(OpenFile(m.path));
+          newState.buffer = File("./flake.nix").readRange(0, INT_MAX);
         }
       },
       msg);
