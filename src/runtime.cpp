@@ -38,7 +38,7 @@ void Program::handleInput() {
   }
 }
 
-void Program::addJob(const Cmd &cmd) {
+void Program::executeCmds(const Cmd &cmd) {
   if (auto maybeMsg = cmd()) {
     std::unique_lock<std::mutex> lock(qMutex);
     msgQ.push(*maybeMsg);
@@ -53,7 +53,7 @@ void Program::run() {
   std::thread input(&Program::handleInput, this);
 
   for (auto cmd : init()) {
-    addJob(cmd);
+    executeCmds(cmd);
   }
 
   while (running) {
@@ -77,7 +77,7 @@ void Program::run() {
     std::cout << render(state);
 
     for (auto &cmd : result.commands) {
-      addJob(cmd);
+      executeCmds(cmd);
     }
   }
 

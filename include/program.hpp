@@ -36,7 +36,7 @@ public:
   UpdateResult update(const State &state, Msg &msg);
   std::string render(const State &state);
   void run();
-  void addJob(const Cmd &cmd);
+  void executeCmds(const Cmd &cmd);
   void requestQuit();
 
 private:
