@@ -22,7 +22,7 @@ std::vector<Cmd> Program::init() {
 
   // Read input file
   File f = File("./flake.nix");
-  state.buffer = f.readRange(0, 14);
+  state.buffer = f.readRange(0, 100000);
 
   return cmds;
 };
@@ -47,49 +47,60 @@ UpdateResult Program::update(const State &state, Msg &msg) {
             cmds.push_back(Send(QuitMsg{}));
             break;
 
-          // Go up
-          case 'j':
+            // Move cursor down
+          case 'j': {
             if (newState.cursorLine + 1 < newState.buffer.size()) {
               newState.cursorLine++;
             }
 
-            // Scroll if cursor goes off screen
+            // Clamp cursorCol to new line length
+            int lineLen = newState.buffer[newState.cursorLine].size();
+            newState.cursorCol = std::min(newState.cursorCol, lineLen);
+
+            // Scroll down if cursor goes below window
             if (newState.cursorLine >=
                 newState.scrollOffset + newState.window.height - 1) {
               newState.scrollOffset++;
             }
-            break;
 
-          // Go down
-          case 'k':
+            break;
+          }
+
+          // Move cursor up
+          case 'k': {
             if (newState.cursorLine > 0) {
               newState.cursorLine--;
             }
 
-            // Scroll up
+            // Clamp cursorCol to new line length
+            int lineLen = newState.buffer[newState.cursorLine].size();
+            newState.cursorCol = std::min(newState.cursorCol, lineLen);
+
+            // Scroll up if cursor goes above window
             if (newState.cursorLine < newState.scrollOffset) {
               newState.scrollOffset--;
             }
             break;
+          }
 
-          // Go right
-          case 'h':
+          // Move cursor left
+          case 'h': {
             if (newState.cursorCol > 0) {
               newState.cursorCol--;
             }
             break;
-
-          // Go left
+          }
+          // Move cursor right
           case 'l': {
-            int lineLen = 0;
-            if (newState.cursorLine < newState.buffer.size())
-              lineLen = newState.buffer[newState.cursorLine].size();
+            int lineLen = newState.buffer[newState.cursorLine].size();
 
             if (newState.cursorCol < lineLen) {
               newState.cursorCol++;
             } else {
+              // Clamp to end of line
               newState.cursorCol = lineLen;
             }
+
             break;
           }
           }
