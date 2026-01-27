@@ -21,7 +21,7 @@ std::vector<Cmd> Program::init() {
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
   // Read input file
-  File f = File("./Makefile");
+  File f = File("./flake.nix");
   state.buffer = f.readRange(0, 14);
 
   return cmds;
@@ -49,24 +49,49 @@ UpdateResult Program::update(const State &state, Msg &msg) {
 
           // Go up
           case 'j':
-            if (newState.cursorLine + 1 < newState.buffer.size())
+            if (newState.cursorLine + 1 < newState.buffer.size()) {
               newState.cursorLine++;
+            }
 
             // Scroll if cursor goes off screen
             if (newState.cursorLine >=
-                newState.scrollOffset + newState.window.height - 1)
+                newState.scrollOffset + newState.window.height - 1) {
               newState.scrollOffset++;
+            }
             break;
 
           // Go down
           case 'k':
-            if (newState.cursorLine > 0)
+            if (newState.cursorLine > 0) {
               newState.cursorLine--;
+            }
 
             // Scroll up
-            if (newState.cursorLine < newState.scrollOffset)
+            if (newState.cursorLine < newState.scrollOffset) {
               newState.scrollOffset--;
+            }
             break;
+
+          // Go right
+          case 'h':
+            if (newState.cursorCol > 0) {
+              newState.cursorCol--;
+            }
+            break;
+
+          // Go left
+          case 'l': {
+            int lineLen = 0;
+            if (newState.cursorLine < newState.buffer.size())
+              lineLen = newState.buffer[newState.cursorLine].size();
+
+            if (newState.cursorCol < lineLen) {
+              newState.cursorCol++;
+            } else {
+              newState.cursorCol = lineLen;
+            }
+            break;
+          }
           }
         }
 
@@ -98,7 +123,26 @@ std::string Program::render(const State &state) {
     int lineIndex = state.scrollOffset + i;
 
     if (lineIndex < state.buffer.size()) {
-      out << state.buffer[lineIndex];
+      const std::string &line = state.buffer[lineIndex];
+
+      if (lineIndex == state.cursorLine) {
+        // Render line with cursor highlight
+        for (int col = 0; col < line.size(); col++) {
+          if (col == state.cursorCol) {
+            out << "\033[7m" << line[col] << "\033[0m";
+          } else {
+            out << line[col];
+          }
+        }
+
+        // If cursor is at end of line, draw a highlighted space
+        if (state.cursorCol == line.size()) {
+          out << "\033[7m \033[0m";
+        }
+      } else {
+        // Normal line
+        out << line;
+      }
     }
 
     out << "\n";

@@ -16,6 +16,7 @@ struct State {
   std::vector<std::string> buffer;
   int cursorLine = 0;
   int scrollOffset = 0;
+  int cursorCol = 0;
 
   Window window;
 };
