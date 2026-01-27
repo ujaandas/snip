@@ -9,29 +9,24 @@ Simply put, messages are "things that happen to the program".
 #define MESSAGE_H
 
 #include <string>
-struct Msg {
-  // These should all be nouns
-  enum class MsgType { Quit, Keypress, Integer, Text, WindowDimensions };
+#include <variant>
 
-  // TODO: Look into using std::variant so we can define a separate struct for
-  // each one and not share data like this
-  MsgType type;
+struct QuitMsg {};
+
+struct KeypressMsg {
   char key;
-  int i = 1;
-  std::string text;
-  int x;
-  int y;
-
-  // Static helper functions to build relevant MsgTypes quicker
-  static Msg Keypress(char c) { return Msg{MsgType::Keypress, c, 0}; }
-  static Msg Write(std::string text) {
-    return Msg{MsgType::Text, '\0', 0, text};
-  }
-  static Msg WindowDimensions(int x, int y) {
-    return Msg{MsgType::WindowDimensions, '\0', 0, "", x, y};
-  };
-  static Msg Increment(int i) { return Msg{MsgType::Integer, '\0', i}; }
-  static Msg Quit() { return Msg{MsgType::Quit, 0, 1}; }
 };
+
+struct WindowDimensionsMsg {
+  int width;
+  int height;
+};
+
+struct FilepathMsg {
+  std::string path;
+};
+
+using Msg =
+    std::variant<QuitMsg, KeypressMsg, WindowDimensionsMsg, FilepathMsg>;
 
 #endif // MESSAGE_H

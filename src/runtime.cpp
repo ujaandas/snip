@@ -1,10 +1,12 @@
 #include "../include/program.hpp"
 #include "../include/terminal.hpp"
 #include "message.hpp"
+#include "state.hpp"
 #include <iostream>
 #include <mutex>
 #include <sys/ioctl.h>
 #include <thread>
+#include <variant>
 
 void Program::handleInput() {
   while (running.load()) {
@@ -13,7 +15,7 @@ void Program::handleInput() {
     if (read(STDIN_FILENO, &c, 1) > 0) {
       std::unique_lock<std::mutex> lock(qMutex);
       // Should I return a command here instead?
-      msgQ.push(Msg::Keypress(c));
+      msgQ.push(KeypressMsg{c});
       cv.notify_one();
     }
 
@@ -23,7 +25,7 @@ void Program::handleInput() {
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     if (w.ws_col != state.window.width || w.ws_row != state.window.height) {
       std::unique_lock<std::mutex> lock(qMutex);
-      msgQ.push(Msg::WindowDimensions(w.ws_col, w.ws_row));
+      msgQ.push(WindowDimensionsMsg{w.ws_col, w.ws_row});
       cv.notify_one();
     }
 
@@ -33,20 +35,21 @@ void Program::handleInput() {
 }
 
 void Program::addJob(const Cmd &cmd) {
-  switch (cmd.type) {
-  case Cmd::CmdType::SendMessage: {
-    std::unique_lock<std::mutex> lock(qMutex);
-    msgQ.push(cmd.msg);
-    cv.notify_one();
-    break;
-  }
-  case Cmd::CmdType::Quit:
-    running.store(false);
-    cv.notify_all();
-    break;
-  case Cmd::CmdType::None:
-    break;
-  }
+  std::visit(
+      [this](auto &&c) {
+        using T = std::decay_t<decltype(c)>;
+        if constexpr (std::is_same_v<T, SendMessageCmd>) {
+          std::unique_lock<std::mutex> lock(qMutex);
+          msgQ.push(c.msg);
+          cv.notify_one();
+        }
+
+        else if constexpr (std::is_same_v<T, QuitCmd>) {
+          running.store(false);
+          cv.notify_all();
+        }
+      },
+      cmd);
 }
 
 void Program::run() {

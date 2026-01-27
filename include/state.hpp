@@ -1,5 +1,3 @@
-#include <string>
-
 /* The app's internal state, passed around through program's runtime.
 Create a new copy each time to ease testing.
 */
@@ -13,7 +11,6 @@ struct Window {
 };
 struct State {
   int count = 0;
-  std::string text;
   Window window;
 };
 

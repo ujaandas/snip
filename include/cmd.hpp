@@ -1,5 +1,5 @@
 #include "message.hpp"
-#include <utility>
+#include <string>
 
 /*
 A "command" is not technically a command - it is not runnable.
@@ -15,17 +15,14 @@ Simply put, commands are "things that the program does".
 #define CMD_H
 
 // A deferred action from the core event handling loop.
-struct Cmd {
-  // Should be verbs
-  enum class CmdType { Quit, None, SendMessage };
-
-  CmdType type;
+struct QuitCmd {};
+struct NoneCmd {};
+struct SendMessageCmd {
   Msg msg;
-
-  // Static helper functions to build relevant CmdTypes quicker
-  static Cmd Quit() { return Cmd{CmdType::Quit}; }
-  static Cmd None() { return Cmd{CmdType::None}; }
-  static Cmd Send(Msg m) { return Cmd{CmdType::SendMessage, std::move(m)}; }
 };
+struct OpenFileCmd {
+  std::string path;
+};
+using Cmd = std::variant<QuitCmd, NoneCmd, SendMessageCmd, OpenFileCmd>;
 
 #endif // CMD_H

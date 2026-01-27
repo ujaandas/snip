@@ -12,7 +12,7 @@ Currently open file buffer - handles all IO operations thereof.
 
 class File {
 private:
-  std::vector<std::string> buf;
+  std::vector<std::string> content;
 
 public:
   // Load entire file into memory
@@ -29,7 +29,7 @@ public:
     // Read to buf
     std::string line;
     while (std::getline(in, line)) {
-      buf.push_back(line);
+      content.push_back(line);
     }
   };
 
@@ -37,14 +37,15 @@ public:
   std::vector<std::string> readRange(int start, int end) const {
     // Bound correctly
     start = std::min(start, 0);
-    end = std::min(end, (int)buf.size());
+    end = std::min(end, (int)content.size());
 
     // Check start not greater than end
     if (start > end) {
       return {};
     }
 
-    return std::vector<std::string>(buf.begin() + start, buf.begin() + end);
+    return std::vector<std::string>(content.begin() + start,
+                                    content.begin() + end);
   }
 };
 
