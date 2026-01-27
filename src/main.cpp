@@ -1,5 +1,6 @@
 #include "../include/file.hpp"
 #include "../include/program.hpp"
+#include "message.hpp"
 #include <cstddef>
 #include <iostream>
 #include <ostream>
@@ -33,30 +34,39 @@ UpdateResult Program::update(const State &state, Msg &msg) {
   std::vector<Cmd> cmds;
 
   std::visit(
-      [&cmds, &newState](auto &&m) {
+      [&cmds, &newState, this](auto &&m) {
         using T = std::decay_t<decltype(m)>;
+
+        // Quit program
         if constexpr (std::is_same_v<T, QuitMsg>) {
-          cmds.push_back(QuitCmd{});
+          cmds.push_back(Quit(*this));
         }
 
+        else if constexpr (std::is_same_v<T, IncrementMsg>) {
+          newState.count += 1;
+        }
+
+        // Check keypresses
         else if constexpr (std::is_same_v<T, KeypressMsg>) {
           switch (m.key) {
           case 'q':
-            cmds.push_back(QuitCmd{});
+            cmds.push_back(Send(QuitMsg{}));
             break;
           case '+':
-            cmds.push_back(SendMessageCmd{(KeypressMsg{'+'})});
+            cmds.push_back(Send(IncrementMsg{1}));
             break;
           }
         }
 
+        // Window size changed
         else if constexpr (std::is_same_v<T, WindowDimensionsMsg>) {
           newState.window.width = m.width;
           newState.window.height = m.height;
         }
 
+        // File opened
         else if constexpr (std::is_same_v<T, FilepathMsg>) {
-          cmds.push_back(OpenFileCmd{m.path});
+          cmds.push_back(OpenFile(m.path));
         }
       },
       msg);

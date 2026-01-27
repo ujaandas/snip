@@ -1,8 +1,5 @@
 /*
-A "message" is simply a block of information. That's it.
-Messages are used in the update loop, and can also be contained within commands.
-Message use and structure should emulate commands.
-Simply put, messages are "things that happen to the program".
+A "message" is simply a block of information. That's it. It is data.
 */
 
 #ifndef MESSAGE_H
@@ -12,6 +9,10 @@ Simply put, messages are "things that happen to the program".
 #include <variant>
 
 struct QuitMsg {};
+
+struct IncrementMsg {
+  int i;
+};
 
 struct KeypressMsg {
   char key;
@@ -26,7 +27,7 @@ struct FilepathMsg {
   std::string path;
 };
 
-using Msg =
-    std::variant<QuitMsg, KeypressMsg, WindowDimensionsMsg, FilepathMsg>;
+using Msg = std::variant<QuitMsg, IncrementMsg, KeypressMsg,
+                         WindowDimensionsMsg, FilepathMsg>;
 
 #endif // MESSAGE_H

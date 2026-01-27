@@ -6,7 +6,11 @@
 #include <mutex>
 #include <sys/ioctl.h>
 #include <thread>
-#include <variant>
+
+void Program::requestQuit() {
+  running.store(false);
+  cv.notify_all();
+}
 
 void Program::handleInput() {
   while (running.load()) {
@@ -35,21 +39,11 @@ void Program::handleInput() {
 }
 
 void Program::addJob(const Cmd &cmd) {
-  std::visit(
-      [this](auto &&c) {
-        using T = std::decay_t<decltype(c)>;
-        if constexpr (std::is_same_v<T, SendMessageCmd>) {
-          std::unique_lock<std::mutex> lock(qMutex);
-          msgQ.push(c.msg);
-          cv.notify_one();
-        }
-
-        else if constexpr (std::is_same_v<T, QuitCmd>) {
-          running.store(false);
-          cv.notify_all();
-        }
-      },
-      cmd);
+  if (auto maybeMsg = cmd()) {
+    std::unique_lock<std::mutex> lock(qMutex);
+    msgQ.push(*maybeMsg);
+    cv.notify_one();
+  }
 }
 
 void Program::run() {

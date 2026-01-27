@@ -37,6 +37,7 @@ public:
   std::string render(const State &state);
   void run();
   void addJob(const Cmd &cmd);
+  void requestQuit();
 
 private:
   void handleInput();

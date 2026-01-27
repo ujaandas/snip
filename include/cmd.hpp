@@ -1,28 +1,22 @@
 #include "message.hpp"
-#include <string>
+#include <functional>
 
 /*
-A "command" is not technically a command - it is not runnable.
-In insteads represents a "deferred action" that the runtime should act upon.
+A command represents a "deferred action" that the runtime should act upon.
 We use this to defer operations from our update loop to keep it pure, which
 makes testing a lot easier.
-Any operation the app wants to perform in the update loop, ie; any "reactive"
-operation, should be defined here with a Command.
-Simply put, commands are "things that the program does".
+Essentially, it is a function that might _eventually_ produce a message.
 */
 
 #ifndef CMD_H
 #define CMD_H
 
-// A deferred action from the core event handling loop.
-struct QuitCmd {};
-struct NoneCmd {};
-struct SendMessageCmd {
-  Msg msg;
-};
-struct OpenFileCmd {
-  std::string path;
-};
-using Cmd = std::variant<QuitCmd, NoneCmd, SendMessageCmd, OpenFileCmd>;
+class Program;
+
+using Cmd = std::function<std::optional<Msg>()>;
+
+Cmd Quit(Program &p);
+Cmd Send(Msg m);
+Cmd OpenFile(std::string path);
 
 #endif // CMD_H
