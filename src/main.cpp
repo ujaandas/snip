@@ -22,9 +22,7 @@ std::vector<Cmd> Program::init() {
 
   // Read input file
   File f = File("./Makefile");
-  for (auto line : f.readRange(0, w.ws_row)) {
-    std::cout << line << "\n";
-  }
+  state.buffer = f.readRange(0, 14);
 
   return cmds;
 };
@@ -42,18 +40,32 @@ UpdateResult Program::update(const State &state, Msg &msg) {
           cmds.push_back(Quit(*this));
         }
 
-        else if constexpr (std::is_same_v<T, IncrementMsg>) {
-          newState.count += 1;
-        }
-
         // Check keypresses
         else if constexpr (std::is_same_v<T, KeypressMsg>) {
           switch (m.key) {
           case 'q':
             cmds.push_back(Send(QuitMsg{}));
             break;
-          case '+':
-            cmds.push_back(Send(IncrementMsg{1}));
+
+          // Go up
+          case 'j':
+            if (newState.cursorLine + 1 < newState.buffer.size())
+              newState.cursorLine++;
+
+            // Scroll if cursor goes off screen
+            if (newState.cursorLine >=
+                newState.scrollOffset + newState.window.height - 1)
+              newState.scrollOffset++;
+            break;
+
+          // Go down
+          case 'k':
+            if (newState.cursorLine > 0)
+              newState.cursorLine--;
+
+            // Scroll up
+            if (newState.cursorLine < newState.scrollOffset)
+              newState.scrollOffset--;
             break;
           }
         }
@@ -75,11 +87,30 @@ UpdateResult Program::update(const State &state, Msg &msg) {
 }
 
 std::string Program::render(const State &state) {
-  std::stringstream output;
-  output << "Count: " << state.count << "\n";
-  output << state.window.height << " x " << state.window.width << "\n";
-  output << std::flush;
-  return output.str();
+  std::stringstream out;
+
+  // Clear screen + move cursor to top-left
+  out << "\033[2J\033[H";
+
+  int usableHeight = state.window.height - 1; // Leave room for debug bar
+
+  for (int i = 0; i < usableHeight; i++) {
+    int lineIndex = state.scrollOffset + i;
+
+    if (lineIndex < state.buffer.size()) {
+      out << state.buffer[lineIndex];
+    }
+
+    out << "\n";
+  }
+
+  out << "\033[7m"; // Reverse video
+  out << "Line " << state.cursorLine << "  Scroll " << state.scrollOffset
+      << "  Size " << state.window.width << "x" << state.window.height;
+  out << "\033[0m"; // Reset formatting
+
+  out << std::flush;
+  return out.str();
 }
 
 int main() {

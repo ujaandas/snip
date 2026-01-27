@@ -2,6 +2,9 @@
 Create a new copy each time to ease testing.
 */
 
+#include <string>
+#include <vector>
+
 #ifndef STATE_H
 #define STATE_H
 
@@ -10,7 +13,10 @@ struct Window {
   int width = 0;
 };
 struct State {
-  int count = 0;
+  std::vector<std::string> buffer;
+  int cursorLine = 0;
+  int scrollOffset = 0;
+
   Window window;
 };
 

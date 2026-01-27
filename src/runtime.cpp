@@ -74,7 +74,7 @@ void Program::run() {
 
     auto result = update(state, msg);
     state = result.newState;
-    std::cout << render(state);
+    std::cout << render(state) << std::flush;
 
     for (auto &cmd : result.commands) {
       executeCmds(cmd);
