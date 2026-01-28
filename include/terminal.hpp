@@ -66,8 +66,8 @@ public:
   }
 
   ~Terminal() {
-    writeEscapeCode(EXIT_ALTBUF);
     writeEscapeCode(SHOW_CURSOR);
+    writeEscapeCode(EXIT_ALTBUF);
     tcsetattr(STDIN_FILENO, TCSANOW, &old);
     fcntl(STDIN_FILENO, F_SETFL, old_flags);
   }
