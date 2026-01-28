@@ -110,7 +110,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
 
         // File opened
         else if constexpr (std::is_same_v<T, FilepathMsg>) {
-          newState.buffer = File("./flake.nix").readRange(0, INT_MAX);
+          newState.buffer = File(m.path).readRange(0, INT_MAX);
         }
       },
       msg);

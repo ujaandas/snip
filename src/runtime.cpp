@@ -9,7 +9,7 @@
 
 void Program::requestQuit() {
   running.store(false);
-  cv.notify_all();
+  msgCv.notify_all();
 }
 
 void Program::handleInput() {
@@ -17,10 +17,10 @@ void Program::handleInput() {
     // Read keyboard input
     char c;
     if (read(STDIN_FILENO, &c, 1) > 0) {
-      std::unique_lock<std::mutex> lock(qMutex);
+      std::unique_lock<std::mutex> lock(msgQMutex);
       // Should I return a command here instead?
       msgQ.push(KeypressMsg{c});
-      cv.notify_one();
+      msgCv.notify_one();
     }
 
     // Check window size
@@ -28,9 +28,9 @@ void Program::handleInput() {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     if (w.ws_col != state.window.width || w.ws_row != state.window.height) {
-      std::unique_lock<std::mutex> lock(qMutex);
+      std::unique_lock<std::mutex> lock(msgQMutex);
       msgQ.push(WindowDimensionsMsg{w.ws_col, w.ws_row});
-      cv.notify_one();
+      msgCv.notify_one();
     }
 
     // Prevent busy-waiting
@@ -38,11 +38,34 @@ void Program::handleInput() {
   }
 }
 
-void Program::executeCmds(const Cmd &cmd) {
+void Program::executeCmd(const Cmd &cmd) {
   if (auto maybeMsg = cmd()) {
-    std::unique_lock<std::mutex> lock(qMutex);
+    std::unique_lock<std::mutex> lock(msgQMutex);
     msgQ.push(*maybeMsg);
-    cv.notify_one();
+    msgCv.notify_one();
+  }
+}
+
+void Program::handleCmd() {
+  while (running.load()) {
+    Cmd cmd;
+    {
+      std::unique_lock<std::mutex> lock(cmdQMutex);
+      while (cmdQ.empty() && running.load()) {
+        cmdCv.wait(lock);
+      }
+
+      if (!running.load() && cmdQ.empty()) {
+        break;
+      }
+
+      cmd = cmdQ.front();
+      cmdQ.pop();
+    }
+    executeCmd(cmd);
+
+    // Prevent busy-waiting
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
@@ -51,17 +74,20 @@ void Program::run() {
   term.init(0);
 
   std::thread input(&Program::handleInput, this);
+  std::thread cmd(&Program::handleCmd, this);
 
   for (auto cmd : init()) {
-    executeCmds(cmd);
+    std::unique_lock<std::mutex> lock(cmdQMutex);
+    cmdQ.push(cmd);
+    cmdCv.notify_one();
   }
 
-  while (running) {
+  while (running.load()) {
     Msg msg;
     {
-      std::unique_lock<std::mutex> lock(qMutex);
+      std::unique_lock<std::mutex> lock(msgQMutex);
       while (msgQ.empty() && running.load()) {
-        cv.wait(lock);
+        msgCv.wait(lock);
       }
 
       if (!running.load() && msgQ.empty()) {
@@ -77,7 +103,9 @@ void Program::run() {
     std::cout << render(state) << std::flush;
 
     for (auto &cmd : result.commands) {
-      executeCmds(cmd);
+      std::unique_lock<std::mutex> lock(cmdQMutex);
+      cmdQ.push(cmd);
+      cmdCv.notify_one();
     }
   }
 

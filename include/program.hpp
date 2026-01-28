@@ -26,8 +26,11 @@ struct UpdateResult {
 class Program {
   State &state;
   std::queue<Msg> msgQ;
-  std::mutex qMutex;
-  std::condition_variable cv;
+  std::mutex msgQMutex;
+  std::queue<Cmd> cmdQ;
+  std::mutex cmdQMutex;
+  std::condition_variable msgCv;
+  std::condition_variable cmdCv;
   std::atomic<bool> running = true;
 
 public:
@@ -36,11 +39,12 @@ public:
   UpdateResult update(const State &state, Msg &msg);
   std::string render(const State &state);
   void run();
-  void executeCmds(const Cmd &cmd);
+  void executeCmd(const Cmd &cmd);
   void requestQuit();
 
 private:
   void handleInput();
+  void handleCmd();
   void handleOutput();
 };
 
