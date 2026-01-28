@@ -34,6 +34,7 @@ void Program::handleInput() {
     }
 
     // Prevent busy-waiting
+    // TODO: Look into self-pipe trick (?)
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
@@ -63,9 +64,6 @@ void Program::handleCmd() {
       cmdQ.pop();
     }
     executeCmd(cmd);
-
-    // Prevent busy-waiting
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
