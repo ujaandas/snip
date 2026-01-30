@@ -2,8 +2,7 @@
 Create a new copy each time to ease testing.
 */
 
-#include <string>
-#include <vector>
+#include "gapbufline.hpp"
 
 #ifndef STATE_H
 #define STATE_H
@@ -13,7 +12,7 @@ struct Window {
   int width = 0;
 };
 struct State {
-  std::vector<std::string> buffer;
+  std::vector<GapBufferedLine> buffer;
   int cursorLine = 0;
   int scrollOffset = 0;
   int cursorCol = 0;

@@ -78,6 +78,8 @@ public:
     gapStart--;
     cursorPos--;
   }
+
+  std::string string() { return std::string{buf.begin(), buf.end()}; };
 };
 
 #endif // GAP_BUFFERED_LINE_H

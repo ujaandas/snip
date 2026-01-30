@@ -1,3 +1,4 @@
+#include "../include/gapbufline.hpp"
 #include <algorithm>
 #include <fstream>
 #include <string>
@@ -34,7 +35,7 @@ public:
   };
 
   // Read between range
-  std::vector<std::string> readRange(int start, int end) const {
+  std::vector<GapBufferedLine> readRange(int start, int end) const {
     // Bound correctly
     start = std::min(start, 0);
     end = std::min(end, (int)content.size());
@@ -44,8 +45,8 @@ public:
       return {};
     }
 
-    return std::vector<std::string>(content.begin() + start,
-                                    content.begin() + end);
+    return std::vector<GapBufferedLine>(content.begin() + start,
+                                        content.begin() + end);
   }
 };
 

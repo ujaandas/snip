@@ -50,7 +50,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
             }
 
             // Clamp cursorCol to new line length
-            int lineLen = newState.buffer[newState.cursorLine].size();
+            int lineLen = newState.buffer[newState.cursorLine].string().size();
             newState.cursorCol = std::min(newState.cursorCol, lineLen);
 
             // Scroll down if cursor goes below window
@@ -69,7 +69,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
             }
 
             // Clamp cursorCol to new line length
-            int lineLen = newState.buffer[newState.cursorLine].size();
+            int lineLen = newState.buffer[newState.cursorLine].string().size();
             newState.cursorCol = std::min(newState.cursorCol, lineLen);
 
             // Scroll up if cursor goes above window
@@ -88,7 +88,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
           }
           // Move cursor right
           case 'l': {
-            int lineLen = newState.buffer[newState.cursorLine].size();
+            int lineLen = newState.buffer[newState.cursorLine].string().size();
 
             if (newState.cursorCol < lineLen) {
               newState.cursorCol++;
@@ -126,29 +126,31 @@ std::string Program::render(const State &state) {
 
   int usableHeight = state.window.height - 1; // Leave room for debug bar
 
+  // Iterate over lines
   for (int i = 0; i < usableHeight; i++) {
     int lineIndex = state.scrollOffset + i;
 
     if (lineIndex < state.buffer.size()) {
-      const std::string &line = state.buffer[lineIndex];
+      GapBufferedLine line = state.buffer[lineIndex];
 
       if (lineIndex == state.cursorLine) {
-        // Render line with cursor highlight
-        for (int col = 0; col < line.size(); col++) {
+        // Iterate over columns
+        for (int col = 0; col < line.string().size(); col++) {
+          // Render line with cursor highlight
           if (col == state.cursorCol) {
-            out << "\033[7m" << line[col] << "\033[0m";
+            out << "\033[7m" << line.string()[col] << "\033[0m";
           } else {
-            out << line[col];
+            out << line.string()[col];
           }
         }
 
         // If cursor is at end of line, draw a highlighted space
-        if (state.cursorCol == line.size()) {
+        if (state.cursorCol == line.string().size()) {
           out << "\033[7m \033[0m";
         }
       } else {
         // Normal line
-        out << line;
+        out << line.string();
       }
     }
 
