@@ -131,26 +131,26 @@ std::string Program::render(const State &state) {
     int lineIndex = state.scrollOffset + i;
 
     if (lineIndex < state.buffer.size()) {
-      GapBufferedLine line = state.buffer[lineIndex];
+      std::string line = state.buffer[lineIndex].string();
 
       if (lineIndex == state.cursorLine) {
         // Iterate over columns
-        for (int col = 0; col < line.string().size(); col++) {
+        for (int col = 0; col < line.size(); col++) {
           // Render line with cursor highlight
           if (col == state.cursorCol) {
-            out << "\033[7m" << line.string()[col] << "\033[0m";
+            out << "\033[7m" << line[col] << "\033[0m";
           } else {
-            out << line.string()[col];
+            out << line[col];
           }
         }
 
         // If cursor is at end of line, draw a highlighted space
-        if (state.cursorCol == line.string().size()) {
+        if (state.cursorCol == line.size()) {
           out << "\033[7m \033[0m";
         }
       } else {
         // Normal line
-        out << line.string();
+        out << line;
       }
     }
 
