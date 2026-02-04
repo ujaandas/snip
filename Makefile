@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=gnu++17 -Iinclude -Wall
+CXXFLAGS = -std=gnu++17 -Iinclude -Wall -g
 TARGET = snip
 SRC = $(wildcard src/*.cpp)
 
