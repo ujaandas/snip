@@ -11,11 +11,21 @@ struct Window {
   int height = 0;
   int width = 0;
 };
+
+struct Cursor {
+  int line;
+  // int col;
+};
+
 struct State {
-  std::vector<GapBufferedLine> buffer;
-  int cursorLine = 0;
+  Cursor cursor;
+  std::vector<std::string> buffer;
+  GapBufferedLine curLine;
+  // int cursorLine = 0; // height on buffer (y-axis)
+  // GapBufferedLine *curLine = &buffer[cursorLine];
   int scrollOffset = 0;
-  int cursorCol = 0;
+  // int cursorCol = 0; // left/rightness on buffer's current line (x-axis)
+  int debugText;
 
   Window window;
 };

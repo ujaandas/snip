@@ -1,6 +1,9 @@
 # Executable
 snip
 
+# dSYM
+*.dSYM
+
 # Build directories
 /build/
 /build-debug/
