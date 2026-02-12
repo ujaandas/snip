@@ -2,13 +2,17 @@
 
 void GapBufferedLine::changeLine(const std::string &newLine) {
   buf.assign(newLine.begin(), newLine.end());
-  gapStart = buf.size();
-  gapEnd = buf.size();
 
-  // Fix cursor pos
-  if (cursorPos > gapEnd) {
-    cursorPos = gapEnd;
+  // Clamp cursor to line length
+  if (cursorPos > buf.size()) {
+    cursorPos = buf.size();
   }
+
+  gapStart = cursorPos;
+  gapEnd = cursorPos;
+
+  // Create an initial gap at the cursor
+  expandGap(16);
 }
 
 bool GapBufferedLine::shiftRight() {

@@ -51,13 +51,6 @@ UpdateResult Program::update(const State &state, Msg &msg) {
               // Move cursor down
               newState.cursor.line++;
 
-              // Clamp column to new line length
-              if (newState.curLine.cursorPos >=
-                  newState.buffer[newState.cursor.line].size()) {
-                newState.curLine.cursorPos =
-                    newState.buffer[newState.cursor.line].size();
-              }
-
               // Adjust the current line pointer
               newState.curLine.changeLine(
                   newState.buffer[newState.cursor.line]);
@@ -83,11 +76,6 @@ UpdateResult Program::update(const State &state, Msg &msg) {
               newState.curLine.changeLine(
                   newState.buffer[newState.cursor.line]);
 
-              // Clamp column to new line length
-              if (newState.curLine.cursorPos > newState.curLine.length()) {
-                newState.curLine.cursorPos = newState.curLine.length();
-              }
-
               // Scroll up if cursor goes above window
               if (newState.cursor.line < newState.scrollOffset) {
                 newState.scrollOffset--;
@@ -100,20 +88,22 @@ UpdateResult Program::update(const State &state, Msg &msg) {
           case 'h': {
             if (newState.curLine.cursorPos > 0) {
               newState.curLine.shiftLeft();
-              newState.curLine.cursorPos--;
             }
             break;
           }
 
           // Move cursor right
           case 'l': {
+            // if (newState.curLine.cursorPos < newState.curLine.length()) {
+            //   newState.curLine.shiftRight();
+            //   newState.curLine.cursorPos++;
+            // } else {
+            //   while (newState.curLine.shiftRight()) {
+            //     newState.curLine.cursorPos = newState.curLine.length();
+            //   }
+            // }
             if (newState.curLine.cursorPos < newState.curLine.length()) {
               newState.curLine.shiftRight();
-              newState.curLine.cursorPos++;
-            } else {
-              while (newState.curLine.shiftRight()) {
-                newState.curLine.cursorPos = newState.curLine.length();
-              }
             }
             break;
           }
