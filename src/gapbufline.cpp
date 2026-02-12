@@ -2,9 +2,13 @@
 
 void GapBufferedLine::changeLine(const std::string &newLine) {
   buf.assign(newLine.begin(), newLine.end());
-  gapStart = 0;
-  gapEnd = 0;
-  cursorPos = 0;
+  gapStart = buf.size();
+  gapEnd = buf.size();
+
+  // Fix cursor pos
+  if (cursorPos > gapEnd) {
+    cursorPos = gapEnd;
+  }
 }
 
 bool GapBufferedLine::shiftRight() {
@@ -41,13 +45,13 @@ bool GapBufferedLine::shiftLeft() {
 }
 
 void GapBufferedLine::expandGap(int amount) {
-  buf.insert(buf.begin() + gapEnd, amount, '\0');
+  buf.insert(buf.begin() + gapStart, amount, '\0');
   gapEnd += amount;
 }
 
 void GapBufferedLine::insert(char c) {
   if (gapStart == gapEnd) {
-    expandGap();
+    expandGap(16);
   }
 
   buf[gapStart] = c;
