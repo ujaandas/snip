@@ -1,5 +1,5 @@
-#ifndef CC_QUEUE
-#define CC_QUEUE
+#ifndef CC_QUEUE_H
+#define CC_QUEUE_H
 
 #include <condition_variable>
 #include <mutex>
@@ -46,4 +46,4 @@ public:
   bool closed = false;
 };
 
-#endif // CC_QUEUE
+#endif // CC_QUEUE_H
