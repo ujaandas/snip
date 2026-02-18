@@ -1,8 +1,7 @@
+#include "./core/ccqueue.hpp"
 #include "cmd.hpp"
 #include "message.hpp"
 #include "state.hpp"
-#include <condition_variable>
-#include <queue>
 
 /*
 Program is the heart of the app's functionality, and can be split into 2 clear
@@ -25,12 +24,8 @@ struct UpdateResult {
 // Defines input/output handling and core runtime.
 class Program {
   State &state;
-  std::queue<Msg> msgQ;
-  std::mutex msgQMutex;
-  std::queue<Cmd> cmdQ;
-  std::mutex cmdQMutex;
-  std::condition_variable msgCv;
-  std::condition_variable cmdCv;
+  CCQueue<Msg> msgQ;
+  CCQueue<Cmd> cmdQ;
   std::atomic<bool> running = true;
 
 public:
