@@ -26,10 +26,6 @@ public:
   bool ccawait(T &item) {
     std::unique_lock<std::mutex> lock(mutex);
 
-    while (queue.empty() && !closed) {
-      cv.wait(lock);
-    }
-
     if (queue.empty()) {
       return false;
     }
