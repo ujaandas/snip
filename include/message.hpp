@@ -7,8 +7,6 @@ A "message" is simply a block of information. That's it. It is data.
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-struct QuitMsg {};
-
 struct KeypressMsg {
   char key;
 };
@@ -22,7 +20,6 @@ struct FilepathMsg {
   std::string path;
 };
 
-using Msg =
-    std::variant<QuitMsg, KeypressMsg, WindowDimensionsMsg, FilepathMsg>;
+using Msg = std::variant<KeypressMsg, WindowDimensionsMsg, FilepathMsg>;
 
 #endif // MESSAGE_H

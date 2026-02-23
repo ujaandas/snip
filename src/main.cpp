@@ -31,17 +31,12 @@ UpdateResult Program::update(const State &state, Msg &msg) {
       [&cmds, &newState, this](auto &&m) {
         using T = std::decay_t<decltype(m)>;
 
-        // Quit program
-        if constexpr (std::is_same_v<T, QuitMsg>) {
-          cmds.push_back(Quit(*this));
-        }
-
         // Check keypresses
-        else if constexpr (std::is_same_v<T, KeypressMsg>) {
+        if constexpr (std::is_same_v<T, KeypressMsg>) {
           newState.debugText = m.key;
           switch (m.key) {
           case 'q':
-            cmds.push_back(Send(QuitMsg{}));
+            cmds.push_back(Quit(*this));
             break;
 
           // Move cursor down
