@@ -29,7 +29,7 @@ class Program {
   std::atomic<bool> running = true;
 
 public:
-  Program(State &m) : state(m) {}
+  Program(State &m) : state(m), msgQ(false), cmdQ(false) {}
   std::vector<Cmd> init();
   UpdateResult update(const State &state, Msg &msg);
   std::string render(const State &state);

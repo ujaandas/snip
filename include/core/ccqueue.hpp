@@ -7,12 +7,15 @@
 
 template <typename T> class CCQueue {
 private:
+  bool async = false;
   std::atomic<bool> closed = false;
   std::queue<T> queue;
   std::mutex mutex;
   std::condition_variable cv;
 
 public:
+  CCQueue<T>(bool isAsync) : async(isAsync){};
+
   void ccpush(const T &item) {
     {
       std::unique_lock<std::mutex> lock(mutex);
@@ -26,6 +29,10 @@ public:
 
   bool ccawait(T &item) {
     std::unique_lock<std::mutex> lock(mutex);
+
+    if (async) {
+      cv.wait(lock, [this] { return closed || !queue.empty(); });
+    }
 
     if (queue.empty()) {
       return false;
