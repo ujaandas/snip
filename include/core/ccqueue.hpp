@@ -7,6 +7,7 @@
 
 template <typename T> class CCQueue {
 private:
+  std::atomic<bool> closed = false;
   std::queue<T> queue;
   std::mutex mutex;
   std::condition_variable cv;
@@ -15,7 +16,7 @@ public:
   void ccpush(const T &item) {
     {
       std::unique_lock<std::mutex> lock(mutex);
-      if (closed) {
+      if (closed.load()) {
         return;
       }
       queue.push(item);
@@ -38,12 +39,10 @@ public:
   void close() {
     {
       std::unique_lock<std::mutex> lock(mutex);
-      closed = true;
+      closed.store(true);
     }
     cv.notify_all();
   }
-
-  bool closed = false;
 };
 
 #endif // CC_QUEUE_H
