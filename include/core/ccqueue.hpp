@@ -8,7 +8,7 @@
 template <typename T> class CCQueue {
 private:
   bool async = false;
-  std::atomic<bool> closed = false;
+  bool closed = false;
   std::queue<T> queue;
   std::mutex mutex;
   std::condition_variable cv;
@@ -19,7 +19,7 @@ public:
   void ccpush(const T &item) {
     {
       std::unique_lock<std::mutex> lock(mutex);
-      if (closed.load()) {
+      if (closed) {
         return;
       }
       queue.push(item);
@@ -30,7 +30,7 @@ public:
   bool ccawait(T &item) {
     std::unique_lock<std::mutex> lock(mutex);
 
-    if (async) {
+    if (!async) {
       cv.wait(lock, [this] { return closed || !queue.empty(); });
     }
 
@@ -46,7 +46,7 @@ public:
   void close() {
     {
       std::unique_lock<std::mutex> lock(mutex);
-      closed.store(true);
+      closed = true;
     }
     cv.notify_all();
   }
