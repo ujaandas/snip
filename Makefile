@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=gnu++17 -Iinclude -Wall -g
 TARGET = snip
 
-SRC = $(shell find include -name "*.cpp")
+SRC = $(shell find src -name "*.cpp")
 HDR = $(shell find include -name "*.hpp")
 
 # The target now depends on both CPP and HPP files
