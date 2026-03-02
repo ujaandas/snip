@@ -1,25 +1,15 @@
 CXX = g++
-CXXFLAGS = -std=gnu++17 -Iinclude -Wall -g -MMD -MP
+CXXFLAGS = -std=gnu++17 -Iinclude -Wall -g
 TARGET = snip
 
-SRC = $(wildcard src/*.cpp)
+SRC = $(shell find include -name "*.cpp")
+HDR = $(shell find include -name "*.hpp")
 
-OBJ = $(SRC:src/%.cpp=build/%.o)
+# The target now depends on both CPP and HPP files
+$(TARGET): $(SRC) $(HDR)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
 
-DEP = $(OBJ:.o=.d)
-
-all: prepare $(TARGET)
-
-prepare:
-	@mkdir -p build
-
-$(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^
-
-build/%.o: src/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+all: $(TARGET)
 
 clean:
-	rm -rf build $(TARGET)
-
--include $(DEP)
+	rm -f $(TARGET)
