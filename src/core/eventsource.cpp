@@ -1,10 +1,12 @@
 #include "../include/core/eventsource.hpp"
 
+EzPipe EventSource::ezp;
+
 EventSource::EventSource(int fd) { this->fd = fd; };
 
-void EventSource::handler(int sig) { ezp.write(sig); }
-
 EventSource EventSource::fromFd(int fd) { return EventSource(fd); }
+
+void EventSource::handler(int sig) { ezp.write(sig); }
 
 EventSource EventSource::fromSignal(int sig) {
   // Bind the signal to our handler
