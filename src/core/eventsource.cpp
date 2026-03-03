@@ -1,22 +1,34 @@
 #include "../include/core/eventsource.hpp"
 
-EzPipe EventSource::ezp;
+EzPipe *EventSource::signals[64] = {nullptr};
 
-EventSource::EventSource(int fd) { this->fd = fd; };
+EventSource::EventSource(int fd, bool isSignal) : fd(fd), isSignal(isSignal) {};
 
-EventSource EventSource::fromFd(int fd) { return EventSource(fd); }
+EventSource EventSource::fromFd(int fd) { return EventSource(fd, false); }
 
-void EventSource::handler(int sig) { ezp.write(sig); }
+void EventSource::handler(int sig) {
+  if (signals[sig]) {
+    signals[sig]->write(sig);
+  }
+}
 
 EventSource EventSource::fromSignal(int sig) {
-  // Bind the signal to our handler
+  // If this signal doesn't have a pipe yet, make one
+  if (!signals[sig]) {
+    signals[sig] = new EzPipe();
+  }
+
   signal(sig, handler);
 
-  // Watch the read end of the pipe so poll() can watch it
-  return EventSource(ezp.read());
+  // Return the read end of THIS specific signal's pipe
+  return EventSource(signals[sig]->read(), true);
 }
 
 int EventSource::getFd() const { return fd; }
 
-// Global bc our pipe is also global
-bool EventSource::consumeSignal(char &c) { return ezp.read(c); }
+void EventSource::autoDrain() {
+  if (isSignal) {
+    char dummy;
+    read(fd, &dummy, 1);
+  }
+}

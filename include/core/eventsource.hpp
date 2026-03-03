@@ -9,8 +9,11 @@
 class EventSource {
 private:
   int fd;
-  EventSource(int fd);
-  static EzPipe ezp;
+  bool isSignal;
+  EventSource(int fd, bool isFd);
+
+  // Keep an arr of 64 for our 64 possible signals
+  static EzPipe *signals[64];
 
   static void handler(int sig);
 
@@ -21,8 +24,8 @@ public:
 
   int getFd() const;
 
-  // Global bc our pipe is also global
-  static bool consumeSignal(char &c);
+  // A tiny helper so the loop can clean up the pipe automatically
+  void autoDrain();
 
   // A callback to execute when poll() says this FD is ready to read
   std::function<void()> onReadReady;
