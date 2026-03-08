@@ -1,5 +1,8 @@
+#include "../include/core/asyncqueue.hpp"
+#include "../include/core/eventloop.hpp"
 #include "../include/program.hpp"
 #include "../include/terminal.hpp"
+#include "core/threadpool.hpp"
 #include "message.hpp"
 #include "state.hpp"
 #include <iostream>
@@ -57,36 +60,76 @@ void Program::handleCmd() {
 }
 
 void Program::run() {
+  // Setup terminal
   Terminal term;
   term.init(0);
 
-  std::thread input(&Program::handleInput, this);
-  std::thread cmd(&Program::handleCmd, this);
+  // Setup app stuff
+  EventLoop loop;
+  AsyncQueue<Msg> msgQueue;
+  ThreadPool pool(4);
 
-  for (auto cmd : init()) {
-    cmdQ.ccpush(cmd);
-  }
-
-  while (running.load()) {
-    Msg msg;
-    if (!msgQ.ccawait(msg)) {
-      break; // queue closed and empty
+  // Take commands from update/init and toss them to workers
+  auto dispatchCmds = [&pool, &msgQueue](const std::vector<Cmd> &cmds) {
+    for (const auto &cmd : cmds) {
+      pool.enqueue([cmd, &msgQueue]() {
+        // Run the command on a background thread
+        // If it returns a Msg, ring the doorbell!
+        if (auto maybeMsg = cmd()) {
+          msgQueue.push(*maybeMsg);
+        }
+      });
     }
+  };
 
-    auto result = update(state, msg);
+  msgQueue.onItem = [this, &loop, &dispatchCmds](Msg msg) {
+    // Get the new state and commands
+    UpdateResult result = update(state, msg);
     state = result.newState;
+
+    // Render to the screen
     std::cout << render(state) << std::flush;
 
-    for (auto &cmd : result.commands) {
-      cmdQ.ccpush(cmd);
+    // Dispatch any new commands to the background
+    dispatchCmds(result.commands);
+
+    // Check for quit command
+    if (!running.load()) {
+      loop.stop();
     }
+  };
+
+  // Stdin
+  EventSource inputSrc = EventSource::fromFd(STDIN_FILENO);
+  inputSrc.onReadReady = [&msgQueue]() {
+    char c;
+    if (read(STDIN_FILENO, &c, 1) > 0) {
+      msgQueue.push(KeypressMsg{c});
+    }
+  };
+
+  // Window resize
+  EventSource resizeSrc = EventSource::fromSignal(SIGWINCH);
+  resizeSrc.onReadReady = [&msgQueue]() {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    msgQueue.push(WindowDimensionsMsg{w.ws_col, w.ws_row});
+  };
+
+  // Register sources
+  loop.addSource(inputSrc);
+  loop.addSource(resizeSrc);
+  loop.addSource(msgQueue.getEventSource());
+
+  struct winsize w;
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) != -1) {
+    state.window.width = w.ws_col;
+    state.window.height = w.ws_row;
   }
 
-  if (input.joinable()) {
-    input.join();
-  }
+  // Do the first render and fire the initial commands
+  std::cout << render(state) << std::flush;
+  dispatchCmds(init());
 
-  if (cmd.joinable()) {
-    cmd.join();
-  }
+  loop.run();
 }

@@ -28,7 +28,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
   std::vector<Cmd> cmds;
 
   std::visit(
-      [&cmds, &newState, this](auto &&m) {
+      [&newState, this](auto &&m) {
         using T = std::decay_t<decltype(m)>;
 
         // Check keypresses
@@ -36,7 +36,7 @@ UpdateResult Program::update(const State &state, Msg &msg) {
           newState.debugText = m.key;
           switch (m.key) {
           case 'q':
-            cmds.push_back(Quit(*this));
+            requestQuit();
             break;
 
           // Move cursor down

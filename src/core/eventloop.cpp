@@ -1,7 +1,14 @@
 #include "../include/core/eventloop.hpp"
 #include <poll.h>
 
+EventLoop::EventLoop() {};
+
+EventLoop::EventLoop(std::vector<EventSource> initSources)
+    : sources(initSources) {};
+
 void EventLoop::run() {
+  running = true;
+
   while (running) {
     // Build a struct of fds instead of going thru each manually
     // We can pass this to poll() directly
@@ -31,5 +38,7 @@ void EventLoop::run() {
     }
   }
 }
+
+void EventLoop::addSource(EventSource es) { sources.push_back(es); };
 
 void EventLoop::stop() { running = false; }
