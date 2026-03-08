@@ -1,4 +1,4 @@
-#include "../include/core/ezpipe.hpp"
+#include "ezpipe.hpp"
 #include <fcntl.h>
 #include <unistd.h>
 

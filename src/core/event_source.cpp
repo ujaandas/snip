@@ -1,4 +1,4 @@
-#include "../include/core/eventsource.hpp"
+#include "event_source.hpp"
 
 EzPipe *EventSource::signals[64] = {nullptr};
 

@@ -1,4 +1,4 @@
-#include "../include/core/threadpool.hpp"
+#include "thread_pool.hpp"
 
 // Start all workers
 ThreadPool::ThreadPool(size_t num_threads) : tasks(false) {
