@@ -8,21 +8,21 @@
 #include "../event_loop/thread_pool.hpp"
 #include "cmd.hpp"
 #include "msg.hpp"
-#include "state.hpp"
 #include <functional>
 #include <iostream>
 
-struct UpdateResult {
+namespace snip {
+template <typename State> struct UpdateResult {
   State newState;
   std::vector<Cmd> commands;
 };
 
-class App {
+template <typename State> class App {
 private:
-  CCQueue<Msg> msgQ;
+  CCQueue<Msg> msgQ{true};
   EzPipe wakePipe;
 
-  ThreadPool pool;
+  ThreadPool pool{4};
   EventLoop *loop = nullptr;
 
 protected:
@@ -30,12 +30,29 @@ protected:
   bool running = true;
 
 public:
-  App(State &s) : msgQ(true), pool(4), state(s) {}
+  App(State &s) : state(s) {}
+  virtual ~App() = default;
 
-  // Send a message into the app - anyone can call this to add message
+  // Thread safe msg dispatcher
   void post(const Msg &msg) {
     msgQ.ccpush(msg);
     wakePipe.write('!'); // Wake event loop
+  }
+
+  // Run the app inside an EventLoop
+  void run(EventLoop &eventLoop) {
+    loop = &eventLoop;
+
+    // Register our mailbox source
+    loop->addSource(messageSource());
+
+    // Initial render
+    std::cout << render(state) << std::flush;
+
+    // Run init commands
+    dispatch(init());
+
+    loop->run();
   }
 
 private:
@@ -77,27 +94,11 @@ private:
 
 protected:
   virtual std::vector<Cmd> init() = 0;
-  virtual UpdateResult update(State &, Msg) = 0;
+  virtual UpdateResult<State> update(State &, Msg) = 0;
   virtual std::string render(State &) = 0;
 
   void quit() { running = false; }
-
-public:
-  // Run the app inside an EventLoop
-  void run(EventLoop &eventLoop) {
-    loop = &eventLoop;
-
-    // Register our mailbox source
-    loop->addSource(messageSource());
-
-    // Initial render
-    std::cout << render(state) << std::flush;
-
-    // Run init commands
-    dispatch(init());
-
-    loop->run();
-  }
 };
+} // namespace snip
 
 #endif

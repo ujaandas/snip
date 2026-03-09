@@ -21,7 +21,7 @@ EventSource EventSource::fromSignal(int sig) {
   signal(sig, handler);
 
   // Return the read end of THIS specific signal's pipe
-  return EventSource(signals[sig]->readFd(), true);
+  return EventSource(signals[sig]->getReadFd(), true);
 }
 
 int EventSource::getFd() const { return fd; }

@@ -1,25 +1,21 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef MSG_H
+#define MSG_H
 
-#include <string>
-#include <variant>
+#include <any>
 
-struct KeypressMsg {
+namespace snip {
+
+// The universal message type
+using Msg = std::any;
+
+struct KeyMsg {
   char key;
 };
-
-struct WindowDimensionsMsg {
+struct WindowSizeMsg {
   int width;
   int height;
 };
 
-struct FilepathMsg {
-  std::string path;
-};
+} // namespace snip
 
-/*
-A "message" is simply a block of information. That's it. It is data.
-*/
-using Msg = std::variant<KeypressMsg, WindowDimensionsMsg, FilepathMsg>;
-
-#endif // MESSAGE_H
+#endif // MSG_H

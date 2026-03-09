@@ -3,11 +3,13 @@
 
 #include "msg.hpp"
 #include <functional>
+#include <optional>
 
-/*
-A command represents a deferred, *external* action that _might_ produce a
-message.
-*/
+namespace snip {
+
+// A Command is a deferred side-effect that optionally returns a Msg
 using Cmd = std::function<std::optional<Msg>()>;
+
+} // namespace snip
 
 #endif // CMD_H
