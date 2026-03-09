@@ -1,5 +1,4 @@
-#ifndef EVENT_LOOP_H
-#define EVENT_LOOP_H
+#pragma once
 
 #include "event_source.hpp"
 #include <atomic>
@@ -17,5 +16,3 @@ public:
   void run();
   void stop();
 };
-
-#endif // EVENT_LOOP_H

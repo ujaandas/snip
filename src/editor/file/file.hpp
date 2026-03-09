@@ -1,5 +1,4 @@
-#ifndef FILE_H
-#define FILE_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -19,5 +18,3 @@ public:
   // Read between range
   std::vector<std::string> readRange(int start, int end);
 };
-
-#endif // FILE_H

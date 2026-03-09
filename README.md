@@ -12,35 +12,44 @@ I built `snip` because I wanted a full-fledged editor experience without the mai
 - **Non-Blocking I/O:** All side-effects are deferred to a background worker pool so the UI never stutters.
 - **Nix-Native:** Designed to be reproducible, configurable, and easily packaged via Nix flakes.
 
+## Getting Started
+
+I'm still working on the build process. Currently, I just use a Makefile and rawdog it, but I intend to upgrade to CMake and Nix later down the road when I find the need to statically link my libraries.
+
 ## Architecture
 
-`snip` follows a TEA‑inspired (The Elm Architecture) design, very heavily influenced by `go/bubbletea`. It also separates the "what" (logic) from the "how" (runtime) by using and implementing its own framework (which I intend to separate into a different project once more evolved).
+`snip` uses its own mini-event-loop and is a framework in and of itself. Thus, the repository can be split into 3 main chunks.
 
-### 1. The Model (State)
+### 1. The Event Loop
 
-The `State` is an immutable snapshot of your editor at a specific point in time. It holds information like the buffer content, cursor position, and window dimensions.
+The foundation of `snip` is a custom-built, reactor-pattern engine. It is responsible for the "mechanical" side of the app, ie; message-passing and handling:
 
-### 2. Messages (Msg)
+- **Event-Driven:** Currently supports monitoring STDIN and OS Signals (`SIGWINCH`) using `poll()`, consuming no resources while waiting for input.
+- **Thread Worker Pool:** A dedicated background thread pool handles all I/O, ensuring the main thread stays focused on the UI.
+- **Thread Safety:** Uses the self-pipe trick, a thread-safe signaling mechanism that allows background workers to "poke" the main loop once heavy tasks are complete.
 
-Messages are the "heartbeat" of the app and are used to relay data across components.
+### 2. The Framework
 
-- **Input:** Keyboard presses and mouse events.
-- **Signals:** Terminal window resizes (`SIGWINCH`).
-- **Internal:** Background tasks telling the app that a file has finished loading.
+Sitting atop the event loop is a TEA‑inspired (The Elm Architecture) framework, heavily influenced by `go/bubbletea`. This layer manages the application lifecycle:
 
-### 3. The Update Loop
+- **Messages:** A universal, type-safe messaging system using `std::any`. Whether it's a hardware keypress or a file-load completion, everything enters the logic as a discrete Message.
+- **Commands:** Side-effects are never executed directly by the editor logic. Instead, the editor returns a "Command" which the framework executes asynchronously using the aforementioned thread pool.
 
-This is a pure function: `(State, Msg) -> (State, List<Cmd>)`.
-It calculates the next version of the world and decides if any work needs to be done in the background. Because this function is pure, the editor's "logic" is entirely decoupled from the hardware.
+### 3. The App
 
-### 4. Commands
+The editor itself is a collection of pure functions. Because the event-loop and framework handle the complexity of threading and I/O, the editor implementation is entirely deterministic:
 
-Commands represent deferred side-effects. When the Update loop returns a `Cmd`, the runtime tosses it into a background thread pool. This is where file reading, writing, and network calls happen.
+- **The Model:** An immutable snapshot of the editor world—buffers, cursors, and metadata.
+- **The Update Loop:** A pure function `(State, Msg) -> (State, List<Cmd>)`. It is the deterministic "brain" of the editor.
+- **The View:** A passive renderer that transforms the State into optimized ANSI escape codes and whatnot for your terminal.
 
-### 5. The Runtime
+## Roadmap
 
-The runtime is the engine that ties it all together. It uses a custom event loop to:
+Roadmap
 
-- Monitor raw terminal input.
-- Manage a thread-safe "mailbox" using a self-pipe trick for background tasks to communicate back to the UI.
-- Handle the rendering of the state into ANSI escape codes for the terminal.
+- [x] Reactor-based event loop and thread pool
+- [x] Elm-style framework/runtime
+- [x] Basic I/O and modal navigation
+- [ ] Nix-first syntax highlighting (Tree-sitter integration)
+- [ ] Nix-configurable keybindings
+- [ ] And more...

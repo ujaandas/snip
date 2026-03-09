@@ -1,5 +1,4 @@
-#ifndef CMD_H
-#define CMD_H
+#pragma once
 
 #include "msg.hpp"
 #include <functional>
@@ -11,5 +10,3 @@ namespace snip {
 using Cmd = std::function<std::optional<Msg>()>;
 
 } // namespace snip
-
-#endif // CMD_H

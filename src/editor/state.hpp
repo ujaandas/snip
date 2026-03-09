@@ -1,5 +1,4 @@
-#ifndef STATE_H
-#define STATE_H
+#pragma once
 
 #include "text/gapbufline.hpp"
 #include <string>
@@ -31,5 +30,3 @@ struct State {
   std::string debugText = "";
   std::string filename = "";
 };
-
-#endif // STATE_H

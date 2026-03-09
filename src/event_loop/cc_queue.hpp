@@ -1,5 +1,4 @@
-#ifndef CC_QUEUE_H
-#define CC_QUEUE_H
+#pragma once
 
 #include <condition_variable>
 #include <mutex>
@@ -51,5 +50,3 @@ public:
     cv.notify_all();
   }
 };
-
-#endif // CC_QUEUE_H

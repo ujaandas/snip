@@ -1,5 +1,4 @@
-#ifndef SNIP_H
-#define SNIP_H
+#pragma once
 
 #include "../framework/app.hpp"
 #include "state.hpp"
@@ -14,5 +13,3 @@ protected:
   snip::UpdateResult<State> update(State &currentState, snip::Msg msg) override;
   std::string render(State &currentState) override;
 };
-
-#endif // SNIP_H

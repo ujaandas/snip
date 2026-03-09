@@ -1,5 +1,4 @@
-#ifndef THREAD_POOL_H
-#define THREAD_POOL_H
+#pragma once
 
 #include "cc_queue.hpp"
 #include <cstddef>
@@ -17,5 +16,3 @@ public:
   void enqueue(std::function<void()> task);
   ~ThreadPool();
 };
-
-#endif // THREAD_POOL_H

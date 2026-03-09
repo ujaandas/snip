@@ -1,5 +1,4 @@
-#ifndef EZ_PIPE_H
-#define EZ_PIPE_H
+#pragma once
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -26,5 +25,3 @@ public:
 
   ~EzPipe();
 };
-
-#endif // EZ_PIPE_H

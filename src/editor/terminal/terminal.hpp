@@ -1,11 +1,10 @@
+#pragma once
+
 #include <cstring>
 #include <fcntl.h>
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
-
-#ifndef TERM_H
-#define TERM_H
 
 #define HIDE_CURSOR "\x1b[?25l"
 #define SHOW_CURSOR "\x1b[?25h"
@@ -72,5 +71,3 @@ public:
     fcntl(STDIN_FILENO, F_SETFL, old_flags);
   }
 };
-
-#endif // TERM_H

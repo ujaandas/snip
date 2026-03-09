@@ -1,5 +1,4 @@
-#ifndef MSG_H
-#define MSG_H
+#pragma once
 
 #include <any>
 
@@ -17,5 +16,3 @@ struct WindowSizeMsg {
 };
 
 } // namespace snip
-
-#endif // MSG_H

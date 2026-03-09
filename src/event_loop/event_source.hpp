@@ -1,5 +1,4 @@
-#ifndef EVENT_SOURCE_H
-#define EVENT_SOURCE_H
+#pragma once
 
 #include "ezpipe.hpp"
 #include <fcntl.h>
@@ -30,5 +29,3 @@ public:
   // A callback to execute when poll() says this FD is ready to read
   std::function<void()> onReadReady;
 };
-
-#endif // EVENT_SOURCE_H

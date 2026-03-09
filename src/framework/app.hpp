@@ -1,5 +1,4 @@
-#ifndef APP_H
-#define APP_H
+#pragma once
 
 #include "../event_loop/cc_queue.hpp"
 #include "../event_loop/event_loop.hpp"
@@ -100,5 +99,3 @@ protected:
   void quit() { running = false; }
 };
 } // namespace snip
-
-#endif

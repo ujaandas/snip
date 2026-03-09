@@ -1,8 +1,7 @@
+#pragma once
+
 #include <string>
 #include <vector>
-
-#ifndef GAP_BUFFERED_LINE_H
-#define GAP_BUFFERED_LINE_H
 
 class GapBufferedLine {
 private:
@@ -31,5 +30,3 @@ public:
 
   std::string string() const { return std::string{buf.begin(), buf.end()}; };
 };
-
-#endif // GAP_BUFFERED_LINE_H
