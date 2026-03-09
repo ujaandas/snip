@@ -17,8 +17,14 @@ public:
   // Pull a byte from the read-end
   bool read(char &c);
 
-  int write();
-  int read();
+  // Empty pipe
+  void clear();
+
+  // Accessor methods for fds
+  int getWriteFd();
+  int getReadFd();
+
+  ~EzPipe();
 };
 
 #endif // EZ_PIPE_H

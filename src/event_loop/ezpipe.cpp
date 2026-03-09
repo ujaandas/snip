@@ -25,5 +25,31 @@ bool EzPipe::read(char &c) {
   return ::read(fds[0], &c, 1) > 0;
 }
 
-int EzPipe::write() { return fds[1]; }
-int EzPipe::read() { return fds[0]; }
+void EzPipe::clear() {
+  if (fds[0] == -1)
+    return;
+
+  char buf[64];
+
+  while (true) {
+    ssize_t n = ::read(fds[0], buf, sizeof(buf));
+    if (n <= 0) {
+      break; // empty or error
+    }
+  }
+}
+
+int EzPipe::getWriteFd() { return fds[1]; }
+int EzPipe::getReadFd() { return fds[0]; }
+
+EzPipe::~EzPipe() {
+  if (fds[0] != -1) {
+    ::close(fds[0]);
+    fds[0] = -1;
+  }
+
+  if (fds[1] != -1) {
+    ::close(fds[1]);
+    fds[1] = -1;
+  }
+}

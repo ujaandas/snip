@@ -1,4 +1,4 @@
-#include "../include/gapbufline.hpp"
+#include "gapbufline.hpp"
 
 void GapBufferedLine::changeLine(const std::string &newLine) {
   buf.assign(newLine.begin(), newLine.end());
