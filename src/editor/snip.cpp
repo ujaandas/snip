@@ -1,6 +1,7 @@
 #include "snip.hpp"
 #include "cmd.hpp"
 #include "msg.hpp"
+#include "terminal/ansi.hpp"
 #include <sstream>
 
 using namespace snip;
@@ -86,7 +87,7 @@ std::string Snip::render(State &state) {
   std::stringstream out;
 
   // Clear screen + move cursor to top-left
-  out << "\033[2J\033[H";
+  out << ansi::CLEAR_SCREEN << ansi::CURSOR_HOME;
 
   int usableHeight = state.window.height - 1;
 
@@ -99,13 +100,15 @@ std::string Snip::render(State &state) {
       if (lineIndex == state.cursor.line) {
         for (int col = 0; col < line.size(); col++) {
           if (state.curLine.cursorPos == col) {
-            out << "\033[7m" << line[col] << "\033[0m";
+            // Highlight the cursor block
+            out << ansi::REVERSE << line[col] << ansi::RESET;
           } else {
             out << line[col];
           }
         }
+        // Highlight trailing space if cursor is at the end of the line
         if (state.curLine.cursorPos == line.size()) {
-          out << "\033[7m \033[0m";
+          out << ansi::REVERSE << " " << ansi::RESET;
         }
       } else {
         out << line;
@@ -114,12 +117,11 @@ std::string Snip::render(State &state) {
     out << "\n";
   }
 
-  out << "\033[7m"; // Reverse video
-  out << "Line " << state.cursor.line << "  Col " << state.curLine.cursorPos
-      << "  Scroll " << state.scrollOffset << "  Size: " << state.window.width
-      << "x" << state.window.height;
-  out << " Debug: " << state.debugText;
-  out << "\033[0m"; // Reset formatting
+  // Draw the debug/status bar at the bottom
+  out << ansi::REVERSE << "Line " << state.cursor.line << "  Col "
+      << state.curLine.cursorPos << "  Scroll " << state.scrollOffset
+      << "  Size: " << state.window.width << "x" << state.window.height
+      << " Debug: " << state.debugText << ansi::RESET;
 
   out << std::flush;
   return out.str();
