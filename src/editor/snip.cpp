@@ -21,7 +21,7 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
 
     switch (m->key) {
     case 'q':
-      this->quit();
+      quit();
       break;
     case 'j':
       if (newState.cursor.line + 1 < newState.buffer.size()) {
