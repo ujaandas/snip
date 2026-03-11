@@ -74,8 +74,8 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
     newState.debugText = "Loaded: " + m->filepath;
   }
 
-  // Handle background file errors
-  else if (auto *m = std::any_cast<FileErrorMsg>(&msg)) {
+  // Handle background errors
+  else if (auto *m = std::any_cast<ErrorMsg>(&msg)) {
     newState.debugText = "Error: " + m->errorMessage;
   }
 

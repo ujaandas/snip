@@ -12,7 +12,7 @@ struct FileLoadedMsg {
 };
 
 // Message emitted if a file fails to load
-struct FileErrorMsg {
+struct ErrorMsg {
   std::string errorMessage;
 };
 

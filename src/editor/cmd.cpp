@@ -19,7 +19,7 @@ Cmd OpenFile(std::string path) {
 
     } catch (const std::exception &e) {
       // If the file doesn't exist or we lack permissions
-      return FileErrorMsg{e.what()};
+      return ErrorMsg{e.what()};
     }
   };
 }
