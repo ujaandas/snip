@@ -16,7 +16,7 @@ build/
 result
 
 # Direnv
-.direnv
+.direnv/
 
 # Prerequisites
 *.d

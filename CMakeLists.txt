@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.25)
 
 project(snip LANGUAGES CXX)
 
-# Set C++23 with GNU extensions (like -std=gnu++23)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
