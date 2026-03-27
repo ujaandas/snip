@@ -1,6 +1,6 @@
 #include "editor/snip.hpp"
 #include "editor/state.hpp"
-#include "editor/terminal/terminal.hpp"
+#include "framework/terminal/terminal.hpp"
 #include "event_loop/event_loop.hpp"
 
 #include <sys/ioctl.h>

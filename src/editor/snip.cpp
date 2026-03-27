@@ -1,14 +1,12 @@
 #include "snip.hpp"
-#include "cmd.hpp"
-#include "msg.hpp"
-#include "terminal/ansi.hpp"
+#include "../framework/terminal/ansi.hpp"
 #include <sstream>
 
 using namespace snip;
 
 std::vector<Cmd> Snip::init() {
   std::vector<Cmd> cmds;
-  cmds.push_back(OpenFile("./flake.nix"));
+  cmds.push_back(ReadFile("./flake.nix"));
   return cmds;
 }
 

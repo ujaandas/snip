@@ -6,7 +6,7 @@
 
 namespace snip {
 
-Cmd OpenFile(std::string path) {
+Cmd ReadFile(std::string path) {
   // Return the lambda that the thread pool will execute
   return [path]() -> std::optional<Msg> {
     try {
