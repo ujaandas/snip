@@ -20,7 +20,7 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
 
     switch (m->key) {
     case 'q':
-      quit();
+      cmds.push_back(Quit());
       break;
     case 'j': {
       int bufferLines = static_cast<int>(newState.buffer.size());
@@ -78,6 +78,16 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
   // Handle background errors
   else if (auto *m = std::any_cast<ErrorMsg>(&msg)) {
     newState.debugText = "Error: " + m->errorMessage;
+  }
+
+  // Handle structured framework I/O errors.
+  else if (auto *m = std::any_cast<IOErrorMsg>(&msg)) {
+    newState.debugText = "IOError(" + m->operation + "): " + m->errorMessage;
+  }
+
+  else if (auto *m = std::any_cast<FileSavedMsg>(&msg)) {
+    newState.debugText = "Saved " + m->filepath + " (" +
+                         std::to_string(m->bytesWritten) + " bytes)";
   }
 
   return {newState, std::move(cmds)};

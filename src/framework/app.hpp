@@ -83,6 +83,17 @@ private:
       Msg msg;
       // Message handler
       while (msgQ.ccawait(msg)) {
+        if (std::any_cast<QuitMsg>(&msg)) {
+          quit();
+
+          if (!running && loop) {
+            loop->stop();
+            break;
+          }
+
+          continue;
+        }
+
         UpdateResult result = update(state, msg);
         state = result.newState;
 

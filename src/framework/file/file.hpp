@@ -1,20 +1,22 @@
 #pragma once
 
+#include <cstddef>
 #include <string>
 #include <vector>
 
-/*
-Currently open file buffer - handles all IO operations thereof.
-*/
+// Stateless file I/O helpers for framework commands.
 class File {
-private:
-  std::vector<std::string> content;
-
 public:
-  // Load entire file into memory
-  // TODO: Should we use mmap? Can we read file size before?
-  File(const std::string fp);
+  File() = delete;
 
-  // Read between range
-  std::vector<std::string> readRange(int start, int end);
+  // Read all lines from a file.
+  static std::vector<std::string> readAll(const std::string &fp);
+
+  // Read a line range [start, end) from a file.
+  static std::vector<std::string> readRange(const std::string &fp, int start,
+                                            int end);
+
+  // Write all lines to a file and return bytes written.
+  static std::size_t writeAll(const std::string &fp,
+                              const std::vector<std::string> &lines);
 };
