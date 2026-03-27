@@ -1,6 +1,6 @@
 #pragma once
 
-#include "text/gapbufline.hpp"
+#include "text/splitline.hpp"
 #include <string>
 #include <vector>
 
@@ -24,7 +24,7 @@ struct State {
 
   // Data Storage
   std::vector<std::string> buffer; // The full file contents
-  GapBufferedLine curLine;         // The active line being edited
+  SplitLineBuffer curLine;         // The active line being edited
 
   // Metadata
   std::string debugText = "";

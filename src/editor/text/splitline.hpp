@@ -1,13 +1,12 @@
 #pragma once
 
+#include <cstddef>
 #include <string>
-#include <vector>
 
-class GapBufferedLine {
+class SplitLineBuffer {
 private:
-  std::vector<char> buf;
-  std::size_t gapStart = 0;
-  std::size_t gapEnd = 0;
+  std::string left;
+  std::string rightReversed;
 
 public:
   std::size_t cursorPos = 0;
@@ -26,7 +25,7 @@ public:
 
   void deleteBefore();
 
-  std::size_t length() { return buf.size(); }
+  std::size_t length() const { return left.size() + rightReversed.size(); }
 
-  std::string string() const { return std::string{buf.begin(), buf.end()}; };
+  std::string string() const;
 };
