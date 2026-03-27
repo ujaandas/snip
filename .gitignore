@@ -1,8 +1,9 @@
 # Executable
 snip
 
-# CMake
+# CMake/Clangd
 build/
+.cache/
 
 # dSYM
 *.dSYM
