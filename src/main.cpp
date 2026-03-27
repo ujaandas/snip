@@ -4,6 +4,7 @@
 #include "event_loop/event_loop.hpp"
 
 #include <sys/ioctl.h>
+#include <signal.h>
 #include <unistd.h>
 
 int main() {
@@ -29,7 +30,7 @@ int main() {
   EventSource inputSrc = EventSource::fromFd(STDIN_FILENO);
   inputSrc.onReadReady = [&app]() {
     char c;
-    if (read(STDIN_FILENO, &c, 1) > 0) {
+    if (::read(STDIN_FILENO, &c, 1) > 0) {
       // Send the universal keymsg into the app
       app.post(snip::KeyMsg{c});
     }

@@ -20,14 +20,9 @@
           src = ./.;
 
           nativeBuildInputs = with pkgs; [
-            gnumake
-            "g++"
+            cmake
+            ninja              
           ];
-
-          installPhase = ''
-            mkdir -p $out/bin
-            cp snip $out/bin/
-          '';
         };
 
         devShell = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
@@ -37,6 +32,7 @@
             cmake
             cppcheck
             gtest
+            gnat
           ];
         };
       }

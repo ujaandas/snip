@@ -6,11 +6,11 @@
 class GapBufferedLine {
 private:
   std::vector<char> buf;
-  int gapStart = 0;
-  int gapEnd = 0;
+  std::size_t gapStart = 0;
+  std::size_t gapEnd = 0;
 
 public:
-  int cursorPos = 0;
+  std::size_t cursorPos = 0;
 
   void changeLine(const std::string &newLine);
 
@@ -26,7 +26,7 @@ public:
 
   void deleteBefore();
 
-  int length() { return buf.size(); }
+  std::size_t length() { return buf.size(); }
 
   std::string string() const { return std::string{buf.begin(), buf.end()}; };
 };

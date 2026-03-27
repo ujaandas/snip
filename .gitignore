@@ -1,6 +1,9 @@
 # Executable
 snip
 
+# CMake
+build/
+
 # dSYM
 *.dSYM
 

@@ -24,8 +24,9 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
     case 'q':
       quit();
       break;
-    case 'j':
-      if (newState.cursor.line + 1 < newState.buffer.size()) {
+    case 'j': {
+      int bufferLines = static_cast<int>(newState.buffer.size());
+      if (newState.cursor.line + 1 < bufferLines) {
         newState.cursor.line++;
         newState.curLine.changeLine(newState.buffer[newState.cursor.line]);
         if (newState.cursor.line >=
@@ -34,6 +35,7 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
         }
       }
       break;
+    }
     case 'k':
       if (newState.cursor.line > 0) {
         newState.cursor.line--;
@@ -90,15 +92,16 @@ std::string Snip::render(State &state) {
   out << ansi::CLEAR_SCREEN << ansi::CURSOR_HOME;
 
   int usableHeight = state.window.height - 1;
+  int bufferLines = static_cast<int>(state.buffer.size());
 
   for (int i = 0; i < usableHeight; i++) {
     int lineIndex = state.scrollOffset + i;
 
-    if (lineIndex < state.buffer.size()) {
-      std::string line = state.buffer[lineIndex];
+    if (lineIndex >= 0 && lineIndex < bufferLines) {
+      const std::string &line = state.buffer[static_cast<std::size_t>(lineIndex)];
 
       if (lineIndex == state.cursor.line) {
-        for (int col = 0; col < line.size(); col++) {
+        for (std::size_t col = 0; col < line.size(); col++) {
           if (state.curLine.cursorPos == col) {
             // Highlight the cursor block
             out << ansi::REVERSE << line[col] << ansi::RESET;

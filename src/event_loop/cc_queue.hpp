@@ -13,7 +13,7 @@ private:
   std::condition_variable cv;
 
 public:
-  CCQueue<T>(bool isAsync) : async(isAsync){};
+  CCQueue(bool isAsync) : async(isAsync){};
 
   void ccpush(const T &item) {
     {

@@ -1,4 +1,6 @@
 #include "ezpipe.hpp"
+#include <cstdio>
+#include <cerrno>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -13,10 +15,11 @@ EzPipe::EzPipe() {
 // Put a byte in the write-end
 void EzPipe::write(char c) {
   if (fds[1] != -1) {
-    ::write(fds[1], &c, 1);
+    if (::write(fds[1], &c, 1) != 1) {
+      std::fprintf(stderr, "pipe write failed\n");
+    }
   }
 }
-
 // Pull a byte from the read-end
 bool EzPipe::read(char &c) {
   if (fds[0] == -1) {

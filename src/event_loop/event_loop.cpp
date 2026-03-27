@@ -1,4 +1,5 @@
 #include "event_loop.hpp"
+#include <cerrno>
 #include <poll.h>
 
 EventLoop::EventLoop() {};

@@ -52,5 +52,7 @@ Terminal::~Terminal() {
 }
 
 void Terminal::writeEscapeCode(std::string_view code) {
-  write(STDOUT_FILENO, code.data(), code.size());
+  if (::write(STDOUT_FILENO, code.data(), code.size()) == -1) {
+    std::fprintf(stderr, "write failed\n");
+  }
 }

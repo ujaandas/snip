@@ -1,4 +1,8 @@
 #include "event_source.hpp"
+#include <csignal>
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
 
 EzPipe *EventSource::signals[64] = {nullptr};
 
@@ -29,6 +33,8 @@ int EventSource::getFd() const { return fd; }
 void EventSource::autoDrain() {
   if (isSignal) {
     char dummy;
-    read(fd, &dummy, 1);
+    if (::read(fd, &dummy, 1) != 1) {
+      std::fprintf(stderr, "read failed\n");
+    }
   }
 }
