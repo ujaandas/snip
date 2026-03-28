@@ -1,6 +1,5 @@
 #include "ezpipe.hpp"
 #include <cstdio>
-#include <cerrno>
 #include <fcntl.h>
 #include <unistd.h>
 

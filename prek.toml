@@ -1,13 +1,17 @@
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
 [[repos]]
 repo = "https://github.com/pre-commit/mirrors-clang-format"
-rev = "v18.1.0"
+rev = "v22.1.2"
 hooks = [
-  { id = "clang-format", files = "\\.(cpp|hpp)$" },
+  { id = "clang-format" }
 ]
 
 [[repos]]
 repo = "https://github.com/pocc/pre-commit-hooks"
 rev = "v1.3.5"
 hooks = [
-  { id = "clang-tidy", files = "\\.(cpp)$" },
+  { id = "clang-tidy", args = ["-p", "build"] }
 ]

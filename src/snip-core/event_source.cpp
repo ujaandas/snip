@@ -1,8 +1,6 @@
 #include "event_source.hpp"
 #include <csignal>
-#include <cerrno>
 #include <cstdio>
-#include <cstring>
 
 EzPipe *EventSource::signals[64] = {nullptr};
 
