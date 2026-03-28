@@ -1,5 +1,5 @@
 #include "snip.hpp"
-#include "../framework/terminal/render.hpp"
+#include "framework/terminal/render.hpp"
 #include <string>
 
 using namespace snip;

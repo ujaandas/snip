@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../event_loop/cc_queue.hpp"
-#include "../event_loop/event_loop.hpp"
-#include "../event_loop/event_source.hpp"
-#include "../event_loop/ezpipe.hpp"
-#include "../event_loop/thread_pool.hpp"
+#include "event_loop/cc_queue.hpp"
+#include "event_loop/event_loop.hpp"
+#include "event_loop/event_source.hpp"
+#include "event_loop/ezpipe.hpp"
+#include "event_loop/thread_pool.hpp"
 #include "cmd.hpp"
 #include "msg.hpp"
 #include <functional>

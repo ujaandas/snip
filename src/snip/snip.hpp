@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../framework/app.hpp"
+#include "framework/app.hpp"
 #include "state.hpp"
 
 // The concrete application

@@ -1,6 +1,3 @@
-# Executable
-snip
-
 # CMake/Clangd
 build/
 .cache/

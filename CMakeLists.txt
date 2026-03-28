@@ -9,14 +9,12 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # Enable compile commands for clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Include directory
-include_directories(include)
+add_subdirectory(src/event_loop)
+add_subdirectory(src/framework)
+add_subdirectory(src/editor)
 
-# Collect source and header files
-file(GLOB_RECURSE SRC "src/*.cpp")
-file(GLOB_RECURSE HDR "src/*.hpp")
+add_executable(snip-app src/main.cpp)
+target_link_libraries(snip-app PRIVATE snip)
+set_target_properties(snip-app PROPERTIES OUTPUT_NAME snip)
 
-# Define executable
-add_executable(${PROJECT_NAME} ${SRC} ${HDR})
-
-install(TARGETS snip RUNTIME DESTINATION bin)
+install(TARGETS snip-app RUNTIME DESTINATION bin)
