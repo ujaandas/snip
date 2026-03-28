@@ -1,6 +1,7 @@
 #pragma once
 
 #include "text/splitline.hpp"
+#include <optional>
 #include <string>
 #include <vector>
 

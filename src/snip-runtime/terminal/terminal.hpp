@@ -7,7 +7,7 @@
 namespace snip::term {
 
 struct Session {
-  termios oldTermios {};
+  termios oldTermios{};
   int oldFlags = 0;
   bool valid = false;
 };

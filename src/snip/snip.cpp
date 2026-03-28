@@ -1,5 +1,5 @@
 #include "snip.hpp"
-#include "snip-runtime/terminal/render.hpp"
+#include "render.hpp"
 
 #include <string>
 
@@ -127,16 +127,16 @@ std::string Snip::render(State &state) {
     frameBuffer[state.cursor.line] = state.curLine.string();
   }
 
-  term::FrameSpec spec;
+  FrameSpec spec;
   spec.width = state.window.width;
   spec.height = state.window.height;
   spec.scrollOffset = state.scrollOffset;
   spec.clear = true;
   spec.hideCursor = false;
 
-  term::Cursor cursor;
+  Cursor cursor;
   cursor.row = (state.cursor.line - state.scrollOffset) + 1;
   cursor.col = state.curLine.cursorPos + 1;
 
-  return term::renderFrame(frameBuffer, makeStatus(state), spec, cursor);
+  return Renderer::renderFrame(frameBuffer, makeStatus(state), spec, cursor);
 }

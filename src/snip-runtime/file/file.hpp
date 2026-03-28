@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-// Stateless file I/O helpers 
+// Stateless file I/O helpers
 class File {
 public:
   File() = delete;

@@ -81,7 +81,8 @@ std::optional<KeyPressMsg> parseKeySequence(const std::string &raw) {
   }
 
   if (std::isprint(c) != 0) {
-    return KeyPressMsg{.code = KeyCode::Rune, .rune = static_cast<char>(c), .raw = raw};
+    return KeyPressMsg{
+        .code = KeyCode::Rune, .rune = static_cast<char>(c), .raw = raw};
   }
 
   if (c < 0x20) {

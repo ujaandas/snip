@@ -1,17 +1,19 @@
 #include "cmd.hpp"
 #include "file/file.hpp"
 #include "msg.hpp"
-#include <climits>
-#include <chrono>
-#include <cstring>
 #include <cerrno>
+#include <chrono>
+#include <climits>
+#include <cstring>
 #include <exception>
 #include <sys/ioctl.h>
 #include <thread>
 
 namespace snip {
 
-Cmd Noop() { return []() -> std::optional<Msg> { return std::nullopt; }; }
+Cmd Noop() {
+  return []() -> std::optional<Msg> { return std::nullopt; };
+}
 
 std::vector<Cmd> Batch(std::vector<Cmd> cmds) { return cmds; }
 
@@ -50,7 +52,9 @@ Cmd Tick(std::string id, std::uint64_t seq, int milliseconds) {
   };
 }
 
-Cmd Quit() { return []() -> std::optional<Msg> { return QuitMsg{}; }; }
+Cmd Quit() {
+  return []() -> std::optional<Msg> { return QuitMsg{}; };
+}
 
 Cmd ReadWindowSize(int fd) {
   return [fd]() -> std::optional<Msg> {
