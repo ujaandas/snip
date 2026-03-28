@@ -1,55 +1,79 @@
-# ✂️ snip
+# snip
 
-`snip` is a Nix‑first, batteries‑included CLI editor and TUI framework. It provides a predictable, terminal‑based editing experience designed to be configured and deployed entirely through Nix.
+`snip` is a Nix-first terminal editor for people who want everything essential in one place: fast editing, clean architecture, and zero feature bloat.
 
-I built `snip` because I wanted a full-fledged editor experience without the maintenance burden of a complex NeoVim or LazyVim configuration. It aims to be the middle ground: the power of a terminal-based modal editor with the predictability of a purely functional architecture.
+## Philosophy
 
-## Features
+`snip` includes the pieces you actually need to ship and use a serious terminal editor:
 
-- **Small & Self-Contained:** A lightweight C++ codebase with zero heavy external dependencies.
-- **Event-Driven:** Every event - from a keypress to a file being loaded - is a discrete event.
-- **Pure State Transitions:** The core logic is a pure function, making the editor remarkably easy to reason about and test.
-- **Non-Blocking I/O:** All side-effects are deferred to a background worker pool so the UI never stutters.
-- **Nix-Native:** Designed to be reproducible, configurable, and easily packaged via Nix flakes.
-
-## Getting Started
-
-I'm still working on the build process. Currently, I just use a Makefile and rawdog it, but I intend to upgrade to CMake and Nix later down the road when I find the need to statically link my libraries.
+- Yoinks LSPs from your Nix shell, eliminating need for plugins
+- Highly performant and concurrent event-driven app loop for predictable behavior
+- Typed message/update pipeline for explicit state transitions and easy testing
+- Non-blocking (deferred) command execution via background workers
+- Terminal input + rendering split into clean runtime/UI boundaries for system-agnostic operation
 
 ## Architecture
 
-`snip` uses its own mini-event-loop and is a framework in and of itself. Thus, the repository can be split into 3 main chunks.
+The project is split into focused modules with strict responsibilities.
 
-### 1. The Event Loop
+### `snip-core`
 
-The foundation of `snip` is a custom-built, reactor-pattern engine. It is responsible for the "mechanical" side of the app, ie; message-passing and handling:
+Concurrency and scheduling primitives:
 
-- **Event-Driven:** Currently supports monitoring STDIN and OS Signals (`SIGWINCH`) using `poll()`, consuming no resources while waiting for input.
-- **Thread Worker Pool:** A dedicated background thread pool handles all I/O, ensuring the main thread stays focused on the UI.
-- **Thread Safety:** Uses the self-pipe trick, a thread-safe signaling mechanism that allows background workers to "poke" the main loop once heavy tasks are complete.
+- event loop
+- event sources
+- signaling pipe
+- concurrent queue
+- thread pool
 
-### 2. The Framework
+### `snip-runtime`
 
-Sitting atop the event loop is a TEA‑inspired (The Elm Architecture) framework, heavily influenced by `go/bubbletea`. This layer manages the application lifecycle:
+Runtime integration layer:
 
-- **Messages:** A universal, type-safe messaging system using `std::any`. Whether it's a hardware keypress or a file-load completion, everything enters the logic as a discrete Message.
-- **Commands:** Side-effects are never executed directly by the editor logic. Instead, the editor returns a "Command" which the framework executes asynchronously using the aforementioned thread pool.
+- terminal session lifecycle
+- input decoding
+- filesystem adapters
+- command execution and orchestration
 
-### 3. The App
+### `snip-editor`
 
-The editor itself is a collection of pure functions. Because the event-loop and framework handle the complexity of threading and I/O, the editor implementation is entirely deterministic:
+Editor domain layer:
 
-- **The Model:** An immutable snapshot of the editor world—buffers, cursors, and metadata.
-- **The Update Loop:** A pure function `(State, Msg) -> (State, List<Cmd>)`. It is the deterministic "brain" of the editor.
-- **The View:** A passive renderer that transforms the State into optimized ANSI escape codes and whatnot for your terminal.
+- editor state/model
+- operations and update logic
+- message handling
+- UI-agnostic view model generation
+
+### `snip-ui`
+
+Rendering backend layer:
+
+- renderer interface
+- ANSI renderer implementation
+
+This keeps editor behavior independent from terminal backend details and makes backend evolution straightforward.
+
+## Quick Start
+
+### Build with Nix
+
+```bash
+nix build
+```
+
+### Without Nix
+
+```bash
+cmake -S . -B build
+cmake --build build -j
+./build/snip
+```
 
 ## Roadmap
 
-Roadmap
+- Expand modal editing semantics toward complete workflows
+- Add richer navigation, search, and picker workflows
+- Add language-aware capabilities (highlighting, structure, diagnostics)
+- Improve rendering performance and terminal capability detection
+- Keep plugin surfaces extensible while protecting core simplicity
 
-- [x] Reactor-based event loop and thread pool
-- [x] Elm-style framework/runtime
-- [x] Basic I/O and modal navigation
-- [ ] Nix-first syntax highlighting (Tree-sitter integration)
-- [ ] Nix-configurable keybindings
-- [ ] And more...
