@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 int main() {
-  const snip::runtime::term::Session session =
+  const auto session =
       snip::runtime::term::startSession(false);
   if (!session.valid) {
     return 1;
@@ -26,7 +26,7 @@ int main() {
   snip::core::EventLoop loop;
 
   // Register STDIN input source
-  snip::core::EventSource input = snip::core::EventSource::fromFd(STDIN_FILENO);
+  auto input = snip::core::EventSource::fromFd(STDIN_FILENO);
   input.onReadReady = [&app]() {
     if (auto key = snip::runtime::input::readKeyPress(STDIN_FILENO)) {
       app.post(*key);
@@ -35,7 +35,7 @@ int main() {
   loop.addSource(std::move(input));
 
   // Register SIGWINCH resize source
-  snip::core::EventSource resize = snip::core::EventSource::fromSignal(SIGWINCH);
+  auto resize = snip::core::EventSource::fromSignal(SIGWINCH);
   resize.onReadReady = [&app]() {
     app.post(snip::runtime::SignalMsg{SIGWINCH});
     if (auto size = snip::runtime::term::queryWindowSize(STDOUT_FILENO)) {

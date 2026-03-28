@@ -123,7 +123,7 @@ runtime::UpdateResult<State> Snip::update(State &currentState,
 }
 
 std::string Snip::render(State &state) {
-  std::vector<std::string> frameBuffer = state.buffer;
+  auto frameBuffer = state.buffer;
   if (state.cursor.line >= 0 && state.cursor.line < frameBuffer.size()) {
     frameBuffer[state.cursor.line] = state.curLine.string();
   }
