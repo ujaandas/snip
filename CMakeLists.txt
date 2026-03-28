@@ -16,12 +16,23 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
       ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
-add_subdirectory(src/snip-core)
-add_subdirectory(src/snip-runtime)
-add_subdirectory(src/snip-editor)
-add_subdirectory(src/snip-ui)
+set(SNIP_PUBLIC_INCLUDE_DIR ${PROJECT_SOURCE_DIR})
 
-add_executable(snip-app src/snip/main.cpp)
+function(snip_apply_target_defaults target)
+	target_include_directories(${target}
+		PUBLIC
+			$<BUILD_INTERFACE:${SNIP_PUBLIC_INCLUDE_DIR}>
+			$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+	)
+	target_compile_features(${target} PUBLIC cxx_std_23)
+endfunction()
+
+add_subdirectory(snip-core)
+add_subdirectory(snip-runtime)
+add_subdirectory(snip-editor)
+add_subdirectory(snip-ui)
+
+add_executable(snip-app snip/main.cpp)
 target_link_libraries(snip-app PRIVATE snip-runtime snip-editor snip-ui)
 set_target_properties(snip-app PROPERTIES OUTPUT_NAME snip)
 
@@ -34,7 +45,7 @@ install(
 )
 
 install(
-	DIRECTORY src/snip-core src/snip-runtime src/snip-editor src/snip-ui
+	DIRECTORY snip-core snip-runtime snip-editor snip-ui
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp"
 )
