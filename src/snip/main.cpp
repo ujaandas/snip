@@ -1,14 +1,13 @@
-#include "snip/snip.hpp"
 #include "snip-core/event_loop.hpp"
 #include "snip-core/event_source.hpp"
 #include "snip-runtime/input.hpp"
 #include "snip-runtime/terminal/terminal.hpp"
+#include "snip/snip.hpp"
 #include <signal.h>
 #include <unistd.h>
 
 int main() {
-  const auto session =
-      snip::runtime::term::startSession(false);
+  const auto session = snip::runtime::term::startSession(false);
   if (!session.valid) {
     return 1;
   }

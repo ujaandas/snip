@@ -21,8 +21,19 @@
 
           nativeBuildInputs = with pkgs; [
             cmake
-            ninja              
+            ninja
           ];
+
+          installPhase = ''
+            runHook preInstall
+
+            cmake --install . --prefix "$out"
+
+            mkdir -p $out
+            cp compile_commands.json $out/compile_commands.json
+
+            runHook postInstall
+          '';
         };
 
         devShell = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
@@ -30,6 +41,7 @@
             clang-tools
             cmake
             prek
+            ninja
           ];
         };
       }
