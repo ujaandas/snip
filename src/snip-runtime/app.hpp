@@ -1,12 +1,12 @@
 #pragma once
 
-#include "event_loop/cc_queue.hpp"
-#include "event_loop/event_loop.hpp"
-#include "event_loop/event_source.hpp"
-#include "event_loop/ezpipe.hpp"
-#include "event_loop/thread_pool.hpp"
 #include "cmd.hpp"
 #include "msg.hpp"
+#include "snip-core/cc_queue.hpp"
+#include "snip-core/event_loop.hpp"
+#include "snip-core/event_source.hpp"
+#include "snip-core/ezpipe.hpp"
+#include "snip-core/thread_pool.hpp"
 #include <functional>
 #include <iostream>
 

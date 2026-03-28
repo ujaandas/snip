@@ -1,0 +1,13 @@
+[[repos]]
+repo = "https://github.com/pre-commit/mirrors-clang-format"
+rev = "v18.1.0"
+hooks = [
+  { id = "clang-format", files = "\\.(cpp|hpp)$" },
+]
+
+[[repos]]
+repo = "https://github.com/pocc/pre-commit-hooks"
+rev = "v1.3.5"
+hooks = [
+  { id = "clang-tidy", files = "\\.(cpp)$" },
+]

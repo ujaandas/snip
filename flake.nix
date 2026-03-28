@@ -2,7 +2,7 @@
   description = "Build and develop the 'snip' editor.";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -27,6 +27,7 @@
 
         devShell = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
           buildInputs = with pkgs; [
+            prek
             gdb
             clang-tools
             cmake

@@ -14,3 +14,5 @@ target_link_libraries(snip
 )
 
 target_compile_features(snip PUBLIC cxx_std_23)
+
+add_library(snip::app ALIAS snip)

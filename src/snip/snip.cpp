@@ -1,5 +1,6 @@
 #include "snip.hpp"
-#include "framework/terminal/render.hpp"
+#include "snip-runtime/terminal/render.hpp"
+
 #include <string>
 
 using namespace snip;
@@ -46,8 +47,8 @@ void moveRight(State &state) {
 std::string makeStatus(const State &state) {
   return "Line " + std::to_string(state.cursor.line) + "  Col " +
          std::to_string(state.curLine.cursorPos) + "  Scroll " +
-         std::to_string(state.scrollOffset) + "  Size: " +
-         std::to_string(state.window.width) + "x" +
+         std::to_string(state.scrollOffset) +
+         "  Size: " + std::to_string(state.window.width) + "x" +
          std::to_string(state.window.height) + " Debug: " + state.debugText;
 }
 
@@ -122,8 +123,7 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
 
 std::string Snip::render(State &state) {
   std::vector<std::string> frameBuffer = state.buffer;
-  if (state.cursor.line >= 0 &&
-      state.cursor.line < frameBuffer.size()) {
+  if (state.cursor.line >= 0 && state.cursor.line < frameBuffer.size()) {
     frameBuffer[state.cursor.line] = state.curLine.string();
   }
 
