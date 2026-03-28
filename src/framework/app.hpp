@@ -9,7 +9,6 @@
 #include "msg.hpp"
 #include <functional>
 #include <iostream>
-#include <type_traits>
 
 namespace snip {
 template <typename State> struct UpdateResult {
@@ -33,13 +32,9 @@ public:
   App(State &s) : state(s) {}
   virtual ~App() = default;
 
-  // T is still arbitrary here, not std::any yet
+  // T is arbitrary and can include richer framework payloads.
   template <typename T> void post(T &&msg) {
-    // Inspect the raw struct to make sure it's just data
-    static_assert(std::is_standard_layout_v<std::decay_t<T>>,
-                  "Msgs must be PODs!");
-
-    // NOW we let it convert into a std::any as we push it into the queue
+    // Convert to std::any as we push it into the queue.
     msgQ.ccpush(std::forward<T>(msg));
     wakePipe.write('!');
   }

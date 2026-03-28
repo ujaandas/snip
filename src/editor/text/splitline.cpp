@@ -41,8 +41,8 @@ void SplitLineBuffer::expandGap(int amount) {
     return;
   }
 
-  left.reserve(left.size() + static_cast<std::size_t>(amount));
-  rightReversed.reserve(rightReversed.size() + static_cast<std::size_t>(amount));
+  left.reserve(left.size() + amount);
+  rightReversed.reserve(rightReversed.size() + amount);
 }
 
 void SplitLineBuffer::insert(char c) {

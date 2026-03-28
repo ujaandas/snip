@@ -1,58 +1,77 @@
 
-
 #include "terminal.hpp"
 #include "ansi.hpp"
+
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 
-Terminal::Terminal() {
-  tcgetattr(STDIN_FILENO, &old_termios);
-  old_flags = fcntl(STDIN_FILENO, F_GETFL);
+namespace snip::term {
+
+void writeStdout(std::string_view bytes) {
+  (void)::write(STDOUT_FILENO, bytes.data(), bytes.size());
 }
 
-void Terminal::init(bool echo) {
-  new_termios = old_termios;
+Session startSession(bool echo) {
+  Session session;
 
-  // Disable canonical mode & signals (Ctrl-C, Ctrl-Z)
-  new_termios.c_lflag &= ~(ICANON | ISIG);
+  if (tcgetattr(STDIN_FILENO, &session.oldTermios) == -1) {
+    return session;
+  }
 
-  // Toggle echo
+  session.oldFlags = fcntl(STDIN_FILENO, F_GETFL);
+  if (session.oldFlags == -1) {
+    return session;
+  }
+
+  termios raw = session.oldTermios;
+
+  raw.c_lflag &= ~(ICANON | ISIG);
   if (echo) {
-    new_termios.c_lflag |= ECHO;
+    raw.c_lflag |= ECHO;
   } else {
-    new_termios.c_lflag &= ~ECHO;
+    raw.c_lflag &= ~ECHO;
   }
 
-  // Disable CR-to-NL translation and flow control (XON/XOFF)
-  new_termios.c_iflag &= ~(ICRNL | IXON);
+  raw.c_iflag &= ~(ICRNL | IXON);
+  raw.c_cc[VMIN] = 1;
+  raw.c_cc[VTIME] = 0;
 
-  // Make read() return after 1 byte, no timeout
-  new_termios.c_cc[VMIN] = 1;
-  new_termios.c_cc[VTIME] = 0;
-
-  // Apply terminal settings
-  tcsetattr(STDIN_FILENO, TCSANOW, &new_termios);
-
-  // Set stdin to non-blocking
-  fcntl(STDIN_FILENO, F_SETFL, old_flags | O_NONBLOCK);
-
-  // Enter full-screen TUI mode
-  writeEscapeCode(ansi::ENTER_ALTBUF);
-  writeEscapeCode(ansi::CLEAR_SCREEN);
-  writeEscapeCode(ansi::HIDE_CURSOR);
-}
-
-Terminal::~Terminal() {
-  // Graceful teardown
-  writeEscapeCode(ansi::SHOW_CURSOR);
-  writeEscapeCode(ansi::EXIT_ALTBUF);
-
-  tcsetattr(STDIN_FILENO, TCSANOW, &old_termios);
-  fcntl(STDIN_FILENO, F_SETFL, old_flags);
-}
-
-void Terminal::writeEscapeCode(std::string_view code) {
-  if (::write(STDOUT_FILENO, code.data(), code.size()) == -1) {
-    std::fprintf(stderr, "write failed\n");
+  if (tcsetattr(STDIN_FILENO, TCSANOW, &raw) == -1) {
+    return session;
   }
+
+  if (fcntl(STDIN_FILENO, F_SETFL, session.oldFlags | O_NONBLOCK) == -1) {
+    tcsetattr(STDIN_FILENO, TCSANOW, &session.oldTermios);
+    return session;
+  }
+
+  writeStdout(ansi::ENTER_ALTBUF);
+  writeStdout(ansi::CLEAR_SCREEN);
+
+  session.valid = true;
+  return session;
 }
+
+void endSession(const Session &session) {
+  if (!session.valid) {
+    return;
+  }
+
+  writeStdout(ansi::SHOW_CURSOR);
+  writeStdout(ansi::EXIT_ALTBUF);
+
+  tcsetattr(STDIN_FILENO, TCSANOW, &session.oldTermios);
+  fcntl(STDIN_FILENO, F_SETFL, session.oldFlags);
+}
+
+std::optional<WindowSize> queryWindowSize(int fd) {
+  struct winsize w;
+  if (ioctl(fd, TIOCGWINSZ, &w) == -1) {
+    return std::nullopt;
+  }
+
+  return WindowSize{w.ws_col, w.ws_row};
+}
+
+} // namespace snip::term

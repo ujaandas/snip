@@ -1,19 +1,26 @@
 #pragma once
 
+#include <optional>
 #include <string_view>
 #include <termios.h>
 
-class Terminal {
-  struct termios old_termios, new_termios;
-  int old_flags;
+namespace snip::term {
 
-public:
-  Terminal();
-
-  void init(bool echo = false);
-
-  ~Terminal();
-
-private:
-  void writeEscapeCode(std::string_view code);
+struct Session {
+  termios oldTermios {};
+  int oldFlags = 0;
+  bool valid = false;
 };
+
+struct WindowSize {
+  int width = 0;
+  int height = 0;
+};
+
+Session startSession(bool echo = false);
+void endSession(const Session &session);
+
+void writeStdout(std::string_view bytes);
+std::optional<WindowSize> queryWindowSize(int fd);
+
+} // namespace snip::term

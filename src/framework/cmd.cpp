@@ -3,10 +3,32 @@
 #include "msg.hpp"
 #include <climits>
 #include <chrono>
+#include <cstring>
+#include <cerrno>
 #include <exception>
+#include <sys/ioctl.h>
 #include <thread>
 
 namespace snip {
+
+Cmd Noop() { return []() -> std::optional<Msg> { return std::nullopt; }; }
+
+std::vector<Cmd> Batch(std::vector<Cmd> cmds) { return cmds; }
+
+Cmd Sequence(std::vector<Cmd> cmds) {
+  return [cmds = std::move(cmds)]() mutable -> std::optional<Msg> {
+    std::optional<Msg> lastMsg;
+    for (auto &cmd : cmds) {
+      if (!cmd) {
+        continue;
+      }
+      if (auto maybeMsg = cmd()) {
+        lastMsg = std::move(*maybeMsg);
+      }
+    }
+    return lastMsg;
+  };
+}
 
 Cmd Emit(Msg msg) {
   return [msg = std::move(msg)]() mutable -> std::optional<Msg> {
@@ -30,14 +52,20 @@ Cmd Tick(std::string id, std::uint64_t seq, int milliseconds) {
 
 Cmd Quit() { return []() -> std::optional<Msg> { return QuitMsg{}; }; }
 
+Cmd ReadWindowSize(int fd) {
+  return [fd]() -> std::optional<Msg> {
+    struct winsize w;
+    if (ioctl(fd, TIOCGWINSZ, &w) == -1) {
+      return IOErrorMsg{"ioctl", "window-size", std::strerror(errno)};
+    }
+    return WindowSizeMsg{w.ws_col, w.ws_row};
+  };
+}
+
 Cmd ReadFile(std::string path) {
-  // Return the lambda that the thread pool will execute
   return [path]() -> std::optional<Msg> {
     try {
-      // This happens on a background thread.
       std::vector<std::string> fileData = File::readRange(path, 0, INT_MAX);
-
-      // Wrap the data in our custom message and send it back to the UI.
       return FileLoadedMsg{path, std::move(fileData)};
 
     } catch (const std::exception &e) {

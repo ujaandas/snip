@@ -4,19 +4,19 @@
 #include <string>
 #include <vector>
 
-// Stateless file I/O helpers for framework commands.
+// Stateless file I/O helpers 
 class File {
 public:
   File() = delete;
 
-  // Read all lines from a file.
+  // Read all lines from a file
   static std::vector<std::string> readAll(const std::string &fp);
 
-  // Read a line range [start, end) from a file.
+  // Read a line range [start, end) from a file
   static std::vector<std::string> readRange(const std::string &fp, int start,
                                             int end);
 
-  // Write all lines to a file and return bytes written.
+  // Write all lines to a file and return bytes written
   static std::size_t writeAll(const std::string &fp,
                               const std::vector<std::string> &lines);
 };

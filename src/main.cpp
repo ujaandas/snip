@@ -1,25 +1,24 @@
 #include "editor/snip.hpp"
 #include "editor/state.hpp"
+#include "framework/input.hpp"
 #include "framework/terminal/terminal.hpp"
 #include "event_loop/event_loop.hpp"
 
-#include <sys/ioctl.h>
 #include <signal.h>
 #include <unistd.h>
 
 int main() {
-  // Initialize terminal
-  Terminal term;
-  term.init(0);
+  const auto session = snip::term::startSession(false);
+  if (!session.valid) {
+    return 1;
+  }
 
   // Setup initial state
   State model;
 
-  // Fetch initial window size
-  struct winsize w;
-  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) != -1) {
-    model.window.width = w.ws_col;
-    model.window.height = w.ws_row;
+  if (auto size = snip::term::queryWindowSize(STDOUT_FILENO)) {
+    model.window.width = size->width;
+    model.window.height = size->height;
   }
 
   // Create our app
@@ -29,19 +28,17 @@ int main() {
   // Setup event sources
   EventSource inputSrc = EventSource::fromFd(STDIN_FILENO);
   inputSrc.onReadReady = [&app]() {
-    char c;
-    if (::read(STDIN_FILENO, &c, 1) > 0) {
-      // Send the universal keymsg into the app
-      app.post(snip::KeyMsg{c});
+    if (auto key = snip::input::readKeyPress(STDIN_FILENO)) {
+      app.post(*key);
     }
   };
 
   EventSource resizeSrc = EventSource::fromSignal(SIGWINCH);
   resizeSrc.onReadReady = [&app]() {
-    struct winsize w;
-    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) != -1) {
-      // Send the universal windowsizemsg
-      app.post(snip::WindowSizeMsg{w.ws_col, w.ws_row});
+    app.post(snip::SignalMsg{SIGWINCH});
+
+    if (auto size = snip::term::queryWindowSize(STDOUT_FILENO)) {
+      app.post(snip::WindowSizeMsg{size->width, size->height});
     }
   };
 
@@ -51,6 +48,8 @@ int main() {
 
   // Hand control over to the App
   app.run(loop);
+
+  snip::term::endSession(session);
 
   return 0;
 }

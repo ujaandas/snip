@@ -1,8 +1,57 @@
 #include "snip.hpp"
-#include "../framework/terminal/ansi.hpp"
-#include <sstream>
+#include "../framework/terminal/render.hpp"
+#include <string>
 
 using namespace snip;
+
+namespace {
+
+void moveDown(State &state) {
+  const int bufferLines = state.buffer.size();
+  if (state.cursor.line + 1 >= bufferLines) {
+    return;
+  }
+
+  state.cursor.line++;
+  state.curLine.changeLine(state.buffer[state.cursor.line]);
+  if (state.cursor.line >= state.scrollOffset + state.window.height - 1) {
+    state.scrollOffset++;
+  }
+}
+
+void moveUp(State &state) {
+  if (state.cursor.line <= 0) {
+    return;
+  }
+
+  state.cursor.line--;
+  state.curLine.changeLine(state.buffer[state.cursor.line]);
+  if (state.cursor.line < state.scrollOffset) {
+    state.scrollOffset--;
+  }
+}
+
+void moveLeft(State &state) {
+  if (state.curLine.cursorPos > 0) {
+    state.curLine.shiftLeft();
+  }
+}
+
+void moveRight(State &state) {
+  if (state.curLine.cursorPos < state.curLine.length()) {
+    state.curLine.shiftRight();
+  }
+}
+
+std::string makeStatus(const State &state) {
+  return "Line " + std::to_string(state.cursor.line) + "  Col " +
+         std::to_string(state.curLine.cursorPos) + "  Scroll " +
+         std::to_string(state.scrollOffset) + "  Size: " +
+         std::to_string(state.window.width) + "x" +
+         std::to_string(state.window.height) + " Debug: " + state.debugText;
+}
+
+} // namespace
 
 std::vector<Cmd> Snip::init() {
   std::vector<Cmd> cmds;
@@ -14,55 +63,35 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
   State newState = currentState;
   std::vector<Cmd> cmds;
 
-  // Check for keypresses
-  if (auto *m = std::any_cast<KeyMsg>(&msg)) {
-    newState.debugText = m->key;
-
-    switch (m->key) {
+  if (auto *m = std::any_cast<KeyPressMsg>(&msg)) {
+    const char c = m->rune;
+    newState.debugText = std::string(1, c);
+    switch (c) {
     case 'q':
       cmds.push_back(Quit());
       break;
-    case 'j': {
-      int bufferLines = static_cast<int>(newState.buffer.size());
-      if (newState.cursor.line + 1 < bufferLines) {
-        newState.cursor.line++;
-        newState.curLine.changeLine(newState.buffer[newState.cursor.line]);
-        if (newState.cursor.line >=
-            newState.scrollOffset + newState.window.height - 1) {
-          newState.scrollOffset++;
-        }
-      }
+    case 'j':
+      moveDown(newState);
       break;
-    }
     case 'k':
-      if (newState.cursor.line > 0) {
-        newState.cursor.line--;
-        newState.curLine.changeLine(newState.buffer[newState.cursor.line]);
-        if (newState.cursor.line < newState.scrollOffset) {
-          newState.scrollOffset--;
-        }
-      }
+      moveUp(newState);
       break;
     case 'h':
-      if (newState.curLine.cursorPos > 0) {
-        newState.curLine.shiftLeft();
-      }
+      moveLeft(newState);
       break;
     case 'l':
-      if (newState.curLine.cursorPos < newState.curLine.length()) {
-        newState.curLine.shiftRight();
-      }
+      moveRight(newState);
+      break;
+    default:
       break;
     }
   }
 
-  // Check for window resize
   else if (auto *m = std::any_cast<WindowSizeMsg>(&msg)) {
     newState.window.width = m->width;
     newState.window.height = m->height;
   }
 
-  // Check for file loads
   else if (auto *m = std::any_cast<FileLoadedMsg>(&msg)) {
     newState.buffer = std::move(m->lines);
     newState.filename = m->filepath;
@@ -75,12 +104,10 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
     newState.debugText = "Loaded: " + m->filepath;
   }
 
-  // Handle background errors
   else if (auto *m = std::any_cast<ErrorMsg>(&msg)) {
     newState.debugText = "Error: " + m->errorMessage;
   }
 
-  // Handle structured framework I/O errors.
   else if (auto *m = std::any_cast<IOErrorMsg>(&msg)) {
     newState.debugText = "IOError(" + m->operation + "): " + m->errorMessage;
   }
@@ -94,46 +121,22 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
 }
 
 std::string Snip::render(State &state) {
-  std::stringstream out;
-
-  // Clear screen + move cursor to top-left
-  out << ansi::CLEAR_SCREEN << ansi::CURSOR_HOME;
-
-  int usableHeight = state.window.height - 1;
-  int bufferLines = static_cast<int>(state.buffer.size());
-
-  for (int i = 0; i < usableHeight; i++) {
-    int lineIndex = state.scrollOffset + i;
-
-    if (lineIndex >= 0 && lineIndex < bufferLines) {
-      const std::string &line = state.buffer[static_cast<std::size_t>(lineIndex)];
-
-      if (lineIndex == state.cursor.line) {
-        for (std::size_t col = 0; col < line.size(); col++) {
-          if (state.curLine.cursorPos == col) {
-            // Highlight the cursor block
-            out << ansi::REVERSE << line[col] << ansi::RESET;
-          } else {
-            out << line[col];
-          }
-        }
-        // Highlight trailing space if cursor is at the end of the line
-        if (state.curLine.cursorPos == line.size()) {
-          out << ansi::REVERSE << " " << ansi::RESET;
-        }
-      } else {
-        out << line;
-      }
-    }
-    out << "\n";
+  std::vector<std::string> frameBuffer = state.buffer;
+  if (state.cursor.line >= 0 &&
+      state.cursor.line < frameBuffer.size()) {
+    frameBuffer[state.cursor.line] = state.curLine.string();
   }
 
-  // Draw the debug/status bar at the bottom
-  out << ansi::REVERSE << "Line " << state.cursor.line << "  Col "
-      << state.curLine.cursorPos << "  Scroll " << state.scrollOffset
-      << "  Size: " << state.window.width << "x" << state.window.height
-      << " Debug: " << state.debugText << ansi::RESET;
+  term::FrameSpec spec;
+  spec.width = state.window.width;
+  spec.height = state.window.height;
+  spec.scrollOffset = state.scrollOffset;
+  spec.clear = true;
+  spec.hideCursor = false;
 
-  out << std::flush;
-  return out.str();
+  term::Cursor cursor;
+  cursor.row = (state.cursor.line - state.scrollOffset) + 1;
+  cursor.col = state.curLine.cursorPos + 1;
+
+  return term::renderFrame(frameBuffer, makeStatus(state), spec, cursor);
 }
