@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+namespace snip {
+
 // Dimensions of the terminal window
 struct WindowState {
   int width = 0;
@@ -47,3 +49,5 @@ struct State {
   std::string debugText = "";
   std::string filename = "";
 };
+
+} // namespace snip

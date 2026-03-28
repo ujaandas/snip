@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <string>
 
+namespace snip {
+
 class SplitLineBuffer {
 private:
   std::string left;
@@ -29,3 +31,5 @@ public:
 
   std::string string() const;
 };
+
+} // namespace snip

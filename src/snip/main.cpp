@@ -1,39 +1,50 @@
 #include "snip/snip.hpp"
-
 #include "snip-core/event_loop.hpp"
-#include "snip-runtime/loop_wiring.hpp"
+#include "snip-core/event_source.hpp"
+#include "snip-runtime/input.hpp"
 #include "snip-runtime/terminal/terminal.hpp"
-
-#include <csignal>
+#include <signal.h>
 #include <unistd.h>
 
 int main() {
-  const snip::term::Session session = snip::term::startSession(false);
+  const snip::runtime::term::Session session =
+      snip::runtime::term::startSession(false);
   if (!session.valid) {
     return 1;
   }
 
-  State model;
-  if (auto size = snip::runtime::readWindowSizeMsg(STDOUT_FILENO)) {
+  snip::State model;
+
+  // Set initial window size
+  if (auto size = snip::runtime::term::queryWindowSize(STDOUT_FILENO)) {
     model.window.width = size->width;
     model.window.height = size->height;
   }
 
-  Snip app(model);
+  // Initialize app and event loop
+  snip::Snip app(model);
   snip::core::EventLoop loop;
 
-  loop.addSource(snip::runtime::makeInputSource(
-      STDIN_FILENO, [&app](const snip::KeyPressMsg &key) { app.post(key); }));
+  // Register STDIN input source
+  snip::core::EventSource input = snip::core::EventSource::fromFd(STDIN_FILENO);
+  input.onReadReady = [&app]() {
+    if (auto key = snip::runtime::input::readKeyPress(STDIN_FILENO)) {
+      app.post(*key);
+    }
+  };
+  loop.addSource(std::move(input));
 
-  loop.addSource(snip::runtime::makeResizeSource(
-      SIGWINCH, [&app](const snip::SignalMsg &sig) {
-        app.post(sig);
-        if (auto size = snip::runtime::readWindowSizeMsg(STDOUT_FILENO)) {
-          app.post(*size);
-        }
-      }));
+  // Register SIGWINCH resize source
+  snip::core::EventSource resize = snip::core::EventSource::fromSignal(SIGWINCH);
+  resize.onReadReady = [&app]() {
+    app.post(snip::runtime::SignalMsg{SIGWINCH});
+    if (auto size = snip::runtime::term::queryWindowSize(STDOUT_FILENO)) {
+      app.post(snip::runtime::WindowSizeMsg{size->width, size->height});
+    }
+  };
+  loop.addSource(std::move(resize));
 
   app.run(loop);
-  snip::term::endSession(session);
+  snip::runtime::term::endSession(session);
   return 0;
 }

@@ -1,5 +1,7 @@
 #include "splitline.hpp"
 
+namespace snip {
+
 void SplitLineBuffer::changeLine(const std::string &newLine) {
   if (cursorPos > newLine.size()) {
     cursorPos = newLine.size();
@@ -74,3 +76,5 @@ std::string SplitLineBuffer::string() const {
 
   return out;
 }
+
+} // namespace snip

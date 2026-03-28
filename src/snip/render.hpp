@@ -31,14 +31,14 @@ public:
     std::string out;
 
     if (spec.hideCursor) {
-      out += std::string(snip::ansi::HIDE_CURSOR);
+      out += std::string(runtime::ansi::HIDE_CURSOR);
     } else {
-      out += std::string(snip::ansi::SHOW_CURSOR);
+      out += std::string(runtime::ansi::SHOW_CURSOR);
     }
 
     if (spec.clear) {
-      out += std::string(snip::ansi::CLEAR_SCREEN);
-      out += std::string(snip::ansi::CURSOR_HOME);
+      out += std::string(runtime::ansi::CLEAR_SCREEN);
+      out += std::string(runtime::ansi::CURSOR_HOME);
     }
 
     const int usableHeight = std::max(0, spec.height - 1);
@@ -60,7 +60,7 @@ public:
     if (cursor.has_value()) {
       const int row = std::max(1, cursor->row);
       const int col = std::max(1, cursor->col);
-      out += snip::ansi::moveCursor(row, col);
+      out += runtime::ansi::moveCursor(row, col);
     }
 
     return out;
@@ -92,8 +92,9 @@ private:
   }
 
   static std::string statusBar(std::string_view text, int width) {
-    return std::string(snip::ansi::REVERSE) + padRight(std::string(text), width) +
-           std::string(snip::ansi::RESET);
+    return std::string(runtime::ansi::REVERSE) +
+           padRight(std::string(text), width) +
+           std::string(runtime::ansi::RESET);
   }
 };
 
