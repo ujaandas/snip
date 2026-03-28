@@ -27,13 +27,9 @@
 
         devShell = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
           buildInputs = with pkgs; [
-            prek
-            gdb
             clang-tools
             cmake
-            cppcheck
-            gtest
-            gnat
+            prek
           ];
         };
       }

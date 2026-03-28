@@ -11,6 +11,11 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # Enable compile commands for clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+  set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES 
+      ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+endif()
+
 add_subdirectory(src/snip-core)
 add_subdirectory(src/snip-runtime)
 add_subdirectory(src/snip)
