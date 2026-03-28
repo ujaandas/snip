@@ -12,6 +12,28 @@
 - Non-blocking (deferred) command execution via background workers
 - Terminal input + rendering split into clean runtime/UI boundaries for system-agnostic operation
 
+## Quick Start
+
+### Build with Nix
+
+```bash
+nix build
+```
+
+Run all checks:
+
+```bash
+nix flake check
+```
+
+### Without Nix
+
+```bash
+cmake -S . -B build
+cmake --build build -j
+./build/snip
+```
+
 ## Architecture
 
 The project is split into focused modules with strict responsibilities.
@@ -53,27 +75,12 @@ Rendering backend layer:
 
 This keeps editor behavior independent from terminal backend details and makes backend evolution straightforward.
 
-## Quick Start
+## Contributing
 
-### Build with Nix
-
-```bash
-nix build
-```
-
-Run all checks:
-
-```bash
-nix flake check
-```
-
-### Without Nix
-
-```bash
-cmake -S . -B build
-cmake --build build -j
-./build/snip
-```
+Take care to adhere to the following rules when adding new functionality to `snip`:
+- Each new library should have a short `README.md` detailing the responsibilities thereof.
+- Try to include a short comment before each function.
+- Each class should have a brief and simple explanation of what it does at the top-level.
 
 ## Roadmap
 
