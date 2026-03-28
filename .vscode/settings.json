@@ -1,0 +1,6 @@
+{
+    "clangd.path": "clangd",
+    "clangd.arguments": [
+        "--query-driver=**/clang++"
+    ]
+}
