@@ -8,7 +8,8 @@ add_library(snip-runtime STATIC
 
 target_include_directories(snip-runtime
   PUBLIC
-    ${PROJECT_SOURCE_DIR}/src
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(snip-runtime

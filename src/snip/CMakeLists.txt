@@ -5,7 +5,8 @@ add_library(snip STATIC
 
 target_include_directories(snip
   PUBLIC
-    ${PROJECT_SOURCE_DIR}/src
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(snip

@@ -7,7 +7,8 @@ add_library(snip-core STATIC
 
 target_include_directories(snip-core
   PUBLIC
-    ${PROJECT_SOURCE_DIR}/src
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_compile_features(snip-core PUBLIC cxx_std_23)
