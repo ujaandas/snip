@@ -20,7 +20,7 @@ int main() {
   }
 
   Snip app(model);
-  EventLoop loop;
+  snip::core::EventLoop loop;
 
   loop.addSource(snip::runtime::makeInputSource(
       STDIN_FILENO, [&app](const snip::KeyPressMsg &key) { app.post(key); }));

@@ -4,8 +4,8 @@
 
 namespace snip::runtime {
 
-EventSource makeInputSource(int inputFd, KeyHandler onKey) {
-  EventSource input = EventSource::fromFd(inputFd);
+core::EventSource makeInputSource(int inputFd, KeyHandler onKey) {
+  core::EventSource input = core::EventSource::fromFd(inputFd);
   input.onReadReady = [inputFd, onKey = std::move(onKey)]() {
     if (!onKey) {
       return;
@@ -18,8 +18,8 @@ EventSource makeInputSource(int inputFd, KeyHandler onKey) {
   return input;
 }
 
-EventSource makeResizeSource(int signalNumber, SignalHandler onSignal) {
-  EventSource resize = EventSource::fromSignal(signalNumber);
+core::EventSource makeResizeSource(int signalNumber, SignalHandler onSignal) {
+  core::EventSource resize = core::EventSource::fromSignal(signalNumber);
   resize.onReadReady = [signalNumber, onSignal = std::move(onSignal)]() {
     if (onSignal) {
       onSignal(SignalMsg{signalNumber});

@@ -2,6 +2,8 @@
 #include <csignal>
 #include <cstdio>
 
+namespace snip::core {
+
 EzPipe *EventSource::signals[64] = {nullptr};
 
 EventSource::EventSource(int fd, bool isSignal) : fd(fd), isSignal(isSignal) {};
@@ -36,3 +38,5 @@ void EventSource::autoDrain() {
     }
   }
 }
+
+} // namespace snip::core

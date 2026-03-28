@@ -18,11 +18,11 @@ template <typename State> struct UpdateResult {
 
 template <typename State> class App {
 private:
-  CCQueue<Msg> msgQ{true};
-  EzPipe wakePipe;
+  core::CCQueue<Msg> msgQ{true};
+  core::EzPipe wakePipe;
 
-  ThreadPool pool{4};
-  EventLoop *loop = nullptr;
+  core::ThreadPool pool{4};
+  core::EventLoop *loop = nullptr;
 
 protected:
   State &state;
@@ -40,7 +40,7 @@ public:
   }
 
   // Run the app inside an EventLoop
-  void run(EventLoop &eventLoop) {
+  void run(core::EventLoop &eventLoop) {
     loop = &eventLoop;
 
     // Register our mailbox source
@@ -69,8 +69,8 @@ private:
   }
 
   // Event source used by the event loop
-  EventSource messageSource() {
-    EventSource src = EventSource::fromFd(wakePipe.getReadFd());
+  core::EventSource messageSource() {
+    core::EventSource src = core::EventSource::fromFd(wakePipe.getReadFd());
 
     src.onReadReady = [this]() {
       wakePipe.clear();

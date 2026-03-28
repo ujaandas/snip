@@ -3,6 +3,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+namespace snip::core {
+
 class EzPipe {
 private:
   int fds[2] = {-1, -1};
@@ -25,3 +27,5 @@ public:
 
   ~EzPipe();
 };
+
+} // namespace snip::core

@@ -3,8 +3,6 @@
 
 #include <string>
 
-using namespace snip;
-
 namespace {
 
 void moveDown(State &state) {
@@ -54,22 +52,22 @@ std::string makeStatus(const State &state) {
 
 } // namespace
 
-std::vector<Cmd> Snip::init() {
-  std::vector<Cmd> cmds;
-  cmds.push_back(ReadFile("./flake.nix"));
+std::vector<snip::Cmd> Snip::init() {
+  std::vector<snip::Cmd> cmds;
+  cmds.push_back(snip::ReadFile("./flake.nix"));
   return cmds;
 }
 
-UpdateResult<State> Snip::update(State &currentState, Msg msg) {
+snip::UpdateResult<State> Snip::update(State &currentState, snip::Msg msg) {
   State newState = currentState;
-  std::vector<Cmd> cmds;
+  std::vector<snip::Cmd> cmds;
 
-  if (auto *m = std::any_cast<KeyPressMsg>(&msg)) {
+  if (auto *m = std::any_cast<snip::KeyPressMsg>(&msg)) {
     const char c = m->rune;
     newState.debugText = std::string(1, c);
     switch (c) {
     case 'q':
-      cmds.push_back(Quit());
+      cmds.push_back(snip::Quit());
       break;
     case 'j':
       moveDown(newState);
@@ -88,12 +86,12 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
     }
   }
 
-  else if (auto *m = std::any_cast<WindowSizeMsg>(&msg)) {
+  else if (auto *m = std::any_cast<snip::WindowSizeMsg>(&msg)) {
     newState.window.width = m->width;
     newState.window.height = m->height;
   }
 
-  else if (auto *m = std::any_cast<FileLoadedMsg>(&msg)) {
+  else if (auto *m = std::any_cast<snip::FileLoadedMsg>(&msg)) {
     newState.buffer = std::move(m->lines);
     newState.filename = m->filepath;
     newState.cursor.line = 0;
@@ -105,15 +103,15 @@ UpdateResult<State> Snip::update(State &currentState, Msg msg) {
     newState.debugText = "Loaded: " + m->filepath;
   }
 
-  else if (auto *m = std::any_cast<ErrorMsg>(&msg)) {
+  else if (auto *m = std::any_cast<snip::ErrorMsg>(&msg)) {
     newState.debugText = "Error: " + m->errorMessage;
   }
 
-  else if (auto *m = std::any_cast<IOErrorMsg>(&msg)) {
+  else if (auto *m = std::any_cast<snip::IOErrorMsg>(&msg)) {
     newState.debugText = "IOError(" + m->operation + "): " + m->errorMessage;
   }
 
-  else if (auto *m = std::any_cast<FileSavedMsg>(&msg)) {
+  else if (auto *m = std::any_cast<snip::FileSavedMsg>(&msg)) {
     newState.debugText = "Saved " + m->filepath + " (" +
                          std::to_string(m->bytesWritten) + " bytes)";
   }
@@ -127,16 +125,17 @@ std::string Snip::render(State &state) {
     frameBuffer[state.cursor.line] = state.curLine.string();
   }
 
-  FrameSpec spec;
+  snip::FrameSpec spec;
   spec.width = state.window.width;
   spec.height = state.window.height;
   spec.scrollOffset = state.scrollOffset;
   spec.clear = true;
   spec.hideCursor = false;
 
-  Cursor cursor;
+  snip::Cursor cursor;
   cursor.row = (state.cursor.line - state.scrollOffset) + 1;
   cursor.col = state.curLine.cursorPos + 1;
 
-  return Renderer::renderFrame(frameBuffer, makeStatus(state), spec, cursor);
+  return snip::Renderer::renderFrame(frameBuffer, makeStatus(state), spec,
+                                     cursor);
 }

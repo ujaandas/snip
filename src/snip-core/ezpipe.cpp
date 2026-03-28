@@ -3,6 +3,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+namespace snip::core {
+
 EzPipe::EzPipe() {
   if (pipe(fds) == -1) {
     throw "Somehow, Palpatine returned (and cooked your EzPipe ctor)!";
@@ -55,3 +57,5 @@ EzPipe::~EzPipe() {
     fds[1] = -1;
   }
 }
+
+} // namespace snip::core

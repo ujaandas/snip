@@ -1,5 +1,7 @@
 #include "thread_pool.hpp"
 
+namespace snip::core {
+
 // Start all workers
 ThreadPool::ThreadPool(size_t num_threads) : tasks(false) {
   for (size_t i = 0; i < num_threads; i++) {
@@ -31,3 +33,5 @@ ThreadPool::~ThreadPool() {
     }
   }
 }
+
+} // namespace snip::core

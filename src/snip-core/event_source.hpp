@@ -5,6 +5,8 @@
 #include <functional>
 #include <unistd.h>
 
+namespace snip::core {
+
 class EventSource {
 private:
   int fd;
@@ -29,3 +31,5 @@ public:
   // A callback to execute when poll() says this FD is ready to read
   std::function<void()> onReadReady;
 };
+
+} // namespace snip::core

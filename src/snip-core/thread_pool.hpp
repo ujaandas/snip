@@ -6,6 +6,8 @@
 #include <thread>
 #include <vector>
 
+namespace snip::core {
+
 class ThreadPool {
 private:
   std::vector<std::thread> workers;
@@ -16,3 +18,5 @@ public:
   void enqueue(std::function<void()> task);
   ~ThreadPool();
 };
+
+} // namespace snip::core

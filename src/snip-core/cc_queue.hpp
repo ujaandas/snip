@@ -4,6 +4,8 @@
 #include <mutex>
 #include <queue>
 
+namespace snip::core {
+
 template <typename T> class CCQueue {
 private:
   bool async = false;
@@ -50,3 +52,5 @@ public:
     cv.notify_all();
   }
 };
+
+} // namespace snip::core

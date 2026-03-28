@@ -4,7 +4,10 @@
 #include <algorithm>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
+
+namespace snip {
 
 struct Cursor {
   int row = 1;
@@ -93,3 +96,5 @@ private:
            std::string(snip::ansi::RESET);
   }
 };
+
+} // namespace snip

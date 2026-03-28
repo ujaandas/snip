@@ -2,6 +2,8 @@
 #include <cerrno>
 #include <poll.h>
 
+namespace snip::core {
+
 EventLoop::EventLoop() {};
 
 EventLoop::EventLoop(std::vector<EventSource> initSources)
@@ -43,3 +45,5 @@ void EventLoop::run() {
 void EventLoop::addSource(EventSource es) { sources.push_back(es); };
 
 void EventLoop::stop() { running = false; }
+
+} // namespace snip::core

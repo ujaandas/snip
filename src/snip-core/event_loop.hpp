@@ -4,6 +4,8 @@
 #include <atomic>
 #include <vector>
 
+namespace snip::core {
+
 class EventLoop {
 private:
   std::vector<EventSource> sources = {};
@@ -16,3 +18,5 @@ public:
   void run();
   void stop();
 };
+
+} // namespace snip::core
