@@ -7,7 +7,7 @@
 namespace snip::runtime::input {
 namespace {
 
-std::optional<KeyPressMsg> parseEscape(const std::string &raw) {
+std::optional<KeyPressMsg> parseEscape(const std::string& raw) {
   if (raw == "\x1b") {
     return KeyPressMsg{.code = KeyCode::Escape, .raw = raw};
   }
@@ -57,7 +57,7 @@ std::optional<KeyPressMsg> parseEscape(const std::string &raw) {
 
 } // namespace
 
-std::optional<KeyPressMsg> parseKeySequence(const std::string &raw) {
+std::optional<KeyPressMsg> parseKeySequence(const std::string& raw) {
   if (raw.empty()) {
     return std::nullopt;
   }
@@ -81,8 +81,7 @@ std::optional<KeyPressMsg> parseKeySequence(const std::string &raw) {
   }
 
   if (std::isprint(c) != 0) {
-    return KeyPressMsg{
-        .code = KeyCode::Rune, .rune = static_cast<char>(c), .raw = raw};
+    return KeyPressMsg{.code = KeyCode::Rune, .rune = static_cast<char>(c), .raw = raw};
   }
 
   if (c < 0x20) {

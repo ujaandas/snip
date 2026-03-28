@@ -6,7 +6,7 @@
 namespace snip::editor {
 namespace {
 
-void moveDown(State &state) {
+void moveDown(State& state) {
   const int bufferLines = static_cast<int>(state.buffer.size());
   if (state.cursor.line + 1 >= bufferLines) {
     return;
@@ -19,7 +19,7 @@ void moveDown(State &state) {
   }
 }
 
-void moveUp(State &state) {
+void moveUp(State& state) {
   if (state.cursor.line <= 0) {
     return;
   }
@@ -31,24 +31,23 @@ void moveUp(State &state) {
   }
 }
 
-void moveLeft(State &state) {
+void moveLeft(State& state) {
   if (state.curLine.cursorPos > 0) {
     state.curLine.shiftLeft();
   }
 }
 
-void moveRight(State &state) {
+void moveRight(State& state) {
   if (state.curLine.cursorPos < state.curLine.length()) {
     state.curLine.shiftRight();
   }
 }
 
-std::string makeStatus(const State &state) {
+std::string makeStatus(const State& state) {
   return "Line " + std::to_string(state.cursor.line) + "  Col " +
          std::to_string(state.curLine.cursorPos) + "  Scroll " +
-         std::to_string(state.scrollOffset) +
-         "  Size: " + std::to_string(state.window.width) + "x" +
-         std::to_string(state.window.height) + "  " + state.statusText;
+         std::to_string(state.scrollOffset) + "  Size: " + std::to_string(state.window.width) +
+         "x" + std::to_string(state.window.height) + "  " + state.statusText;
 }
 
 } // namespace
@@ -57,11 +56,11 @@ std::vector<runtime::Cmd> Editor::init() const {
   return {runtime::ReadFile("./flake.nix")};
 }
 
-UpdateResult Editor::update(const State &currentState, runtime::Msg msg) const {
+UpdateResult Editor::update(const State& currentState, runtime::Msg msg) const {
   State newState = currentState;
   std::vector<runtime::Cmd> commands;
 
-  if (auto *m = std::get_if<runtime::KeyPressMsg>(&msg)) {
+  if (auto* m = std::get_if<runtime::KeyPressMsg>(&msg)) {
     const char c = m->rune;
     newState.statusText = std::string("Key: ") + c;
 
@@ -84,10 +83,10 @@ UpdateResult Editor::update(const State &currentState, runtime::Msg msg) const {
     default:
       break;
     }
-  } else if (auto *m = std::get_if<runtime::WindowSizeMsg>(&msg)) {
+  } else if (auto* m = std::get_if<runtime::WindowSizeMsg>(&msg)) {
     newState.window.width = m->width;
     newState.window.height = m->height;
-  } else if (auto *m = std::get_if<runtime::FileLoadedMsg>(&msg)) {
+  } else if (auto* m = std::get_if<runtime::FileLoadedMsg>(&msg)) {
     newState.buffer = std::move(m->lines);
     newState.filename = m->filepath;
     newState.cursor.line = 0;
@@ -98,17 +97,17 @@ UpdateResult Editor::update(const State &currentState, runtime::Msg msg) const {
     }
 
     newState.statusText = "Loaded: " + m->filepath;
-  } else if (auto *m = std::get_if<runtime::IOErrorMsg>(&msg)) {
+  } else if (auto* m = std::get_if<runtime::IOErrorMsg>(&msg)) {
     newState.statusText = "IOError(" + m->operation + "): " + m->errorMessage;
-  } else if (auto *m = std::get_if<runtime::FileSavedMsg>(&msg)) {
-    newState.statusText = "Saved " + m->filepath + " (" +
-                          std::to_string(m->bytesWritten) + " bytes)";
+  } else if (auto* m = std::get_if<runtime::FileSavedMsg>(&msg)) {
+    newState.statusText =
+        "Saved " + m->filepath + " (" + std::to_string(m->bytesWritten) + " bytes)";
   }
 
   return {std::move(newState), std::move(commands)};
 }
 
-ViewModel Editor::viewModel(const State &state) const {
+ViewModel Editor::viewModel(const State& state) const {
   ViewModel vm;
   vm.lines = state.buffer;
   vm.width = state.window.width;
@@ -117,8 +116,7 @@ ViewModel Editor::viewModel(const State &state) const {
   vm.hideCursor = false;
   vm.clear = true;
 
-  if (state.cursor.line >= 0 &&
-      state.cursor.line < static_cast<int>(vm.lines.size())) {
+  if (state.cursor.line >= 0 && state.cursor.line < static_cast<int>(vm.lines.size())) {
     vm.lines[state.cursor.line] = state.curLine.string();
   }
 

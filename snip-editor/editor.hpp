@@ -15,8 +15,8 @@ struct UpdateResult {
 class Editor {
 public:
   std::vector<runtime::Cmd> init() const;
-  UpdateResult update(const State &currentState, runtime::Msg msg) const;
-  ViewModel viewModel(const State &state) const;
+  UpdateResult update(const State& currentState, runtime::Msg msg) const;
+  ViewModel viewModel(const State& state) const;
 };
 
 } // namespace snip::editor

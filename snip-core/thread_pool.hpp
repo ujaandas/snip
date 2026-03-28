@@ -14,7 +14,7 @@ private:
   CCQueue<std::function<void()>> tasks;
 
 public:
-  ThreadPool(size_t num_threads);
+  explicit ThreadPool(size_t num_threads);
   void enqueue(std::function<void()> task);
   ~ThreadPool();
 };

@@ -61,6 +61,12 @@ This keeps editor behavior independent from terminal backend details and makes b
 nix build
 ```
 
+Run all checks:
+
+```bash
+nix flake check
+```
+
 ### Without Nix
 
 ```bash

@@ -59,7 +59,7 @@ Session startSession(bool echo) {
   return session;
 }
 
-void endSession(const Session &session) {
+void endSession(const Session& session) {
   if (!session.valid) {
     return;
   }

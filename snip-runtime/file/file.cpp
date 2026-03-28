@@ -5,7 +5,7 @@
 
 namespace snip::runtime {
 
-std::vector<std::string> File::readAll(const std::string &fp) {
+std::vector<std::string> File::readAll(const std::string& fp) {
   std::ifstream in(fp);
   if (!in.is_open()) {
     throw std::runtime_error("Could not open file: " + fp);
@@ -20,8 +20,7 @@ std::vector<std::string> File::readAll(const std::string &fp) {
   return content;
 }
 
-std::vector<std::string> File::readRange(const std::string &fp, int start,
-                                         int end) {
+std::vector<std::string> File::readRange(const std::string& fp, int start, int end) {
   std::vector<std::string> content = readAll(fp);
 
   start = std::max(start, 0);
@@ -31,12 +30,10 @@ std::vector<std::string> File::readRange(const std::string &fp, int start,
     return {};
   }
 
-  return std::vector<std::string>(content.begin() + start,
-                                  content.begin() + end);
+  return std::vector<std::string>(content.begin() + start, content.begin() + end);
 }
 
-std::size_t File::writeAll(const std::string &fp,
-                           const std::vector<std::string> &lines) {
+std::size_t File::writeAll(const std::string& fp, const std::vector<std::string>& lines) {
   std::ofstream out(fp, std::ios::out | std::ios::trunc);
   if (!out.is_open()) {
     throw std::runtime_error("Could not open file for writing: " + fp);

@@ -12,15 +12,13 @@ public:
   File() = delete;
 
   // Read all lines from a file
-  static std::vector<std::string> readAll(const std::string &fp);
+  static std::vector<std::string> readAll(const std::string& fp);
 
   // Read a line range [start, end) from a file
-  static std::vector<std::string> readRange(const std::string &fp, int start,
-                                            int end);
+  static std::vector<std::string> readRange(const std::string& fp, int start, int end);
 
   // Write all lines to a file and return bytes written
-  static std::size_t writeAll(const std::string &fp,
-                              const std::vector<std::string> &lines);
+  static std::size_t writeAll(const std::string& fp, const std::vector<std::string>& lines);
 };
 
 } // namespace snip::runtime

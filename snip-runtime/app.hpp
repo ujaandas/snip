@@ -24,24 +24,24 @@ private:
   core::EzPipe wakePipe;
 
   core::ThreadPool pool{4};
-  core::EventLoop *loop = nullptr;
+  core::EventLoop* loop = nullptr;
 
 protected:
-  State &state;
+  State& state;
   bool running = true;
 
 public:
-  App(State &s) : state(s) {}
+  App(State& s) : state(s) {}
   virtual ~App() = default;
 
   // T must be a supported runtime::Msg alternative.
-  template <typename T> void post(T &&msg) {
+  template <typename T> void post(T&& msg) {
     msgQ.ccpush(Msg{std::forward<T>(msg)});
     wakePipe.write('!');
   }
 
   // Run the app inside an EventLoop
-  void run(core::EventLoop &eventLoop) {
+  void run(core::EventLoop& eventLoop) {
     loop = &eventLoop;
 
     // Register our mailbox source
@@ -57,8 +57,8 @@ public:
   }
 
 private:
-  void dispatch(const std::vector<Cmd> &cmds) {
-    for (const auto &cmd : cmds) {
+  void dispatch(const std::vector<Cmd>& cmds) {
+    for (const auto& cmd : cmds) {
       pool.enqueue([this, cmd]() {
         if (auto maybeMsg = cmd()) {
           // Template argument deduction lets us omit the angle bracket syntax
@@ -108,9 +108,11 @@ private:
 
 protected:
   virtual std::vector<Cmd> init() = 0;
-  virtual UpdateResult<State> update(State &, Msg) = 0;
-  virtual std::string render(State &) = 0;
+  virtual UpdateResult<State> update(State&, Msg) = 0;
+  virtual std::string render(State&) = 0;
 
-  void quit() { running = false; }
+  void quit() {
+    running = false;
+  }
 };
 } // namespace snip::runtime

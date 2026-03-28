@@ -4,11 +4,13 @@
 
 namespace snip::core {
 
-EzPipe *EventSource::signals[64] = {nullptr};
+EzPipe* EventSource::signals[64] = {nullptr};
 
 EventSource::EventSource(int fd, bool isSignal) : fd(fd), isSignal(isSignal) {};
 
-EventSource EventSource::fromFd(int fd) { return EventSource(fd, false); }
+EventSource EventSource::fromFd(int fd) {
+  return EventSource(fd, false);
+}
 
 void EventSource::handler(int sig) {
   if (signals[sig]) {
@@ -28,7 +30,9 @@ EventSource EventSource::fromSignal(int sig) {
   return EventSource(signals[sig]->getReadFd(), true);
 }
 
-int EventSource::getFd() const { return fd; }
+int EventSource::getFd() const {
+  return fd;
+}
 
 void EventSource::autoDrain() {
   if (isSignal) {

@@ -63,7 +63,7 @@ struct IOErrorMsg {
   std::string errorMessage;
 };
 
-using Msg = std::variant<KeyPressMsg, WindowSizeMsg, QuitMsg, FileLoadedMsg,
-                         FileSavedMsg, IOErrorMsg>;
+using Msg =
+    std::variant<KeyPressMsg, WindowSizeMsg, QuitMsg, FileLoadedMsg, FileSavedMsg, IOErrorMsg>;
 
 } // namespace snip::runtime

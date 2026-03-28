@@ -15,18 +15,18 @@ Cmd ReadFile(std::string path) {
       std::vector<std::string> fileData = File::readRange(path, 0, INT_MAX);
       return FileLoadedMsg{path, std::move(fileData)};
 
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       return IOErrorMsg{"read", path, e.what()};
     }
   };
 }
 
-Cmd WriteFile(std::string path, const std::vector<std::string> &buffer) {
+Cmd WriteFile(std::string path, const std::vector<std::string>& buffer) {
   return [path, buffer]() -> std::optional<Msg> {
     try {
       const std::size_t bytes = File::writeAll(path, buffer);
       return FileSavedMsg{path, bytes, buffer.size()};
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       return IOErrorMsg{"write", path, e.what()};
     }
   };

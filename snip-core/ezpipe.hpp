@@ -16,7 +16,7 @@ public:
   void write(char c);
 
   // Pull a byte from the read-end
-  bool read(char &c);
+  bool read(char& c);
 
   // Empty pipe
   void clear();

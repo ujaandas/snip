@@ -20,14 +20,16 @@ ThreadPool::ThreadPool(size_t num_threads) : tasks(false) {
   }
 }
 
-void ThreadPool::enqueue(std::function<void()> task) { tasks.ccpush(task); }
+void ThreadPool::enqueue(std::function<void()> task) {
+  tasks.ccpush(task);
+}
 
 ThreadPool::~ThreadPool() {
   // Stop accepting items and wake up all sleeping workers
   tasks.close();
 
   // Wait for everyone to finish their current tasks
-  for (std::thread &worker : workers) {
+  for (std::thread& worker : workers) {
     if (worker.joinable()) {
       worker.join();
     }

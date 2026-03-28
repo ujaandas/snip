@@ -2,7 +2,7 @@
 
 namespace snip::editor {
 
-void SplitLineBuffer::changeLine(const std::string &newLine) {
+void SplitLineBuffer::changeLine(const std::string& newLine) {
   if (cursorPos > newLine.size()) {
     cursorPos = newLine.size();
   }

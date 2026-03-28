@@ -1,4 +1,5 @@
 #include "event_loop.hpp"
+#include <algorithm>
 #include <cerrno>
 #include <poll.h>
 
@@ -6,8 +7,7 @@ namespace snip::core {
 
 EventLoop::EventLoop() {};
 
-EventLoop::EventLoop(std::vector<EventSource> initSources)
-    : sources(initSources) {};
+EventLoop::EventLoop(const std::vector<EventSource>& initSources) : sources(initSources) {};
 
 void EventLoop::run() {
   running = true;
@@ -15,10 +15,10 @@ void EventLoop::run() {
   while (running) {
     // Build a struct of fds instead of going thru each manually
     // We can pass this to poll() directly
-    std::vector<struct pollfd> pfds;
-    for (auto &src : sources) {
-      pfds.push_back({src.getFd(), POLLIN, 0});
-    }
+    std::vector<struct pollfd> pfds(sources.size());
+
+    std::transform(sources.begin(), sources.end(), pfds.begin(),
+                   [](const auto& src) { return pollfd{src.getFd(), POLLIN, 0}; });
 
     // Wait and poll
     if (poll(pfds.data(), pfds.size(), -1) < 0) {
@@ -42,8 +42,12 @@ void EventLoop::run() {
   }
 }
 
-void EventLoop::addSource(EventSource es) { sources.push_back(es); };
+void EventLoop::addSource(EventSource es) {
+  sources.push_back(es);
+};
 
-void EventLoop::stop() { running = false; }
+void EventLoop::stop() {
+  running = false;
+}
 
 } // namespace snip::core

@@ -13,7 +13,7 @@ private:
 
 public:
   EventLoop();
-  EventLoop(std::vector<EventSource> initSources);
+  explicit EventLoop(const std::vector<EventSource>& initSources);
   void addSource(EventSource es);
   void run();
   void stop();

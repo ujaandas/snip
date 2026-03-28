@@ -15,9 +15,9 @@ private:
   std::condition_variable cv;
 
 public:
-  CCQueue(bool isAsync) : async(isAsync) {};
+  explicit CCQueue(bool isAsync) : async(isAsync) {};
 
-  void ccpush(const T &item) {
+  void ccpush(const T& item) {
     {
       std::unique_lock<std::mutex> lock(mutex);
       if (closed) {
@@ -28,7 +28,7 @@ public:
     cv.notify_one();
   }
 
-  bool ccawait(T &item) {
+  bool ccawait(T& item) {
     std::unique_lock<std::mutex> lock(mutex);
 
     if (!async) {

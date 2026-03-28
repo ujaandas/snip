@@ -8,7 +8,7 @@
 namespace snip::ui {
 namespace {
 
-std::string clipLine(const std::string &line, int width) {
+std::string clipLine(const std::string& line, int width) {
   if (width <= 0) {
     return "";
   }
@@ -33,17 +33,15 @@ std::string padRight(std::string s, int width) {
 }
 
 std::string statusBar(std::string_view text, int width) {
-  return std::string(ansi::REVERSE) + padRight(std::string(text), width) +
-         std::string(ansi::RESET);
+  return std::string(ansi::REVERSE) + padRight(std::string(text), width) + std::string(ansi::RESET);
 }
 
 } // namespace
 
-std::string AnsiRenderer::render(const editor::ViewModel &vm) const {
+std::string AnsiRenderer::render(const editor::ViewModel& vm) const {
   std::string out;
 
-  out += vm.hideCursor ? std::string(ansi::HIDE_CURSOR)
-                       : std::string(ansi::SHOW_CURSOR);
+  out += vm.hideCursor ? std::string(ansi::HIDE_CURSOR) : std::string(ansi::SHOW_CURSOR);
 
   if (vm.clear) {
     out += std::string(ansi::CLEAR_SCREEN);

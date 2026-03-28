@@ -18,7 +18,7 @@ struct WindowSize {
 };
 
 Session startSession(bool echo = false);
-void endSession(const Session &session);
+void endSession(const Session& session);
 
 void writeStdout(std::string_view bytes);
 std::optional<WindowSize> queryWindowSize(int fd);

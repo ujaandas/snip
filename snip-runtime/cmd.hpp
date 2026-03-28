@@ -14,6 +14,6 @@ using Cmd = std::function<std::optional<Msg>()>;
 Cmd Quit();
 
 Cmd ReadFile(std::string path);
-Cmd WriteFile(std::string path, const std::vector<std::string> &buffer);
+Cmd WriteFile(std::string path, const std::vector<std::string>& buffer);
 
 } // namespace snip::runtime

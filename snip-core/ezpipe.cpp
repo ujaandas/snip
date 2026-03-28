@@ -22,7 +22,7 @@ void EzPipe::write(char c) {
   }
 }
 // Pull a byte from the read-end
-bool EzPipe::read(char &c) {
+bool EzPipe::read(char& c) {
   if (fds[0] == -1) {
     return false;
   }
@@ -43,8 +43,12 @@ void EzPipe::clear() {
   }
 }
 
-int EzPipe::getWriteFd() { return fds[1]; }
-int EzPipe::getReadFd() { return fds[0]; }
+int EzPipe::getWriteFd() {
+  return fds[1];
+}
+int EzPipe::getReadFd() {
+  return fds[0];
+}
 
 EzPipe::~EzPipe() {
   if (fds[0] != -1) {
