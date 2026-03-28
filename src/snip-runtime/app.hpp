@@ -9,6 +9,8 @@
 #include "snip-core/thread_pool.hpp"
 #include <functional>
 #include <iostream>
+#include <utility>
+#include <variant>
 
 namespace snip::runtime {
 template <typename State> struct UpdateResult {
@@ -32,10 +34,9 @@ public:
   App(State &s) : state(s) {}
   virtual ~App() = default;
 
-  // T is arbitrary and can include richer framework payloads.
+  // T must be a supported runtime::Msg alternative.
   template <typename T> void post(T &&msg) {
-    // Convert to std::any as we push it into the queue.
-    msgQ.ccpush(std::forward<T>(msg));
+    msgQ.ccpush(Msg{std::forward<T>(msg)});
     wakePipe.write('!');
   }
 
@@ -78,7 +79,7 @@ private:
       Msg msg;
       // Message handler
       while (msgQ.ccawait(msg)) {
-        if (std::any_cast<QuitMsg>(&msg)) {
+        if (std::holds_alternative<QuitMsg>(msg)) {
           quit();
 
           if (!running && loop) {
@@ -89,7 +90,7 @@ private:
           continue;
         }
 
-        UpdateResult result = update(state, msg);
+        UpdateResult result = update(state, std::move(msg));
         state = result.newState;
 
         std::cout << render(state) << std::flush;

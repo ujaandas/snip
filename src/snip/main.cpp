@@ -1,10 +1,40 @@
 #include "snip-core/event_loop.hpp"
 #include "snip-core/event_source.hpp"
+#include "snip-editor/editor.hpp"
+#include "snip-runtime/app.hpp"
 #include "snip-runtime/input.hpp"
 #include "snip-runtime/terminal/terminal.hpp"
-#include "snip/snip.hpp"
+#include "snip-ui/renderer.hpp"
 #include <signal.h>
 #include <unistd.h>
+
+namespace {
+
+class SnipApp final : public snip::runtime::App<snip::editor::State> {
+private:
+  snip::editor::Editor editor;
+  const snip::ui::Renderer &renderer;
+
+public:
+  SnipApp(snip::editor::State &state, const snip::ui::Renderer &renderer)
+      : snip::runtime::App<snip::editor::State>(state), renderer(renderer) {}
+
+protected:
+  std::vector<snip::runtime::Cmd> init() override { return editor.init(); }
+
+  snip::runtime::UpdateResult<snip::editor::State>
+
+  update(snip::editor::State &currentState, snip::runtime::Msg msg) override {
+    auto result = editor.update(currentState, std::move(msg));
+    return {std::move(result.newState), std::move(result.commands)};
+  }
+
+  std::string render(snip::editor::State &currentState) override {
+    return renderer.render(editor.viewModel(currentState));
+  }
+};
+
+} // namespace
 
 int main() {
   const auto session = snip::runtime::term::startSession(false);
@@ -12,7 +42,7 @@ int main() {
     return 1;
   }
 
-  snip::State model;
+  snip::editor::State model;
 
   // Set initial window size
   if (auto size = snip::runtime::term::queryWindowSize(STDOUT_FILENO)) {
@@ -21,7 +51,8 @@ int main() {
   }
 
   // Initialize app and event loop
-  snip::Snip app(model);
+  snip::ui::AnsiRenderer renderer;
+  SnipApp app(model, renderer);
   snip::core::EventLoop loop;
 
   // Register STDIN input source
@@ -36,7 +67,6 @@ int main() {
   // Register SIGWINCH resize source
   auto resize = snip::core::EventSource::fromSignal(SIGWINCH);
   resize.onReadReady = [&app]() {
-    app.post(snip::runtime::SignalMsg{SIGWINCH});
     if (auto size = snip::runtime::term::queryWindowSize(STDOUT_FILENO)) {
       app.post(snip::runtime::WindowSizeMsg{size->width, size->height});
     }

@@ -1,19 +1,11 @@
 #pragma once
 
-#include <any>
 #include <cstddef>
-#include <cstdint>
 #include <string>
+#include <variant>
 #include <vector>
 
 namespace snip::runtime {
-
-// The universal message type
-using Msg = std::any;
-
-struct KeyMsg {
-  char key;
-};
 
 enum class KeyCode {
   Rune,
@@ -48,49 +40,8 @@ struct WindowSizeMsg {
   int height;
 };
 
-struct FocusMsg {
-  bool focused;
-};
-
-struct SignalMsg {
-  int signal;
-};
-
-enum class MouseButton {
-  Left,
-  Middle,
-  Right,
-  WheelUp,
-  WheelDown,
-  None,
-};
-
-enum class MouseAction {
-  Press,
-  Release,
-  Drag,
-  Move,
-  Scroll,
-};
-
-struct MouseMsg {
-  MouseButton button = MouseButton::None;
-  MouseAction action = MouseAction::Move;
-  int row = 0;
-  int col = 0;
-  bool shift = false;
-  bool alt = false;
-  bool ctrl = false;
-};
-
 // Framework-level shutdown signal
 struct QuitMsg {};
-
-// Generic delayed/timer tick message
-struct TickMsg {
-  std::string id;
-  std::uint64_t seq;
-};
 
 // Message emitted when a file is successfully loaded by a background worker
 struct FileLoadedMsg {
@@ -112,9 +63,7 @@ struct IOErrorMsg {
   std::string errorMessage;
 };
 
-// Message emitted if a file fails to load
-struct ErrorMsg {
-  std::string errorMessage;
-};
+using Msg = std::variant<KeyPressMsg, WindowSizeMsg, QuitMsg, FileLoadedMsg,
+                         FileSavedMsg, IOErrorMsg>;
 
 } // namespace snip::runtime

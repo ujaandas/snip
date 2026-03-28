@@ -1,6 +1,6 @@
 #include "splitline.hpp"
 
-namespace snip {
+namespace snip::editor {
 
 void SplitLineBuffer::changeLine(const std::string &newLine) {
   if (cursorPos > newLine.size()) {
@@ -38,32 +38,9 @@ bool SplitLineBuffer::shiftLeft() {
   return true;
 }
 
-void SplitLineBuffer::expandGap(int amount) {
-  if (amount <= 0) {
-    return;
-  }
-
-  left.reserve(left.size() + amount);
-  rightReversed.reserve(rightReversed.size() + amount);
-}
-
 void SplitLineBuffer::insert(char c) {
   left.push_back(c);
   cursorPos++;
-}
-
-void SplitLineBuffer::insert(const std::string &text) {
-  left += text;
-  cursorPos += text.size();
-}
-
-void SplitLineBuffer::deleteBefore() {
-  if (left.empty()) {
-    return;
-  }
-
-  left.pop_back();
-  cursorPos--;
 }
 
 std::string SplitLineBuffer::string() const {
@@ -77,4 +54,4 @@ std::string SplitLineBuffer::string() const {
   return out;
 }
 
-} // namespace snip
+} // namespace snip::editor

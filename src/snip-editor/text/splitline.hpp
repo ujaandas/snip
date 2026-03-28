@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <string>
 
-namespace snip {
+namespace snip::editor {
 
 class SplitLineBuffer {
 private:
@@ -19,17 +19,11 @@ public:
 
   bool shiftLeft();
 
-  void expandGap(int amount = 10);
-
   void insert(char c);
-
-  void insert(const std::string &text);
-
-  void deleteBefore();
 
   std::size_t length() const { return left.size() + rightReversed.size(); }
 
   std::string string() const;
 };
 
-} // namespace snip
+} // namespace snip::editor

@@ -1,12 +1,18 @@
 
 #include "terminal.hpp"
-#include "ansi.hpp"
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
 namespace snip::runtime::term {
+
+namespace {
+constexpr std::string_view SHOW_CURSOR = "\x1b[?25h";
+constexpr std::string_view ENTER_ALTBUF = "\x1b[?1049h";
+constexpr std::string_view EXIT_ALTBUF = "\x1b[?1049l";
+constexpr std::string_view CLEAR_SCREEN = "\x1b[2J";
+} // namespace
 
 void writeStdout(std::string_view bytes) {
   (void)::write(STDOUT_FILENO, bytes.data(), bytes.size());
@@ -46,8 +52,8 @@ Session startSession(bool echo) {
     return session;
   }
 
-  writeStdout(::snip::runtime::ansi::ENTER_ALTBUF);
-  writeStdout(::snip::runtime::ansi::CLEAR_SCREEN);
+  writeStdout(ENTER_ALTBUF);
+  writeStdout(CLEAR_SCREEN);
 
   session.valid = true;
   return session;
@@ -58,8 +64,8 @@ void endSession(const Session &session) {
     return;
   }
 
-  writeStdout(::snip::runtime::ansi::SHOW_CURSOR);
-  writeStdout(::snip::runtime::ansi::EXIT_ALTBUF);
+  writeStdout(SHOW_CURSOR);
+  writeStdout(EXIT_ALTBUF);
 
   tcsetattr(STDIN_FILENO, TCSANOW, &session.oldTermios);
   fcntl(STDIN_FILENO, F_SETFL, session.oldFlags);
