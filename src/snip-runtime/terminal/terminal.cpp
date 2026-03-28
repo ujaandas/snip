@@ -6,7 +6,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-namespace snip::term {
+namespace snip::runtime::term {
 
 void writeStdout(std::string_view bytes) {
   (void)::write(STDOUT_FILENO, bytes.data(), bytes.size());
@@ -46,8 +46,8 @@ Session startSession(bool echo) {
     return session;
   }
 
-  writeStdout(ansi::ENTER_ALTBUF);
-  writeStdout(ansi::CLEAR_SCREEN);
+  writeStdout(::snip::runtime::ansi::ENTER_ALTBUF);
+  writeStdout(::snip::runtime::ansi::CLEAR_SCREEN);
 
   session.valid = true;
   return session;
@@ -58,8 +58,8 @@ void endSession(const Session &session) {
     return;
   }
 
-  writeStdout(ansi::SHOW_CURSOR);
-  writeStdout(ansi::EXIT_ALTBUF);
+  writeStdout(::snip::runtime::ansi::SHOW_CURSOR);
+  writeStdout(::snip::runtime::ansi::EXIT_ALTBUF);
 
   tcsetattr(STDIN_FILENO, TCSANOW, &session.oldTermios);
   fcntl(STDIN_FILENO, F_SETFL, session.oldFlags);
@@ -74,4 +74,4 @@ std::optional<WindowSize> queryWindowSize(int fd) {
   return WindowSize{w.ws_col, w.ws_row};
 }
 
-} // namespace snip::term
+} // namespace snip::runtime::term

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace snip {
+namespace snip::runtime {
 
 // The universal message type
 using Msg = std::any;
@@ -117,4 +117,4 @@ struct ErrorMsg {
   std::string errorMessage;
 };
 
-} // namespace snip
+} // namespace snip::runtime

@@ -3,7 +3,7 @@
 #include <string>
 #include <string_view>
 
-namespace snip::ansi {
+namespace snip::runtime::ansi {
 
 // Core Control
 constexpr std::string_view HIDE_CURSOR = "\x1b[?25l";
@@ -29,4 +29,4 @@ inline std::string eraseLineAt(int row) {
   return moveCursor(row, 1) + std::string(CLEAR_LINE);
 }
 
-} // namespace snip::ansi
+} // namespace snip::runtime::ansi

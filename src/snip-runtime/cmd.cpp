@@ -9,7 +9,7 @@
 #include <sys/ioctl.h>
 #include <thread>
 
-namespace snip {
+namespace snip::runtime {
 
 Cmd Noop() {
   return []() -> std::optional<Msg> { return std::nullopt; };
@@ -89,4 +89,4 @@ Cmd WriteFile(std::string path, const std::vector<std::string> &buffer) {
   };
 }
 
-} // namespace snip
+} // namespace snip::runtime

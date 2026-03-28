@@ -4,7 +4,7 @@
 #include <string_view>
 #include <termios.h>
 
-namespace snip::term {
+namespace snip::runtime::term {
 
 struct Session {
   termios oldTermios{};
@@ -23,4 +23,4 @@ void endSession(const Session &session);
 void writeStdout(std::string_view bytes);
 std::optional<WindowSize> queryWindowSize(int fd);
 
-} // namespace snip::term
+} // namespace snip::runtime::term

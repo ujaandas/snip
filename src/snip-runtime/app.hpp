@@ -10,7 +10,7 @@
 #include <functional>
 #include <iostream>
 
-namespace snip {
+namespace snip::runtime {
 template <typename State> struct UpdateResult {
   State newState;
   std::vector<Cmd> commands;
@@ -112,4 +112,4 @@ protected:
 
   void quit() { running = false; }
 };
-} // namespace snip
+} // namespace snip::runtime

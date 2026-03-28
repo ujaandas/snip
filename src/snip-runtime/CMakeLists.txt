@@ -1,7 +1,6 @@
 add_library(snip-runtime STATIC
   cmd.cpp
   input.cpp
-  loop_wiring.cpp
   file/file.cpp
   terminal/terminal.cpp
 )

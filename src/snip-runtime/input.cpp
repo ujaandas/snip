@@ -4,7 +4,7 @@
 #include <cctype>
 #include <unistd.h>
 
-namespace snip::input {
+namespace snip::runtime::input {
 namespace {
 
 std::optional<KeyPressMsg> parseEscape(const std::string &raw) {
@@ -118,4 +118,4 @@ std::optional<KeyPressMsg> readKeyPress(int fd) {
   return parseKeySequence(raw);
 }
 
-} // namespace snip::input
+} // namespace snip::runtime::input
