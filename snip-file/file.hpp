@@ -7,6 +7,11 @@
 // Stateless file I/O helpers
 namespace snip::file {
 
+/*
+  File provides static methods for reading and writing files.
+  TODO: Make this not completely crap. Also consider adding caching and stateful file handles for
+  better performance on large files and to support editing files larger than available memory.
+*/
 class File {
 public:
   File() = delete;
