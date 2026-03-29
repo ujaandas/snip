@@ -1,5 +1,7 @@
 #include "editor.hpp"
+#include "snip-editor/view_model.hpp"
 
+#include <cctype>
 #include <string>
 #include <utility>
 
@@ -7,7 +9,7 @@ namespace snip::editor {
 namespace {
 
 void moveDown(State& state) {
-  const int bufferLines = static_cast<int>(state.buffer.size());
+  const int bufferLines = state.buffer.size();
   if (state.cursor.line + 1 >= bufferLines) {
     return;
   }
@@ -58,15 +60,44 @@ std::vector<runtime::Cmd> Editor::init() const {
 
 UpdateResult Editor::update(const State& currentState, runtime::Msg msg) const {
   State newState = currentState;
-  std::vector<runtime::Cmd> commands;
+  std::vector<runtime::Cmd> cmds;
 
   if (auto* m = std::get_if<runtime::KeyPressMsg>(&msg)) {
     const char c = m->rune;
-    newState.statusText = std::string("Key: ") + c;
+
+    newState.statusText = "Key: " + std::string(1, c) + " (" + std::to_string(c) + ")";
+
+    // If digit, multiply verb
+    if (std::isdigit(static_cast<unsigned char>(c))) {
+      newState.action.count = newState.action.count * 10 + (c - '0');
+      return {newState, std::move(cmds)};
+    }
+
+    if (auto it = ct.nouns.find(c); it != ct.nouns.end()) {
+      int n = std::max(1, newState.action.count);
+      newState.action.count = 0;
+
+      for (int i = 0; i < n; ++i) {
+        it->second(newState);
+      }
+
+      return {newState, std::move(cmds)};
+    }
+
+    if (auto it = ct.verbs.find(c); it != ct.verbs.end()) {
+      int n = std::max(1, newState.action.count);
+      newState.action.count = 0;
+
+      for (int i = 0; i < n; ++i) {
+        it->second(newState);
+      }
+
+      return {newState, std::move(cmds)};
+    }
 
     switch (c) {
     case 'q':
-      commands.push_back(runtime::Quit());
+      cmds.push_back(runtime::Quit());
       break;
     case 'j':
       moveDown(newState);
@@ -108,11 +139,12 @@ UpdateResult Editor::update(const State& currentState, runtime::Msg msg) const {
         "Saved " + m->filepath + " (" + std::to_string(m->bytesWritten) + " bytes)";
   }
 
-  return {std::move(newState), std::move(commands)};
+  return {std::move(newState), std::move(cmds)};
 }
 
 ViewModel Editor::viewModel(const State& state) const {
   ViewModel vm;
+
   vm.lines = state.buffer;
   vm.width = state.window.width;
   vm.height = state.window.height;
@@ -120,12 +152,20 @@ ViewModel Editor::viewModel(const State& state) const {
   vm.cursor.hidden = false;
   vm.clear = true;
 
-  if (state.cursor.line >= 0 && state.cursor.line < static_cast<int>(vm.lines.size())) {
+  if (state.cursor.line >= 0 && state.cursor.line < vm.lines.size()) {
     vm.lines[state.cursor.line] = state.curLine.string();
   }
 
+  // Build selections
+  vm.selections.clear();
+  for (const auto& sel : state.action.sel) {
+    vm.selections.push_back(SelectionVm{static_cast<int>(sel.line_start),
+                                        static_cast<int>(sel.col_start),
+                                        static_cast<int>(sel.col_end)});
+  }
+
   vm.cursor.row = (state.cursor.line - state.scrollOffset) + 1;
-  vm.cursor.col = static_cast<int>(state.curLine.cursorPos) + 1;
+  vm.cursor.col = state.curLine.cursorPos + 1;
   vm.statusText = makeStatus(state);
 
   return vm;

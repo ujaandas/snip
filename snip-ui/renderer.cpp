@@ -12,22 +12,22 @@ std::string clipLine(const std::string& line, int width) {
   if (width <= 0) {
     return "";
   }
-  if (line.size() <= static_cast<std::size_t>(width)) {
+  if (line.size() <= width) {
     return line;
   }
-  return line.substr(0, static_cast<std::size_t>(width));
+  return line.substr(0, width);
 }
 
 std::string padRight(std::string s, int width) {
   if (width <= 0) {
     return "";
   }
-  if (s.size() > static_cast<std::size_t>(width)) {
-    s.resize(static_cast<std::size_t>(width));
+  if (s.size() > width) {
+    s.resize(width);
     return s;
   }
-  if (s.size() < static_cast<std::size_t>(width)) {
-    s.append(static_cast<std::size_t>(width) - s.size(), ' ');
+  if (s.size() < width) {
+    s.append(width - s.size(), ' ');
   }
   return s;
 }
@@ -54,10 +54,37 @@ std::string AnsiRenderer::render(const editor::ViewModel& vm) const {
     const int lineIndex = vm.scrollOffset + i;
     std::string row;
 
-    if (lineIndex >= 0 && lineIndex < static_cast<int>(vm.lines.size())) {
-      row = clipLine(vm.lines[static_cast<std::size_t>(lineIndex)], vm.width);
+    if (lineIndex >= 0 && lineIndex < vm.lines.size()) {
+      const std::string& src = vm.lines[lineIndex];
+
+      // Collect selection ranges that touch this line
+      std::vector<std::pair<int, int>> ranges;
+      for (auto const& sel : vm.selections) {
+        if (sel.line == lineIndex)
+          ranges.push_back({sel.col_start, sel.col_end});
+      }
+
+      // Build the row with highlighting
+      row.reserve(src.size());
+      for (int col = 0; col < src.size(); ++col) {
+        bool in_sel = false;
+        for (auto [s, e] : ranges) {
+          if (col >= s && col < e) {
+            in_sel = true;
+            break;
+          }
+        }
+        if (in_sel) {
+          row += ansi::REVERSE;
+          row.push_back(src[col]);
+          row += ansi::RESET;
+        } else {
+          row.push_back(src[col]);
+        }
+      }
     }
 
+    row = clipLine(std::move(row), vm.width);
     out += padRight(std::move(row), vm.width);
     out += "\n";
   }

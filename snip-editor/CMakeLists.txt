@@ -1,6 +1,7 @@
 add_library(snip-editor STATIC
   editor.cpp
   text/splitline.cpp
+  motion.cpp
 )
 
 snip_apply_target_defaults(snip-editor)

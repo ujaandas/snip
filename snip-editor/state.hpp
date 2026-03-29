@@ -1,5 +1,6 @@
 #pragma once
 
+#include "snip-editor/motion.hpp"
 #include "snip-editor/text/splitline.hpp"
 #include <string>
 #include <vector>
@@ -18,6 +19,7 @@ struct CursorState {
 struct State {
   WindowState window;
   CursorState cursor;
+  Action action;
   int scrollOffset = 0;
 
   std::vector<std::string> buffer;

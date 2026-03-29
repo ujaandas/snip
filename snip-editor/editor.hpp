@@ -1,5 +1,6 @@
 #pragma once
 
+#include "snip-editor/motion.hpp"
 #include "snip-editor/state.hpp"
 #include "snip-editor/view_model.hpp"
 #include "snip-runtime/cmd.hpp"
@@ -18,6 +19,9 @@ struct UpdateResult {
   for rendering. It also produces commands for side effects like file I/O.
 */
 class Editor {
+private:
+  CommandTable ct = mk_default_cmds();
+
 public:
   std::vector<runtime::Cmd> init() const;
   UpdateResult update(const State& currentState, runtime::Msg msg) const;

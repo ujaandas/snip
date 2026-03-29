@@ -11,6 +11,12 @@ struct Cursor {
   int col = 1;
 };
 
+struct SelectionVm {
+  int line;
+  int col_start;
+  int col_end;
+};
+
 struct ViewModel {
   std::vector<std::string> lines;
   std::string statusText;
@@ -19,6 +25,7 @@ struct ViewModel {
   int scrollOffset = 0;
   bool clear = true;
   Cursor cursor;
+  std::vector<SelectionVm> selections;
 };
 
 } // namespace snip::editor
