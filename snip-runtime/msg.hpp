@@ -63,6 +63,9 @@ struct IOErrorMsg {
   std::string errorMessage;
 };
 
+/*
+  Msg is a variant type that represents any information exchanged between components.
+*/
 using Msg =
     std::variant<KeyPressMsg, WindowSizeMsg, QuitMsg, FileLoadedMsg, FileSavedMsg, IOErrorMsg>;
 

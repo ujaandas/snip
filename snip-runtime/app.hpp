@@ -18,6 +18,14 @@ template <typename State> struct UpdateResult {
   std::vector<Cmd> commands;
 };
 
+/*
+  App represent's Snip's runtime and provides an API for managing the application state and handling
+  events. It provides a main event loop, a message passing system, and a simple command abstraction
+  for running background tasks.
+
+  We subclass App and implement the init, update, and render methods. Then call
+  run() with an EventLoop instance to start the app.
+*/
 template <typename State> class App {
 private:
   core::CCQueue<Msg> msgQ{true};

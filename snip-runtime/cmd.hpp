@@ -8,7 +8,9 @@
 
 namespace snip::runtime {
 
-// A Command is a deferred side-effect that optionally returns a Msg
+/*
+  A Command is a deferred side-effect that optionally returns a Msg
+ */
 using Cmd = std::function<std::optional<Msg>()>;
 
 Cmd Quit();
