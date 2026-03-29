@@ -7,8 +7,9 @@
 namespace snip::core {
 
 /*
-Concurrent-safe queue.
-t
+  CCQueue is a thread-safe queue that supports both synchronous and asynchronous modes.
+  In synchronous mode, ccawait will block until an item is available or the queue is closed.
+  In asynchronous mode, ccawait will return immediately with false if the queue is empty.
 */
 template <typename T> class CCQueue {
 private:

@@ -6,6 +6,10 @@
 
 namespace snip::core {
 
+/*
+  The EventLoop manages a collection of EventSources and dispatches events to them.
+  It runs in a single thread and processes events in a loop until stopped.
+*/
 class EventLoop {
 private:
   std::vector<EventSource> sources = {};

@@ -5,6 +5,10 @@
 
 namespace snip::core {
 
+/*
+  EzPipe is a simple pipe implementation that provides a way to communicate between threads.
+  TODO: Replace with eventfd or a more efficient mechanism if needed.
+*/
 class EzPipe {
 private:
   int fds[2] = {-1, -1};

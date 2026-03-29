@@ -7,6 +7,12 @@
 
 namespace snip::core {
 
+/*
+  EventSource represents a source of events that can be monitored by the EventLoop.
+  It can be created from a file descriptor (eg; STDIN for user input) or from a signal (eg; SIGWINCH
+  for window resize). Each EventSource has an onReadReady callback that is executed when the
+  EventLoop detects that the source is ready to read.
+*/
 class EventSource {
 private:
   int fd;

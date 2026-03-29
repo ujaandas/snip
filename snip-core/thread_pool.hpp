@@ -8,6 +8,11 @@
 
 namespace snip::core {
 
+/*
+  ThreadPool manages a collection of worker threads that execute tasks from a shared queue.
+  Tasks are enqueued via the enqueue() method, and worker threads continuously pull and execute
+  tasks until the ThreadPool is destroyed.
+*/
 class ThreadPool {
 private:
   std::vector<std::thread> workers;
