@@ -31,6 +31,6 @@ struct CommandTable {
   std::unordered_map<char, Verb> verbs;
 };
 
-CommandTable mk_default_cmds();
+const CommandTable mk_default_cmds();
 
 } // namespace snip::editor

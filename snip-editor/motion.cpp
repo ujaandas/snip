@@ -2,7 +2,7 @@
 #include "snip-editor/state.hpp"
 
 namespace snip::editor {
-CommandTable mk_default_cmds() {
+const CommandTable mk_default_cmds() {
   CommandTable t;
 
   t.nouns['w'] = [](State& s) {

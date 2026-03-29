@@ -20,7 +20,7 @@ struct UpdateResult {
 */
 class Editor {
 private:
-  CommandTable ct = mk_default_cmds();
+  const CommandTable ct = mk_default_cmds();
 
 public:
   std::vector<runtime::Cmd> init() const;
