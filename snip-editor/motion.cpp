@@ -13,11 +13,11 @@ const CommandTable mk_default_cmds() {
       return;
     }
 
-    if (s.cursor.line < 0 || s.cursor.line >= static_cast<int>(s.buffer.size())) {
+    if (s.cursorLine < 0 || s.cursorLine >= static_cast<int>(s.buffer.size())) {
       return;
     }
 
-    const auto& line = s.buffer[static_cast<std::size_t>(s.cursor.line)];
+    const auto& line = s.buffer[static_cast<std::size_t>(s.cursorLine)];
 
     auto is_word = [](char c) { return std::isalnum(static_cast<unsigned char>(c)) || c == '_'; };
 
@@ -25,7 +25,7 @@ const CommandTable mk_default_cmds() {
 
     if (s.action.noun == 'w' && !s.action.sel.empty()) {
       const auto& last = s.action.sel.back();
-      if (last.line_start == static_cast<std::size_t>(s.cursor.line)) {
+      if (last.line_start == static_cast<std::size_t>(s.cursorLine)) {
         i = std::min(last.col_end, line.size());
       }
     }
@@ -46,8 +46,8 @@ const CommandTable mk_default_cmds() {
       ++right;
     }
 
-    s.action.sel.push_back({static_cast<std::size_t>(s.cursor.line), left,
-                            static_cast<std::size_t>(s.cursor.line), right, SelMode::Character});
+    s.action.sel.push_back({static_cast<std::size_t>(s.cursorLine), left,
+                            static_cast<std::size_t>(s.cursorLine), right, SelMode::Character});
     s.action.noun = 'w';
   };
 

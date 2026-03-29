@@ -12,13 +12,9 @@ struct WindowState {
   int height = 24;
 };
 
-struct CursorState {
-  int line = 0;
-};
-
 struct State {
   WindowState window;
-  CursorState cursor;
+  int cursorLine = 0;
   Action action;
   int scrollOffset = 0;
 

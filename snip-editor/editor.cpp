@@ -10,25 +10,25 @@ namespace {
 
 void moveDown(State& state) {
   const int bufferLines = state.buffer.size();
-  if (state.cursor.line + 1 >= bufferLines) {
+  if (state.cursorLine + 1 >= bufferLines) {
     return;
   }
 
-  state.cursor.line++;
-  state.curLine.changeLine(state.buffer[state.cursor.line]);
-  if (state.cursor.line >= state.scrollOffset + state.window.height - 1) {
+  state.cursorLine++;
+  state.curLine.changeLine(state.buffer[state.cursorLine]);
+  if (state.cursorLine >= state.scrollOffset + state.window.height - 1) {
     state.scrollOffset++;
   }
 }
 
 void moveUp(State& state) {
-  if (state.cursor.line <= 0) {
+  if (state.cursorLine <= 0) {
     return;
   }
 
-  state.cursor.line--;
-  state.curLine.changeLine(state.buffer[state.cursor.line]);
-  if (state.cursor.line < state.scrollOffset) {
+  state.cursorLine--;
+  state.curLine.changeLine(state.buffer[state.cursorLine]);
+  if (state.cursorLine < state.scrollOffset) {
     state.scrollOffset--;
   }
 }
@@ -46,7 +46,7 @@ void moveRight(State& state) {
 }
 
 std::string makeStatus(const State& state) {
-  return "Line " + std::to_string(state.cursor.line) + "  Col " +
+  return "Line " + std::to_string(state.cursorLine) + "  Col " +
          std::to_string(state.curLine.cursorPos) + "  Scroll " +
          std::to_string(state.scrollOffset) + "  Size: " + std::to_string(state.window.width) +
          "x" + std::to_string(state.window.height) + "  " + state.statusText;
@@ -124,7 +124,7 @@ UpdateResult Editor::update(const State& currentState, runtime::Msg msg) const {
   } else if (auto* m = std::get_if<runtime::FileLoadedMsg>(&msg)) {
     newState.buffer = std::move(m->lines);
     newState.filename = m->filepath;
-    newState.cursor.line = 0;
+    newState.cursorLine = 0;
 
     if (!newState.buffer.empty()) {
       newState.curLine.cursorPos = 0;
@@ -152,8 +152,8 @@ ViewModel Editor::viewModel(const State& state) const {
   vm.cursor.hidden = false;
   vm.clear = true;
 
-  if (state.cursor.line >= 0 && state.cursor.line < vm.lines.size()) {
-    vm.lines[state.cursor.line] = state.curLine.string();
+  if (state.cursorLine >= 0 && state.cursorLine < vm.lines.size()) {
+    vm.lines[state.cursorLine] = state.curLine.string();
   }
 
   // Build selections
@@ -164,7 +164,7 @@ ViewModel Editor::viewModel(const State& state) const {
                                         static_cast<int>(sel.col_end)});
   }
 
-  vm.cursor.row = (state.cursor.line - state.scrollOffset) + 1;
+  vm.cursor.row = (state.cursorLine - state.scrollOffset) + 1;
   vm.cursor.col = state.curLine.cursorPos + 1;
   vm.statusText = makeStatus(state);
 
