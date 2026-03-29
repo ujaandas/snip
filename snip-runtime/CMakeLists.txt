@@ -1,8 +1,6 @@
 add_library(snip-runtime STATIC
   cmd.cpp
   input.cpp
-  file/file.cpp
-  terminal/terminal.cpp
 )
 
 snip_apply_target_defaults(snip-runtime)
@@ -10,6 +8,8 @@ snip_apply_target_defaults(snip-runtime)
 target_link_libraries(snip-runtime
   PUBLIC
     snip-core
+  PRIVATE
+    snip-file
 )
 
 add_library(snip::runtime ALIAS snip-runtime)

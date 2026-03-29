@@ -1,5 +1,5 @@
 #include "cmd.hpp"
-#include "file/file.hpp"
+#include "snip-file/file.hpp"
 #include <climits>
 #include <exception>
 
@@ -12,7 +12,7 @@ Cmd Quit() {
 Cmd ReadFile(std::string path) {
   return [path]() -> std::optional<Msg> {
     try {
-      std::vector<std::string> fileData = File::readRange(path, 0, INT_MAX);
+      std::vector<std::string> fileData = snip::file::File::readRange(path, 0, INT_MAX);
       return FileLoadedMsg{path, std::move(fileData)};
 
     } catch (const std::exception& e) {
@@ -24,7 +24,7 @@ Cmd ReadFile(std::string path) {
 Cmd WriteFile(std::string path, const std::vector<std::string>& buffer) {
   return [path, buffer]() -> std::optional<Msg> {
     try {
-      const std::size_t bytes = File::writeAll(path, buffer);
+      const std::size_t bytes = snip::file::File::writeAll(path, buffer);
       return FileSavedMsg{path, bytes, buffer.size()};
     } catch (const std::exception& e) {
       return IOErrorMsg{"write", path, e.what()};

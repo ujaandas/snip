@@ -52,10 +52,22 @@ Concurrency and scheduling primitives:
 
 Runtime integration layer:
 
-- terminal session lifecycle
 - input decoding
-- filesystem adapters
 - command execution and orchestration
+
+### `snip-file`
+
+Filesystem integration layer:
+
+- stateless file read/write helpers
+- line-range extraction utilities
+
+### `snip-term`
+
+Terminal integration layer:
+
+- terminal session lifecycle
+- terminal sizing/output utilities
 
 ### `snip-editor`
 

@@ -1,11 +1,10 @@
-
 #include "terminal.hpp"
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-namespace snip::runtime::term {
+namespace snip::term {
 
 namespace {
 constexpr std::string_view SHOW_CURSOR = "\x1b[?25h";
@@ -110,4 +109,4 @@ std::optional<WindowSize> queryWindowSize(int fd) {
   return std::nullopt;
 }
 
-} // namespace snip::runtime::term
+} // namespace snip::term

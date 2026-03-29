@@ -3,7 +3,7 @@
 #include "snip-editor/editor.hpp"
 #include "snip-runtime/app.hpp"
 #include "snip-runtime/input.hpp"
-#include "snip-runtime/terminal/terminal.hpp"
+#include "snip-term/terminal.hpp"
 #include "snip-ui/renderer.hpp"
 #include <signal.h>
 #include <unistd.h>
@@ -39,7 +39,7 @@ protected:
 } // namespace
 
 int main() {
-  const auto session = snip::runtime::term::startSession(false);
+  const auto session = snip::term::startSession(false);
   if (!session.valid) {
     return 1;
   }
@@ -47,7 +47,7 @@ int main() {
   snip::editor::State model;
 
   // Set initial window size
-  if (auto size = snip::runtime::term::queryWindowSize(STDOUT_FILENO)) {
+  if (auto size = snip::term::queryWindowSize(STDOUT_FILENO)) {
     model.window.width = size->width;
     model.window.height = size->height;
   }
@@ -69,13 +69,13 @@ int main() {
   // Register SIGWINCH resize source
   auto resize = snip::core::EventSource::fromSignal(SIGWINCH);
   resize.onReadReady = [&app]() {
-    if (auto size = snip::runtime::term::queryWindowSize(STDOUT_FILENO)) {
+    if (auto size = snip::term::queryWindowSize(STDOUT_FILENO)) {
       app.post(snip::runtime::WindowSizeMsg{size->width, size->height});
     }
   };
   loop.addSource(std::move(resize));
 
   app.run(loop);
-  snip::runtime::term::endSession(session);
+  snip::term::endSession(session);
   return 0;
 }

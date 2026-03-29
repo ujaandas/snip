@@ -3,7 +3,7 @@
 #include <fstream>
 #include <stdexcept>
 
-namespace snip::runtime {
+namespace snip::file {
 
 std::vector<std::string> File::readAll(const std::string& fp) {
   std::ifstream in(fp);
@@ -58,4 +58,4 @@ std::size_t File::writeAll(const std::string& fp, const std::vector<std::string>
   return bytesWritten;
 }
 
-} // namespace snip::runtime
+} // namespace snip::file

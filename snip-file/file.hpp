@@ -5,7 +5,7 @@
 #include <vector>
 
 // Stateless file I/O helpers
-namespace snip::runtime {
+namespace snip::file {
 
 class File {
 public:
@@ -21,4 +21,4 @@ public:
   static std::size_t writeAll(const std::string& fp, const std::vector<std::string>& lines);
 };
 
-} // namespace snip::runtime
+} // namespace snip::file
