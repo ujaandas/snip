@@ -41,7 +41,7 @@ std::string statusBar(std::string_view text, int width) {
 std::string AnsiRenderer::render(const editor::ViewModel& vm) const {
   std::string out;
 
-  out += vm.hideCursor ? std::string(ansi::HIDE_CURSOR) : std::string(ansi::SHOW_CURSOR);
+  out += vm.cursor.hidden ? std::string(ansi::HIDE_CURSOR) : std::string(ansi::SHOW_CURSOR);
 
   if (vm.clear) {
     out += std::string(ansi::CLEAR_SCREEN);

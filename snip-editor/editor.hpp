@@ -12,6 +12,11 @@ struct UpdateResult {
   std::vector<runtime::Cmd> commands;
 };
 
+/*
+  Editor is responsible for managing the editor state and implementing the core editing logic. It
+  receives messages from the runtime, updates the state accordingly, and produces a new ViewModel
+  for rendering. It also produces commands for side effects like file I/O.
+*/
 class Editor {
 public:
   std::vector<runtime::Cmd> init() const;

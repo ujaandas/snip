@@ -117,7 +117,7 @@ ViewModel Editor::viewModel(const State& state) const {
   vm.width = state.window.width;
   vm.height = state.window.height;
   vm.scrollOffset = state.scrollOffset;
-  vm.hideCursor = false;
+  vm.cursor.hidden = false;
   vm.clear = true;
 
   if (state.cursor.line >= 0 && state.cursor.line < static_cast<int>(vm.lines.size())) {
