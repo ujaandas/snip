@@ -72,12 +72,42 @@ void endSession(const Session& session) {
 }
 
 std::optional<WindowSize> queryWindowSize(int fd) {
-  struct winsize w;
-  if (ioctl(fd, TIOCGWINSZ, &w) == -1) {
-    return std::nullopt;
+  auto query = [](int candidateFd) -> std::optional<WindowSize> {
+    struct winsize w{};
+    if (ioctl(candidateFd, TIOCGWINSZ, &w) == -1) {
+      return std::nullopt;
+    }
+
+    if (w.ws_col == 0 || w.ws_row == 0) {
+      return std::nullopt;
+    }
+
+    return WindowSize{w.ws_col, w.ws_row};
+  };
+
+  if (auto size = query(fd)) {
+    return size;
   }
 
-  return WindowSize{w.ws_col, w.ws_row};
+  if (fd != STDOUT_FILENO) {
+    if (auto size = query(STDOUT_FILENO)) {
+      return size;
+    }
+  }
+
+  if (fd != STDIN_FILENO) {
+    if (auto size = query(STDIN_FILENO)) {
+      return size;
+    }
+  }
+
+  if (fd != STDERR_FILENO) {
+    if (auto size = query(STDERR_FILENO)) {
+      return size;
+    }
+  }
+
+  return std::nullopt;
 }
 
 } // namespace snip::runtime::term

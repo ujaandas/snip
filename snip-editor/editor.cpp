@@ -84,8 +84,12 @@ UpdateResult Editor::update(const State& currentState, runtime::Msg msg) const {
       break;
     }
   } else if (auto* m = std::get_if<runtime::WindowSizeMsg>(&msg)) {
-    newState.window.width = m->width;
-    newState.window.height = m->height;
+    if (m->width > 0) {
+      newState.window.width = m->width;
+    }
+    if (m->height > 0) {
+      newState.window.height = m->height;
+    }
   } else if (auto* m = std::get_if<runtime::FileLoadedMsg>(&msg)) {
     newState.buffer = std::move(m->lines);
     newState.filename = m->filepath;

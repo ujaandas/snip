@@ -6,6 +6,10 @@
 
 namespace snip::core {
 
+/*
+Concurrent-safe queue.
+t
+*/
 template <typename T> class CCQueue {
 private:
   bool async = false;

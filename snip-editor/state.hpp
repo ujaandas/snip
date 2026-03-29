@@ -7,8 +7,8 @@
 namespace snip::editor {
 
 struct WindowState {
-  int width = 0;
-  int height = 0;
+  int width = 80;
+  int height = 24;
 };
 
 struct CursorState {
