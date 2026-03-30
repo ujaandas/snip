@@ -4,11 +4,20 @@
 #include <algorithm>
 #include <string>
 #include <string_view>
-#include <utility>
 #include <vector>
 
 namespace snip::ui {
 namespace {
+
+struct StyleRange {
+  int start = 0;
+  int end = 0;
+};
+
+// Keep width handling in one place so every row is exactly terminal-width columns
+int clampWidth(int width) {
+  return std::max(0, width);
+}
 
 std::string padRight(std::string s, int width) {
   if (width <= 0) {
@@ -28,9 +37,18 @@ std::string statusBar(std::string_view text, int width) {
   return std::string(ansi::REVERSE) + padRight(std::string(text), width) + std::string(ansi::RESET);
 }
 
-std::vector<std::pair<int, int>> normalizeRanges(const editor::ViewModel& vm, int lineIndex) {
-  std::vector<std::pair<int, int>> ranges;
+std::string_view lineTextAt(const editor::ViewModel& vm, int lineIndex) {
+  if (lineIndex < 0 || lineIndex >= static_cast<int>(vm.lines.size())) {
+    return {};
+  }
+
+  return vm.lines[static_cast<std::size_t>(lineIndex)];
+}
+
+std::vector<StyleRange> styleRangesForLine(const editor::ViewModel& vm, int lineIndex) {
+  std::vector<StyleRange> ranges;
   ranges.reserve(vm.selections.size());
+  const int width = clampWidth(vm.width);
 
   for (const auto& sel : vm.selections) {
     if (sel.line != lineIndex) {
@@ -38,9 +56,9 @@ std::vector<std::pair<int, int>> normalizeRanges(const editor::ViewModel& vm, in
     }
 
     int start = std::max(0, sel.col_start);
-    int end = std::min(vm.width, sel.col_end);
+    int end = std::min(width, sel.col_end);
     if (start < end) {
-      ranges.push_back({start, end});
+      ranges.push_back(StyleRange{start, end});
     }
   }
 
@@ -48,19 +66,25 @@ std::vector<std::pair<int, int>> normalizeRanges(const editor::ViewModel& vm, in
     return ranges;
   }
 
-  std::sort(ranges.begin(), ranges.end());
+  std::sort(ranges.begin(), ranges.end(), [](const StyleRange& a, const StyleRange& b) {
+    if (a.start != b.start) {
+      return a.start < b.start;
+    }
+    return a.end < b.end;
+  });
 
-  std::vector<std::pair<int, int>> merged;
+  std::vector<StyleRange> merged;
   merged.push_back(ranges.front());
 
   for (std::size_t i = 1; i < ranges.size(); ++i) {
     auto& last = merged.back();
-    const auto [start, end] = ranges[i];
+    const auto next = ranges[i];
 
-    if (start <= last.second) {
-      last.second = std::max(last.second, end);
+    // Merge overlapping (or touching) ranges so render logic has one active range at a time
+    if (next.start <= last.end) {
+      last.end = std::max(last.end, next.end);
     } else {
-      merged.push_back({start, end});
+      merged.push_back(next);
     }
   }
 
@@ -68,7 +92,7 @@ std::vector<std::pair<int, int>> normalizeRanges(const editor::ViewModel& vm, in
 }
 
 void appendStyledRow(std::string& out, std::string_view src, int width,
-                     const std::vector<std::pair<int, int>>& ranges) {
+                     const std::vector<StyleRange>& ranges) {
   if (width <= 0) {
     return;
   }
@@ -77,12 +101,12 @@ void appendStyledRow(std::string& out, std::string_view src, int width,
   std::size_t rangeIdx = 0;
 
   for (int col = 0; col < width; ++col) {
-    while (rangeIdx < ranges.size() && col >= ranges[rangeIdx].second) {
+    while (rangeIdx < ranges.size() && col >= ranges[rangeIdx].end) {
       ++rangeIdx;
     }
 
     bool selected =
-        rangeIdx < ranges.size() && col >= ranges[rangeIdx].first && col < ranges[rangeIdx].second;
+        rangeIdx < ranges.size() && col >= ranges[rangeIdx].start && col < ranges[rangeIdx].end;
 
     if (selected && !reverseOn) {
       out += ansi::REVERSE;
@@ -108,6 +132,8 @@ void appendStyledRow(std::string& out, std::string_view src, int width,
 
 std::string AnsiRenderer::render(const editor::ViewModel& vm) const {
   std::string out;
+  const int width = clampWidth(vm.width);
+  const int usableHeight = std::max(0, vm.height - 1);
 
   out += vm.cursor.hidden ? std::string(ansi::HIDE_CURSOR) : std::string(ansi::SHOW_CURSOR);
 
@@ -116,25 +142,19 @@ std::string AnsiRenderer::render(const editor::ViewModel& vm) const {
     out += std::string(ansi::CURSOR_HOME);
   }
 
-  const int usableHeight = std::max(0, vm.height - 1);
-
+  // Main content pass: iterate visible lines and apply that line's styles
   for (int i = 0; i < usableHeight; ++i) {
     const int lineIndex = vm.scrollOffset + i;
-    std::string_view src;
-
-    if (lineIndex >= 0 && lineIndex < vm.lines.size()) {
-      src = vm.lines[static_cast<std::size_t>(lineIndex)];
-    }
-
-    const auto ranges = normalizeRanges(vm, lineIndex);
-    appendStyledRow(out, src, vm.width, ranges);
+    const std::string_view src = lineTextAt(vm, lineIndex);
+    const auto ranges = styleRangesForLine(vm, lineIndex);
+    appendStyledRow(out, src, width, ranges);
     out += "\n";
   }
 
-  out += statusBar(vm.statusText, vm.width);
+  out += statusBar(vm.statusText, width);
 
-  const int row = std::max(1, vm.cursor.row);
-  const int col = std::max(1, vm.cursor.col);
+  const int row = std::clamp(vm.cursor.row, 1, std::max(1, usableHeight));
+  const int col = std::clamp(vm.cursor.col, 1, std::max(1, width));
   out += ansi::moveCursor(row, col);
 
   return out;
