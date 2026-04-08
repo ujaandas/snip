@@ -32,6 +32,7 @@ add_subdirectory(snip-file)
 add_subdirectory(snip-term)
 add_subdirectory(snip-runtime)
 add_subdirectory(snip-editor)
+add_subdirectory(snip-render)
 add_subdirectory(snip-ui)
 
 add_executable(snip-app snip/main.cpp)
@@ -39,7 +40,7 @@ target_link_libraries(snip-app PRIVATE snip-runtime snip-term snip-editor snip-u
 set_target_properties(snip-app PROPERTIES OUTPUT_NAME snip)
 
 install(
-	TARGETS snip-core snip-file snip-term snip-runtime snip-editor snip-ui snip-app
+	TARGETS snip-core snip-file snip-term snip-runtime snip-editor snip-render snip-ui snip-app
 	EXPORT snipTargets
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -47,7 +48,7 @@ install(
 )
 
 install(
-	DIRECTORY snip-core snip-file snip-term snip-runtime snip-editor snip-ui
+	DIRECTORY snip-core snip-file snip-term snip-runtime snip-editor snip-render snip-ui
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp"
 )
