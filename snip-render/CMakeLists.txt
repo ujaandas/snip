@@ -1,5 +1,6 @@
 add_library(snip-render STATIC
   renderer.cpp
+  translator.cpp
 )
 
 snip_apply_target_defaults(snip-render)

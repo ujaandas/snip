@@ -1,10 +1,11 @@
 #include "snip-core/event_loop.hpp"
 #include "snip-core/event_source.hpp"
 #include "snip-editor/editor.hpp"
+#include "snip-render/renderer.hpp"
+#include "snip-render/translator.hpp"
 #include "snip-runtime/app.hpp"
 #include "snip-runtime/input.hpp"
 #include "snip-term/terminal.hpp"
-#include "snip-ui/renderer.hpp"
 #include <signal.h>
 #include <unistd.h>
 
@@ -13,11 +14,11 @@ namespace {
 class SnipApp final : public snip::runtime::App<snip::editor::State> {
 private:
   snip::editor::Editor editor;
-  const snip::ui::Renderer& renderer;
+  snip::render::Renderer renderer;
+  snip::render::AnsiTranslator translator;
 
 public:
-  SnipApp(snip::editor::State& state, const snip::ui::Renderer& renderer)
-      : snip::runtime::App<snip::editor::State>(state), renderer(renderer) {}
+  explicit SnipApp(snip::editor::State& state) : snip::runtime::App<snip::editor::State>(state) {}
 
 protected:
   std::vector<snip::runtime::Cmd> init() override {
@@ -32,7 +33,8 @@ protected:
   }
 
   std::string render(snip::editor::State& currentState) override {
-    return renderer.render(editor.viewModel(currentState));
+    const auto frame = renderer.render(editor.viewModel(currentState));
+    return translator.translate(frame);
   }
 };
 
@@ -53,8 +55,7 @@ int main() {
   }
 
   // Initialize app and event loop
-  snip::ui::AnsiRenderer renderer;
-  SnipApp app(model, renderer);
+  SnipApp app(model);
   snip::core::EventLoop loop;
 
   // Register STDIN input source

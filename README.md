@@ -78,12 +78,13 @@ Editor domain layer:
 - message handling
 - UI-agnostic view model generation
 
-### `snip-ui`
+### `snip-render`
 
 Rendering backend layer:
 
-- renderer interface
-- ANSI renderer implementation
+- ViewModel to Frame IR rendering
+- styling and formatting helpers
+- Frame to ANSI translation
 
 This keeps editor behavior independent from terminal backend details and makes backend evolution straightforward.
 
