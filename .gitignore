@@ -1,5 +1,6 @@
 # CMake/Clangd
 build/
+.nix-dev/
 .cache/
 
 # dSYM
