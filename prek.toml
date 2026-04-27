@@ -2,15 +2,61 @@
 # See https://prek.j178.dev for more information.
 #:schema https://www.schemastore.org/prek.json
 
+fail_fast = false
+
 [[repos]]
 repo = "local"
 hooks = [
   {
-    id = "nix-flake-check",
-    name = "nix flake check",
-    entry = "nix flake check",
+    id = "nix-dev-configure",
+    name = "run nix dev configure",
+    entry = "nix run .#configure",
     language = "system",
     pass_filenames = false,
     stages = ["pre-commit"]
+  },
+  {
+    id = "clang-format",
+    name = "run clang-format",
+    entry = "nix develop -c clang-format",
+    args = ["--style=file", "-i"],
+    language = "system",
+    files = "\\.(c|cc|cpp|cxx|h|hpp)$",
+    stages = ["pre-commit"]
+  },
+  {
+    id = "clang-tidy",
+    name = "run clang-tidy",
+    entry = "nix develop -c clang-tidy",
+    args = ["-p=.nix-dev/build"],
+    language = "system",
+    files = "\\.(c|cc|cpp|cxx|h|hpp)$",
+    stages = ["pre-commit"]
+  },
+  {
+    id = "cppcheck",
+    name = "run cppcheck",
+    entry = "nix develop -c cppcheck",
+    args = [
+      "--project=.nix-dev/build/compile_commands.json",
+      "--enable=all",
+      "--inline-suppr",
+      "--check-level=exhaustive",
+      "--error-exitcode=1",
+      "--suppress=missingIncludeSystem",
+      "--suppress=unusedFunction",
+      "--suppress=unmatchedSuppression"
+    ],
+    language = "system",
+    pass_filenames = false,
+    stages = ["pre-commit"]
+  },
+  {
+    id = "nix-test-configure",
+    name = "run test suite",
+    entry = "nix run .#test",
+    language = "system",
+    pass_filenames = false,
+    stages = ["pre-push"]
   }
 ]
