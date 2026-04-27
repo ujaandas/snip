@@ -13,161 +13,86 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        sourcePaths = "snip snip-core snip-runtime snip-editor snip-ui";
-
-        fmt = pkgs.writeShellApplication {
-          name = "snip-fmt";
-          meta.description = "Format C++ sources with clang-format";
+        dev-configure = pkgs.writeShellApplication {
+          name = "dev-configure";
+          meta.description = "Configure clangd environment.";
           runtimeInputs = with pkgs; [
-            clang-tools
-            findutils
+            clang
+            cmake
+            ninja
+            gtest
           ];
           text = ''
             set -euo pipefail
-
-            mapfile -t files < <(find ${sourcePaths} -type f \( -name '*.cpp' -o -name '*.hpp' \) | sort)
-
-            if [ "''${#files[@]}" -eq 0 ]; then
-              echo "No C++ source files found."
-              exit 0
-            fi
-
-            clang-format -i "''${files[@]}"
-            echo "Formatted ''${#files[@]} file(s)."
+            cmake -S . -B .nix-dev/build
           '';
         };
 
-        lint = pkgs.writeShellApplication {
-          name = "snip-lint";
-          meta.description = "Run cppcheck linting over project sources";
+        dev-test = pkgs.writeShellApplication {
+          name = "dev-test";
+          meta.description = "Run test suite.";
           runtimeInputs = with pkgs; [
-            cppcheck
+            clang
+            cmake
+            ninja
+            gtest
           ];
           text = ''
             set -euo pipefail
-
-            cppcheck \
-              --std=c++23 \
-              --language=c++ \
-              --enable=warning,style,performance,portability \
-              --check-level=exhaustive \
-              --inline-suppr \
-              --error-exitcode=1 \
-              --quiet \
-              ${sourcePaths}
-
-            echo "cppcheck passed."
+            cmake -S . -B .nix-dev/build
+            cmake --build .nix-dev/build
+            ctest --test-dir .nix-dev/build --output-on-failure
           '';
         };
 
-        # tidy = pkgs.writeShellApplication {
-        #   name = "snip-tidy";
-        #   meta.description = "Run clang-tidy using generated compile_commands.json";
-        #   runtimeInputs = with pkgs; [
-        #     clang-tools
-        #     cmake
-        #     findutils
-        #     ninja
-        #   ];
-        #   text = ''
-        #     set -euo pipefail
-
-        #     build_dir="$(mktemp -d)"
-        #     trap 'rm -rf "$build_dir"' EXIT
-
-        #     cmake -S . -B "$build_dir" -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-
-        #     mapfile -t cpp_files < <(find ${sourcePaths} -type f -name '*.cpp' | sort)
-
-        #     if [ "''${#cpp_files[@]}" -eq 0 ]; then
-        #       echo "No C++ source files found."
-        #       exit 0
-        #     fi
-
-        #     clang-tidy -p "$build_dir" "''${cpp_files[@]}"
-        #     echo "clang-tidy completed for ''${#cpp_files[@]} translation unit(s)."
-        #   '';
-        # };
-
-        qa = pkgs.writeShellApplication {
-          name = "snip-qa";
-          meta.description = "Run formatter, cppcheck lint, and clang-tidy";
-          runtimeInputs = [
-            fmt
-            lint
-            # tidy
-          ];
-          text = ''
-            set -euo pipefail
-
-            snip-fmt
-            snip-lint
-            # snip-tidy
-          '';
-        };
-      in
-      {
-        packages.default = pkgs.stdenv.mkDerivation {
+        snip = pkgs.clangStdenv.mkDerivation {
           pname = "snip";
           version = "0.1.0";
           src = ./.;
+          meta = {
+            mainProgram = "snip";
+            description = "Constrained LLM generation via semantic snip and refinement types.";
+          };
 
           nativeBuildInputs = with pkgs; [
             cmake
             ninja
           ];
+
+          buildInputs = with pkgs; [
+            gtest
+          ];
+
+          doCheck = true;
+          checkPhase = ''
+            ctest --output-on-failure
+          '';
         };
 
-        # apps = {
-        #   fmt = flake-utils.lib.mkApp { drv = fmt; };
-        #   fmt-check = flake-utils.lib.mkApp { drv = fmtCheck; };
-        #   lint = flake-utils.lib.mkApp { drv = lint; };
-        #   tidy = flake-utils.lib.mkApp { drv = tidy; };
-        #   qa = flake-utils.lib.mkApp { drv = qa; };
-        # };
+      in
+      {
+        packages.default = snip;
 
         checks = {
-          format =
-            pkgs.runCommand "snip-format"
-              {
-                src = ./.;
-                nativeBuildInputs = [ fmt ];
-              }
-              ''
-                cp -r "$src" source
-                chmod -R +w source
-                cd source
-                snip-fmt
-                touch "$out"
-              '';
+          default = snip;
+        };
 
-          lint =
-            pkgs.runCommand "snip-lint"
-              {
-                src = ./.;
-                nativeBuildInputs = [ lint ];
-              }
-              ''
-                cp -r "$src" source
-                chmod -R +w source
-                cd source
-                snip-lint
-                touch "$out"
-              '';
+        apps = {
+          default = (flake-utils.lib.mkApp { drv = snip; }) // {
+            meta.description = "Run the default snip executable.";
+          };
 
-          # tidy =
-          #   pkgs.runCommand "snip-tidy"
-          #     {
-          #       src = ./.;
-          #       nativeBuildInputs = [ tidy ];
-          #     }
-          #     ''
-          #       cp -r "$src" source
-          #       chmod -R +w source
-          #       cd source
-          #       snip-tidy
-          #       touch "$out"
-          #     '';
+          configure = {
+            type = "app";
+            program = "${dev-configure}/bin/dev-configure";
+            meta.description = "Configure the local CMake build directory.";
+          };
+
+          test = {
+            type = "app";
+            program = "${dev-test}/bin/dev-test";
+            meta.description = "Run test suites.";
+          };
         };
 
         formatter = pkgs.nixfmt;
