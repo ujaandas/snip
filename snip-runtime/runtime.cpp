@@ -60,25 +60,15 @@ snip::core::EventSource Runtime::messageSource() {
     wakePipe.clear();
 
     Msg msg;
-    // Message handler
     while (msgQ.ccawait(msg)) {
       if (std::holds_alternative<QuitMsg>(msg)) {
-        quit();
-
-        if (!running && loop) {
-          loop->stop();
-          break;
-        }
-
-        continue;
+        running = false;
+      } else {
+        auto [newState, cmds] = update(state, std::move(msg));
+        state = newState;
+        std::cout << render(state) << std::flush;
+        dispatch(cmds);
       }
-
-      UpdateResult result = update(state, std::move(msg));
-      state = result.newState;
-
-      std::cout << render(state) << std::flush;
-
-      dispatch(result.commands);
 
       if (!running && loop) {
         loop->stop();
