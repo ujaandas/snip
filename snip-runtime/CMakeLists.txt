@@ -1,5 +1,6 @@
 add_library(snip-runtime STATIC
   cmd.cpp
+  runtime.cpp
   input.cpp
 )
 
