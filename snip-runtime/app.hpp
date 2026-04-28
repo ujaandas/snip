@@ -1,5 +1,10 @@
 #pragma once
 
+#include <functional>
+#include <iostream>
+#include <utility>
+#include <variant>
+
 #include "cmd.hpp"
 #include "msg.hpp"
 #include "snip-core/cc_queue.hpp"
@@ -7,44 +12,49 @@
 #include "snip-core/event_source.hpp"
 #include "snip-core/ezpipe.hpp"
 #include "snip-core/thread_pool.hpp"
-#include <functional>
-#include <iostream>
-#include <utility>
-#include <variant>
+#include "snip-editor/editor.hpp"
+#include "snip-editor/state.hpp"
+#include "snip-render/renderer.hpp"
+#include "snip-render/translator.hpp"
 
 namespace snip::runtime {
-template <typename State> struct UpdateResult {
-  State newState;
+
+struct UpdateResult {
+  editor::State newState;
   std::vector<Cmd> commands;
 };
 
 /*
-  App represent's Snip's runtime and provides an API for managing the application state and handling
-  events. It provides a main event loop, a message passing system, and a simple command abstraction
-  for running background tasks.
+  App represents Snip's runtime and provides an API for managing the
+  application state and handling events. It provides a main event loop, a
+  message passing system, and a simple command abstraction for running
+  background tasks.
 
   We subclass App and implement the init, update, and render methods. Then call
   run() with an EventLoop instance to start the app.
 */
-template <typename State> class App {
-private:
+class App {
+ private:
   core::CCQueue<Msg> msgQ{true};
   core::EzPipe wakePipe;
 
   core::ThreadPool pool{4};
   core::EventLoop* loop = nullptr;
 
-protected:
-  State& state;
+  snip::editor::Editor editor;
+  snip::render::Renderer renderer;
+  snip::render::AnsiTranslator translator;
+
+  editor::State& state;
   bool running = true;
 
-public:
-  App(State& s) : state(s) {}
-  virtual ~App() = default;
+ public:
+  explicit App(editor::State& s) : state(s) {}
+  ~App() = default;
 
   // T must be a supported runtime::Msg alternative.
-  template <typename T> void post(T&& msg) {
-    msgQ.ccpush(Msg{std::forward<T>(msg)});
+  void post(Msg&& msg) {
+    msgQ.ccpush(msg);
     wakePipe.write('!');
   }
 
@@ -64,14 +74,26 @@ public:
     loop->run();
   }
 
-private:
+ private:
+  std::vector<Cmd> init() { return editor.init(); };
+
+  UpdateResult update(const editor::State& currentState, Msg msg) {
+    auto result = editor.update(currentState, std::move(msg));
+    return {std::move(result.newState), std::move(result.commands)};
+  };
+
+  std::string render(const editor::State& currentState) {
+    const auto frame = renderer.render(editor.viewModel(currentState));
+    return translator.translate(frame);
+  };
+
+  void quit() { running = false; }
+
   void dispatch(const std::vector<Cmd>& cmds) {
     for (const auto& cmd : cmds) {
       pool.enqueue([this, cmd]() {
         if (auto maybeMsg = cmd()) {
-          // Template argument deduction lets us omit the angle bracket syntax
-          // here
-          post(*maybeMsg);
+          post(std::move(*maybeMsg));
         }
       });
     }
@@ -113,14 +135,5 @@ private:
 
     return src;
   }
-
-protected:
-  virtual std::vector<Cmd> init() = 0;
-  virtual UpdateResult<State> update(State&, Msg) = 0;
-  virtual std::string render(State&) = 0;
-
-  void quit() {
-    running = false;
-  }
 };
-} // namespace snip::runtime
+}  // namespace snip::runtime
