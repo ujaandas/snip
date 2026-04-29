@@ -1,6 +1,5 @@
 #include "runtime.hpp"
 
-#include <functional>
 #include <iostream>
 #include <utility>
 #include <variant>
@@ -17,13 +16,9 @@ void Runtime::post(Msg&& msg) {
 void Runtime::run(core::EventLoop& eventLoop) {
   loop = &eventLoop;
 
-  // Register our mailbox source
   loop->addSource(messageSource());
 
-  // Initial render
   std::cout << render(state) << std::flush;
-
-  // Run init commands
   dispatch(init());
 
   loop->run();

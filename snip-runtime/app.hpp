@@ -7,14 +7,14 @@
 
 namespace snip::runtime {
 
-class SnipRuntime final : public Runtime {
+class App final : public Runtime {
  private:
   snip::editor::Editor editor;
   snip::render::Renderer renderer;
   snip::render::AnsiTranslator translator;
 
  public:
-  explicit SnipRuntime(editor::State& s);
+  explicit App(editor::State& state);
 
  protected:
   std::vector<Cmd> init() override;
