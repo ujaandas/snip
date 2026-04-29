@@ -4,6 +4,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#include <utility>
+
 namespace snip::term {
 
 namespace {
@@ -11,7 +13,22 @@ constexpr std::string_view SHOW_CURSOR = "\x1b[?25h";
 constexpr std::string_view ENTER_ALTBUF = "\x1b[?1049h";
 constexpr std::string_view EXIT_ALTBUF = "\x1b[?1049l";
 constexpr std::string_view CLEAR_SCREEN = "\x1b[2J";
-} // namespace
+}  // namespace
+
+Terminal::Terminal(bool echo) : session(startSession(echo)) {}
+
+Terminal::~Terminal() { endSession(session); }
+
+Terminal::Terminal(Terminal&& other)
+    : session(std::exchange(other.session, Session{})) {}
+
+Terminal& Terminal::operator=(Terminal&& other) {
+  if (this != &other) {
+    endSession(session);
+    session = std::exchange(other.session, Session{});
+  }
+  return *this;
+}
 
 void writeStdout(std::string_view bytes) {
   (void)::write(STDOUT_FILENO, bytes.data(), bytes.size());
@@ -109,4 +126,4 @@ std::optional<WindowSize> queryWindowSize(int fd) {
   return std::nullopt;
 }
 
-} // namespace snip::term
+}  // namespace snip::term

@@ -9,8 +9,8 @@
 #include "snip-term/terminal.hpp"
 
 int main() {
-  const auto session = snip::term::startSession(false);
-  if (!session.valid) {
+  snip::term::Terminal session(false);
+  if (!session.valid()) {
     return 1;
   }
 
@@ -42,6 +42,5 @@ int main() {
 
   app.run(loop);
 
-  snip::term::endSession(session);
   return 0;
 }
