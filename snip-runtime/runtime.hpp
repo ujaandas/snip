@@ -50,8 +50,6 @@ class Runtime {
 
   virtual std::string render(const editor::State& currentState) = 0;
 
-  void quit();
-
  private:
   void dispatch(const std::vector<Cmd>& cmds);
 

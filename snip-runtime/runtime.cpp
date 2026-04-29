@@ -29,8 +29,6 @@ void Runtime::run(core::EventLoop& eventLoop) {
   loop->run();
 }
 
-void Runtime::quit() { running = false; }
-
 void Runtime::dispatch(const std::vector<Cmd>& cmds) {
   for (const auto& cmd : cmds) {
     pool.enqueue([this, cmd]() {
