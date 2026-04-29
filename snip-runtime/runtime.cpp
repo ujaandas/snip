@@ -29,18 +29,6 @@ void Runtime::run(core::EventLoop& eventLoop) {
   loop->run();
 }
 
-std::vector<Cmd> Runtime::init() { return editor.init(); }
-
-UpdateResult Runtime::update(const editor::State& currentState, Msg msg) {
-  auto result = editor.update(currentState, std::move(msg));
-  return {std::move(result.newState), std::move(result.commands)};
-}
-
-std::string Runtime::render(const editor::State& currentState) {
-  const auto frame = renderer.render(editor.viewModel(currentState));
-  return translator.translate(frame);
-}
-
 void Runtime::quit() { running = false; }
 
 void Runtime::dispatch(const std::vector<Cmd>& cmds) {

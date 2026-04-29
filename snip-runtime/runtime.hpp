@@ -7,10 +7,7 @@
 #include "snip-core/event_source.hpp"
 #include "snip-core/ezpipe.hpp"
 #include "snip-core/thread_pool.hpp"
-#include "snip-editor/editor.hpp"
 #include "snip-editor/state.hpp"
-#include "snip-render/renderer.hpp"
-#include "snip-render/translator.hpp"
 
 namespace snip::runtime {
 
@@ -33,16 +30,12 @@ class Runtime {
   core::ThreadPool pool{4};
   core::EventLoop* loop = nullptr;
 
-  snip::editor::Editor editor;
-  snip::render::Renderer renderer;
-  snip::render::AnsiTranslator translator;
-
   editor::State& state;
   bool running = true;
 
  public:
   explicit Runtime(editor::State& s);
-  ~Runtime() = default;
+  virtual ~Runtime() = default;
 
   // T must be a supported runtime::Msg alternative.
   void post(Msg&& msg);
@@ -50,15 +43,16 @@ class Runtime {
   // Run the app inside an EventLoop
   void run(core::EventLoop& eventLoop);
 
- private:
-  std::vector<Cmd> init();
+ protected:
+  virtual std::vector<Cmd> init() = 0;
 
-  UpdateResult update(const editor::State& currentState, Msg msg);
+  virtual UpdateResult update(const editor::State& currentState, Msg msg) = 0;
 
-  std::string render(const editor::State& currentState);
+  virtual std::string render(const editor::State& currentState) = 0;
 
   void quit();
 
+ private:
   void dispatch(const std::vector<Cmd>& cmds);
 
   // Event source used by the event loop

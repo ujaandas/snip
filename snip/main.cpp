@@ -4,8 +4,8 @@
 #include "snip-core/event_loop.hpp"
 #include "snip-core/event_source.hpp"
 #include "snip-editor/state.hpp"
+#include "snip-runtime/app_runtime.hpp"
 #include "snip-runtime/input.hpp"
-#include "snip-runtime/runtime.hpp"
 #include "snip-term/terminal.hpp"
 
 int main() {
@@ -23,7 +23,7 @@ int main() {
   }
 
   // Initialize app and event loop
-  snip::runtime::Runtime runtime(model);
+  snip::runtime::SnipRuntime runtime(model);
   snip::core::EventLoop loop;
 
   // Register STDIN input source
