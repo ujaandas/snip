@@ -1,4 +1,5 @@
 add_subdirectory(core)
+add_subdirectory(text)
 
 add_executable(snip
   main.cpp
