@@ -39,6 +39,7 @@ hooks = [
     entry = "nix develop -c cppcheck",
     args = [
       "--project=.nix-dev/build/compile_commands.json",
+      "-i.nix-dev/build",
       "--enable=all",
       "--inline-suppr",
       "--check-level=exhaustive",

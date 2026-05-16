@@ -8,6 +8,8 @@ target_link_libraries(snip
   PRIVATE
     snip_core
     Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
 )
 
 install(TARGETS snip
