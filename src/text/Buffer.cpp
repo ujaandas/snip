@@ -2,7 +2,7 @@
 
 #include <QtCore/qtypes.h>
 
-Buffer::Buffer(std::string text) { text_ = QString::fromStdString(text); }
+Buffer::Buffer(std::string text) : text_(QString::fromStdString(text)) {}
 
 QStringView Buffer::text() const { return text_; }
 
