@@ -39,13 +39,15 @@
         dev-test = pkgs.writeShellApplication {
           name = "dev-test";
           meta.description = "Run test suite.";
-          runtimeInputs = with pkgs; [
-            clang
-            cmake
-            ninja
-            gtest
-            qt
-          ];
+          runtimeInputs =
+            with pkgs;
+            [
+              clang
+              cmake
+              ninja
+              gtest
+            ]
+            ++ qtPkgs;
           text = ''
             set -euo pipefail
             cmake -S . -B .nix-dev/build
