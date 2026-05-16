@@ -1,8 +1,6 @@
 #include "Buffer.h"
 
-#include <QtCore/qtypes.h>
-
-Buffer::Buffer(std::string text) : text_(QString::fromStdString(text)) {}
+Buffer::Buffer(QString text) : text_(text) {}
 
 QStringView Buffer::text() const { return text_; }
 

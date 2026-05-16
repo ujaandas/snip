@@ -10,7 +10,7 @@ class Buffer {
   qsizetype scrollOffset_ = 0;
 
  public:
-  explicit Buffer(std::string text);
+  explicit Buffer(QString text);
 
   QStringView text() const;
   qsizetype scrollOffset() const;
