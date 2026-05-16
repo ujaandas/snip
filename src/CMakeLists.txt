@@ -2,6 +2,7 @@ add_subdirectory(core)
 
 add_executable(snip
   main.cpp
+  qml.qrc
 )
 
 target_link_libraries(snip
@@ -9,7 +10,8 @@ target_link_libraries(snip
     snip_core
     Qt6::Core
     Qt6::Gui
-    Qt6::Widgets
+    Qt6::Qml
+    Qt6::Quick
 )
 
 install(TARGETS snip

@@ -13,7 +13,10 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        qtPkgs = with pkgs; [ qt6.qtbase ];
+        qtPkgs = with pkgs; [
+          qt6.qtbase
+          qt6.qtdeclarative
+        ];
 
         dev-configure = pkgs.writeShellApplication {
           name = "dev-configure";

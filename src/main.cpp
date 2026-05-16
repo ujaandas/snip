@@ -1,26 +1,22 @@
-#include <QApplication>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <QtCore/QUrl>
+#include <QtGui/QGuiApplication>
+#include <QtQml/QQmlApplicationEngine>
 #include <iostream>
 
 #include "core/Hello.h"
 
 int main(int argc, char* argv[]) {
-  QApplication app(argc, argv);
+  QGuiApplication app(argc, argv);
 
   Hello hello;
   std::cout << hello.greet() << "\n";
 
-  QWidget window;
-  window.setWindowTitle("Hello World");
-  window.resize(300, 100);
+  QQmlApplicationEngine engine;
+  engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
 
-  QVBoxLayout* layout = new QVBoxLayout(&window);
-  QLabel* label = new QLabel("Hello World");
-  label->setAlignment(Qt::AlignCenter);
-  layout->addWidget(label);
+  if (engine.rootObjects().isEmpty()) {
+    return -1;
+  }
 
-  window.show();
   return app.exec();
 }
