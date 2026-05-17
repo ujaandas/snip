@@ -1,5 +1,5 @@
 add_library(snip_text
-  Buffer.cpp
+  FileBuffer.cpp
 )
 
 target_include_directories(snip_text
