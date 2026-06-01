@@ -1,15 +1,19 @@
-#include "FileBuffer.h"
+#include "FileBuffer.hpp"
 
 #include <qtypes.h>
 
 #include <QFile>
 #include <QTextStream>
 
+#include "Log.hpp"
+
 FileBuffer::FileBuffer(QString path) : path_(path) {
   QFile file(path);
 
   if (!file.open(QIODevice::ReadOnly)) {
-    qFatal("File could not be opened: %s", qPrintable(file.errorString()));
+    // qFatal("File could not be opened: %s", qPrintable());
+    Log::fatal("File '{}' could not be opened: {}", file.fileName(),
+               file.errorString());
   }
 
   QTextStream in(&file);
@@ -24,8 +28,8 @@ FileBuffer::FileBuffer(QString path) : path_(path) {
 
 QStringView FileBuffer::lineAt(qsizetype line) const {
   if (line >= text_.size()) {
-    qFatal("Requested line exceeds file buffer by %lld lines",
-           line - text_.size());
+    Log::fatal("Requested line exceeds file buffer by {} lines",
+               line - text_.size());
   }
 
   return text_[line];
