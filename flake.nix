@@ -32,6 +32,7 @@
             ++ qtPkgs;
           text = ''
             set -euo pipefail
+            export QML_DISABLE_DISK_CACHE=1
             cmake -S . -B .nix-dev/build -G Ninja
           '';
         };
@@ -50,6 +51,7 @@
             ++ qtPkgs;
           text = ''
             set -euo pipefail
+            export QML_DISABLE_DISK_CACHE=1
             cmake -S . -B .nix-dev/build
             cmake --build .nix-dev/build
             ctest --test-dir .nix-dev/build --output-on-failure
@@ -69,6 +71,12 @@
             cmake
             ninja
             qt6.wrapQtAppsHook
+          ];
+
+          qtWrapperArgs = [
+            "--set"
+            "QML_DISABLE_DISK_CACHE"
+            "1"
           ];
 
           buildInputs =
@@ -112,7 +120,7 @@
 
         formatter = pkgs.nixfmt;
 
-        devShells.default = pkgs.mkShell {
+        devShells.default = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
           buildInputs =
             with pkgs;
             [
@@ -124,6 +132,10 @@
               gtest
             ]
             ++ qtPkgs;
+
+          shellHook = ''
+            export QML_DISABLE_DISK_CACHE=1
+          '';
         };
       }
     );
