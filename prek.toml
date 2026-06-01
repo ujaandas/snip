@@ -28,8 +28,8 @@ hooks = [
   {
     id = "clang-tidy",
     name = "run clang-tidy",
-    entry = "nix develop -c clang-tidy",
-    args = ["-p=.nix-dev/build"],
+    entry = "nix",
+    args = ["run", ".#clang-tidy", "--", "-p=.nix-dev/build"],
     language = "system",
     files = "\\.(c|cc|cpp|cxx|h|hpp)$",
     stages = ["pre-commit"]

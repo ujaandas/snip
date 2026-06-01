@@ -15,7 +15,9 @@
 
         qtPkgs = with pkgs; [
           qt6.qtbase
+          qt6.qtbase.dev
           qt6.qtdeclarative
+          qt6.qtdeclarative.dev
         ];
 
         dev-configure = pkgs.writeShellApplication {
@@ -55,6 +57,26 @@
             cmake -S . -B .nix-dev/build
             cmake --build .nix-dev/build
             ctest --test-dir .nix-dev/build --output-on-failure
+          '';
+        };
+
+        dev-clang-tidy = pkgs.writeShellApplication {
+          name = "dev-clang-tidy";
+          meta.description = "Run clang-tidy with Qt include roots.";
+          runtimeInputs =
+            with pkgs;
+            [
+              clang-tools
+            ]
+            ++ qtPkgs;
+          text = ''
+            set -euo pipefail
+            clang-tidy \
+              --extra-arg=-isystem \
+              --extra-arg=${pkgs.qt6.qtbase.dev}/include \
+              --extra-arg=-isystem \
+              --extra-arg=${pkgs.qt6.qtdeclarative.dev}/include \
+              "$@"
           '';
         };
 
@@ -116,6 +138,13 @@
             program = "${dev-test}/bin/dev-test";
             meta.description = "Run test suites.";
           };
+
+          clang-tidy = {
+            type = "app";
+            program = "${dev-clang-tidy}/bin/dev-clang-tidy";
+            meta.description = "Run clang-tidy with Qt include roots.";
+          };
+
         };
 
         formatter = pkgs.nixfmt;
