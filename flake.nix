@@ -13,18 +13,26 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
+        qtPkgs = with pkgs; [
+          qt6.qtbase
+          qt6.qtdeclarative
+        ];
+
         dev-configure = pkgs.writeShellApplication {
           name = "dev-configure";
           meta.description = "Configure clangd environment.";
-          runtimeInputs = with pkgs; [
-            clang
-            cmake
-            ninja
-            gtest
-          ];
+          runtimeInputs =
+            with pkgs;
+            [
+              clang
+              cmake
+              ninja
+              gtest
+            ]
+            ++ qtPkgs;
           text = ''
             set -euo pipefail
-            cmake -S . -B .nix-dev/build
+            cmake -S . -B .nix-dev/build -G Ninja
           '';
         };
 
@@ -36,6 +44,7 @@
             cmake
             ninja
             gtest
+            qt
           ];
           text = ''
             set -euo pipefail
@@ -51,17 +60,21 @@
           src = ./.;
           meta = {
             mainProgram = "snip";
-            description = "Constrained LLM generation via semantic snip and refinement types.";
+            description = "A badonkers-fast, Nix-first editor for gigachads.";
           };
 
           nativeBuildInputs = with pkgs; [
             cmake
             ninja
+            qt6.wrapQtAppsHook
           ];
 
-          buildInputs = with pkgs; [
-            gtest
-          ];
+          buildInputs =
+            with pkgs;
+            [
+              gtest
+            ]
+            ++ qtPkgs;
 
           doCheck = true;
           checkPhase = ''
@@ -97,14 +110,18 @@
 
         formatter = pkgs.nixfmt;
 
-        devShells.default = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
-          buildInputs = with pkgs; [
-            clang-tools
-            cmake
-            cppcheck
-            prek
-            ninja
-          ];
+        devShells.default = pkgs.mkShell {
+          buildInputs =
+            with pkgs;
+            [
+              clang-tools
+              cmake
+              cppcheck
+              prek
+              ninja
+              gtest
+            ]
+            ++ qtPkgs;
         };
       }
     );
