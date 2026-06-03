@@ -1,6 +1,7 @@
 #include <QtQml/qqml.h>
 
 #include <QtCore/QUrl>
+#include <QtGui/QFontDatabase>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 
@@ -8,6 +9,12 @@
 
 int main(int argc, char* argv[]) {
   QGuiApplication app(argc, argv);
+
+  QFontDatabase::addApplicationFont(":/assets/fonts/JetBrainsMono[wght].ttf");
+
+  QFont f("JetBrains Mono");
+  f.setPixelSize(14);
+  f.setWeight(QFont::Normal);
 
   qmlRegisterType<EditorView>("MyEditor", 1, 0, "EditorView");
 
