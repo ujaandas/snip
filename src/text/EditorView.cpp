@@ -1,57 +1,34 @@
 #include "EditorView.hpp"
 
-#include <qstringview.h>
-
-#include <QChar>
-#include <QQuickItem>
-#include <QQuickWindow>
-#include <QSGNode>
-#include <QSGTextNode>
-#include <QTextLayout>
+#include <QFont>
+#include <QFontMetrics>
+#include <QPainter>
 
 EditorView::EditorView(QQuickItem* parent)
-    : QQuickItem(parent), buf_("README.md") {
-  setFlag(ItemHasContents, true);
-};
+    : QQuickPaintedItem(parent), buf_("README.md") {
+  setOpaquePainting(true);
+}
 
-QSGNode* EditorView::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) {
-  QSGNode* root = oldNode;
+void EditorView::paint(QPainter* p) {
+  p->fillRect(boundingRect(), QColor("#1e1f22"));
 
-  if (!root) root = new QSGNode();
+  QFont font("JetBrains Mono");
+  font.setPixelSize(14);
 
-  // clear previous frame
-  while (auto* child = root->firstChild()) {
-    root->removeChildNode(child);
-    delete child;
+  p->setFont(font);
+  p->setPen(Qt::white);
+
+  QFontMetrics fm(font);
+
+  constexpr int leftMargin = 24;
+
+  int y = 40;
+
+  for (int i = 0; i < buf_.lineCount(); ++i) {
+    QStringView line = buf_.lineAt(i);
+
+    p->drawText(leftMargin, y, QString(line));
+
+    y += fm.height();
   }
-
-  QFont font("JetBrains Mono", 12);
-
-  constexpr float lineHeight = 18.0f;
-  constexpr float leftMargin = 8.0f;
-
-  const int lineCount = buf_.lineCount();
-
-  for (int i = 0; i < lineCount; i++) {
-    QStringView text = buf_.lineAt(i);
-
-    auto* textNode = window()->createTextNode();
-
-    textNode->setColor(Qt::white);
-    textNode->setViewport(boundingRect());
-
-    QTextLayout* layout = new QTextLayout(QString(text), font);
-
-    layout->beginLayout();
-    QTextLine line = layout->createLine();
-    line.setLineWidth(10000);
-    line.setPosition(QPointF(0, 0));
-    layout->endLayout();
-
-    textNode->addTextLayout(QPointF(leftMargin, i * lineHeight), layout);
-
-    root->appendChildNode(textNode);
-  }
-
-  return root;
 }

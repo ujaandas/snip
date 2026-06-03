@@ -1,18 +1,17 @@
 #pragma once
 
-#include <QQuickItem>
+#include <QQuickPaintedItem>
 
 #include "FileBuffer.hpp"
 
-class EditorView : public QQuickItem {
+class EditorView : public QQuickPaintedItem {
   Q_OBJECT
 
  private:
   FileBuffer buf_;
 
- protected:
-  QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) override;
-
  public:
   explicit EditorView(QQuickItem* parent = nullptr);
+
+  void paint(QPainter* painter) override;
 };
