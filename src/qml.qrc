@@ -1,5 +1,6 @@
 <RCC>
-  <qresource prefix="/">
-    <file>Main.qml</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>Main.qml</file>
+        <file>../assets/fonts/JetBrainsMono[wght].ttf</file>
+    </qresource>
 </RCC>

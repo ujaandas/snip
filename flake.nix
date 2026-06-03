@@ -15,7 +15,9 @@
 
         qtPkgs = with pkgs; [
           qt6.qtbase
+          qt6.qtbase.dev
           qt6.qtdeclarative
+          qt6.qtdeclarative.dev
         ];
 
         dev-configure = pkgs.writeShellApplication {
@@ -32,6 +34,7 @@
             ++ qtPkgs;
           text = ''
             set -euo pipefail
+            export QML_DISABLE_DISK_CACHE=1
             cmake -S . -B .nix-dev/build -G Ninja
           '';
         };
@@ -39,18 +42,41 @@
         dev-test = pkgs.writeShellApplication {
           name = "dev-test";
           meta.description = "Run test suite.";
-          runtimeInputs = with pkgs; [
-            clang
-            cmake
-            ninja
-            gtest
-            qt
-          ];
+          runtimeInputs =
+            with pkgs;
+            [
+              clang
+              cmake
+              ninja
+              gtest
+            ]
+            ++ qtPkgs;
           text = ''
             set -euo pipefail
+            export QML_DISABLE_DISK_CACHE=1
             cmake -S . -B .nix-dev/build
             cmake --build .nix-dev/build
             ctest --test-dir .nix-dev/build --output-on-failure
+          '';
+        };
+
+        dev-clang-tidy = pkgs.writeShellApplication {
+          name = "dev-clang-tidy";
+          meta.description = "Run clang-tidy with Qt include roots.";
+          runtimeInputs =
+            with pkgs;
+            [
+              clang-tools
+            ]
+            ++ qtPkgs;
+          text = ''
+            set -euo pipefail
+            clang-tidy \
+              --extra-arg=-isystem \
+              --extra-arg=${pkgs.qt6.qtbase.dev}/include \
+              --extra-arg=-isystem \
+              --extra-arg=${pkgs.qt6.qtdeclarative.dev}/include \
+              "$@"
           '';
         };
 
@@ -67,6 +93,12 @@
             cmake
             ninja
             qt6.wrapQtAppsHook
+          ];
+
+          qtWrapperArgs = [
+            "--set"
+            "QML_DISABLE_DISK_CACHE"
+            "1"
           ];
 
           buildInputs =
@@ -106,11 +138,18 @@
             program = "${dev-test}/bin/dev-test";
             meta.description = "Run test suites.";
           };
+
+          clang-tidy = {
+            type = "app";
+            program = "${dev-clang-tidy}/bin/dev-clang-tidy";
+            meta.description = "Run clang-tidy with Qt include roots.";
+          };
+
         };
 
         formatter = pkgs.nixfmt;
 
-        devShells.default = pkgs.mkShell {
+        devShells.default = pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
           buildInputs =
             with pkgs;
             [
@@ -122,6 +161,10 @@
               gtest
             ]
             ++ qtPkgs;
+
+          shellHook = ''
+            export QML_DISABLE_DISK_CACHE=1
+          '';
         };
       }
     );

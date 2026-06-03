@@ -9,6 +9,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+enable_testing()
+
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick)
 
 add_subdirectory(src)

@@ -13,6 +13,7 @@ hooks = [
     entry = "nix run .#configure",
     language = "system",
     pass_filenames = false,
+    files = "\\.(c|cc|cpp|cxx|h|hpp)$",
     stages = ["pre-commit"]
   },
   {
@@ -27,8 +28,8 @@ hooks = [
   {
     id = "clang-tidy",
     name = "run clang-tidy",
-    entry = "nix develop -c clang-tidy",
-    args = ["-p=.nix-dev/build"],
+    entry = "nix",
+    args = ["run", ".#clang-tidy", "--", "-p=.nix-dev/build"],
     language = "system",
     files = "\\.(c|cc|cpp|cxx|h|hpp)$",
     stages = ["pre-commit"]
@@ -49,6 +50,7 @@ hooks = [
       "--suppress=unmatchedSuppression"
     ],
     language = "system",
+    files = "\\.(c|cc|cpp|cxx|h|hpp)$",
     pass_filenames = false,
     stages = ["pre-commit"]
   },
