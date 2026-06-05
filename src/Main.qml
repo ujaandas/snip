@@ -1,19 +1,13 @@
 import QtQuick
-import QtQuick.Window
-import MyScroll 1.0
-import MyEditor 1.0
+import QtQuick.Controls
 
-Window {
-    width: 800
-    height: 600
+ApplicationWindow {
     visible: true
+    width: 900
+    height: 600
 
-    StrictScrollViewport {
+    EditorView {
         anchors.fill: parent
-
-        content: EditorView {
-            width: contentWidth
-            height: contentHeight
-        }
+        controller: editor
     }
 }
