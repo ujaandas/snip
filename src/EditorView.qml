@@ -5,17 +5,21 @@ Item {
     id: root
     property QtObject controller   // EditorController*
 
-    TextArea {
-        id: editor
-        width: parent.width
-
-        wrapMode: TextArea.NoWrap
-        font.family: "JetBrains Mono"
-        font.pixelSize: 14
-
+    ScrollView {
         anchors.fill: parent
-        text: controller.text
+        
+        TextArea {
+            id: editor
+            width: parent.width
 
-        onTextChanged: controller.text = text
+            wrapMode: TextArea.NoWrap
+            font.family: "JetBrains Mono"
+            font.pixelSize: 14
+
+            anchors.fill: parent
+            text: controller.text
+
+            onTextChanged: controller.text = text
+        }
     }
 }
