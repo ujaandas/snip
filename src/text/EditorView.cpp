@@ -52,17 +52,16 @@ void EditorView::setOffsetY(qreal y) {
   emit offsetYChanged();
 }
 
-// qreal EditorView::documentHeight() const {
-//   return buf_.lineCount() * lineHeight_;
-// }
+qreal EditorView::documentHeight() const {
+  return buf_.lineCount() * lineHeight_;
+}
 
-// qreal EditorView::documentWidth() const {
-//   int maxWidth = 0;
+qreal EditorView::documentWidth() const {
+  int maxWidth = 0;
 
-//   for (int i = 0; i < buf_.lineCount(); ++i) {
-//     maxWidth = qMax(maxWidth,
-//     fm_.horizontalAdvance(QString(buf_.lineAt(i))));
-//   }
+  for (int i = 0; i < buf_.lineCount(); ++i) {
+    maxWidth = qMax(maxWidth, fm_.horizontalAdvance(QString(buf_.lineAt(i))));
+  }
 
-//   return maxWidth + leftMargin_;
-// }
+  return maxWidth + leftMargin_;
+}
