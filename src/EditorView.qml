@@ -13,9 +13,6 @@ Item {
         anchors.fill: parent
         
         TextArea {
-            // ID
-            id: editor
-
             // Styling
             width: parent.width
 
@@ -26,7 +23,7 @@ Item {
             anchors.fill: parent
 
             // Data
-            text: controller.text
+            text: controller ? controller.text : ""
 
             onEditingFinished: {
                 controller.text = text
@@ -35,9 +32,11 @@ Item {
             Connections {
                 target: controller
                 function onTextChanged() {
-                    if (editor.text !== controller.text) {
+                    if (!controller) 
+                        return
+
+                    if (editor.text !== controller.text) 
                         editor.text = controller.text
-                    }
                 }
             }
         }

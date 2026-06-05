@@ -15,11 +15,12 @@ class EditorModel : public QObject {
 
   QString filePath() const;
   void load(const QString& path);
+  bool save();
 
  signals:
   void textChanged();
 
  private:
-  QString text_;
+  QString doc_;
   QString filePath_;
 };

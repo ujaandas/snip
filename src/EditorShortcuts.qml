@@ -5,17 +5,17 @@ Item {
     property QtObject editor
 
     Shortcut {
-        sequence: StandardKey.Save
+        sequences: [ StandardKey.Save ]
         onActivated: editor.save()
     }
 
     Shortcut {
-        sequence: StandardKey.Undo
+        sequences: [ StandardKey.Undo ]
         onActivated: editor.undo()
     }
 
     Shortcut {
-        sequence: StandardKey.Redo
+        sequences: [ StandardKey.Redo ]
         onActivated: editor.redo()
     }
 }
