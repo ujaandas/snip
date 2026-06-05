@@ -3,32 +3,49 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QPainter>
+#include <QtMinMax>
 
 EditorView::EditorView(QQuickItem* parent)
-    : QQuickPaintedItem(parent), buf_("README.md") {
+    : QQuickPaintedItem(parent),
+      buf_("README.md"),
+      font_(QFont("JetBrains Mono")),
+      fm_(font_) {
+  font_.setPixelSize(14);
+  lineHeight_ = fm_.height();
+
   setOpaquePainting(true);
 }
 
 void EditorView::paint(QPainter* p) {
-  p->fillRect(boundingRect(), QColor("#1e1f22"));
+  p->fillRect(boundingRect(), Qt::white);
 
-  QFont font("JetBrains Mono");
-  font.setPixelSize(14);
+  p->setFont(font_);
+  p->setPen(Qt::red);
 
-  p->setFont(font);
-  p->setPen(Qt::white);
+  const qreal scrollY = -y();
 
-  QFontMetrics fm(font);
+  const int firstLine = qMax(0, int(scrollY / lineHeight_));
+  const int visibleLines = int(height() / lineHeight_) + 2;
+  const int lastLine = qMin(buf_.lineCount(), firstLine + visibleLines);
 
-  constexpr int leftMargin = 24;
+  int yPos = -(int(scrollY) % lineHeight_) + lineHeight_;
 
-  int y = 40;
+  for (int i = firstLine; i < lastLine; ++i) {
+    p->drawText(leftMargin_, yPos, QString(buf_.lineAt(i)));
+    yPos += lineHeight_;
+  }
+}
+
+qreal EditorView::documentHeight() const {
+  return buf_.lineCount() * lineHeight_;
+}
+
+qreal EditorView::documentWidth() const {
+  int maxWidth = 0;
 
   for (int i = 0; i < buf_.lineCount(); ++i) {
-    QStringView line = buf_.lineAt(i);
-
-    p->drawText(leftMargin, y, QString(line));
-
-    y += fm.height();
+    maxWidth = qMax(maxWidth, fm_.horizontalAdvance(QString(buf_.lineAt(i))));
   }
+
+  return maxWidth + leftMargin_;
 }

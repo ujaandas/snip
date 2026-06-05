@@ -6,14 +6,20 @@ Window {
     width: 480
     height: 240
     visible: true
-    title: "Hello World!!!"
+    title: "snip"
 
-    Rectangle {
+    Flickable {
+        id: flick
         anchors.fill: parent
-        color: "#111111"
+        clip: true
+
+        contentWidth: editor.documentWidth
+        contentHeight: editor.documentHeight
 
         EditorView {
-            anchors.fill: parent
+            id: editor
+            width: flick.width
+            height: editor.documentHeight
         }
     }
 }
