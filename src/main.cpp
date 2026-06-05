@@ -4,29 +4,28 @@
 #include <QtGui/QFontDatabase>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
+#include <QtQml/QQmlContext>
 
-#include "EditorView.hpp"
-#include "StrictScrollViewport.hpp"
+#include "EditorController.hpp"
 
 int main(int argc, char* argv[]) {
+  // Initialize app and engine
   QGuiApplication app(argc, argv);
+  QQmlApplicationEngine engine;
 
+  // Instantiate controllers
+  EditorController editor;
+
+  // Register controllers
+  engine.rootContext()->setContextProperty("editor", &editor);
+
+  // Load font
   QFontDatabase::addApplicationFont(":/assets/fonts/JetBrainsMono[wght].ttf");
 
-  QFont f("JetBrains Mono");
-  f.setPixelSize(14);
-  f.setWeight(QFont::Normal);
-
-  qmlRegisterType<EditorView>("MyEditor", 1, 0, "EditorView");
-  qmlRegisterType<StrictScrollViewport>("MyScroll", 1, 0,
-                                        "StrictScrollViewport");
-
-  QQmlApplicationEngine engine;
+  // Load main qml
   engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
 
-  if (engine.rootObjects().isEmpty()) {
-    return -1;
-  }
+  if (engine.rootObjects().isEmpty()) return -1;
 
   return app.exec();
 }
