@@ -23,6 +23,7 @@ void EditorView::paint(QPainter* p) {
   p->setPen(Qt::red);
 
   const qreal scrollY = -y();
+  const qreal scrollX = -x();
 
   const int firstLine = qMax(0, int(scrollY / lineHeight_));
   const int visibleLines = int(height() / lineHeight_) + 2;
@@ -31,7 +32,7 @@ void EditorView::paint(QPainter* p) {
   int yPos = -(int(scrollY) % lineHeight_) + lineHeight_;
 
   for (int i = firstLine; i < lastLine; ++i) {
-    p->drawText(leftMargin_, yPos, QString(buf_.lineAt(i)));
+    p->drawText(leftMargin_ - scrollX, yPos, QString(buf_.lineAt(i)));
     yPos += lineHeight_;
   }
 }

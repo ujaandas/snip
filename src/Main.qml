@@ -18,7 +18,7 @@ Window {
 
         EditorView {
             id: editor
-            width: flick.width
+            width: editor.documentWidth
             height: editor.documentHeight
         }
     }
