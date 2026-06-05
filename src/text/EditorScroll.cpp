@@ -1,84 +1,73 @@
 #include "EditorScroll.hpp"
 
-#include <QtCore/qpoint.h>
+#include <QWheelEvent>
+#include <QtMath>
 
-#include "EditorView.hpp"
+#include "EditorScroll.hpp"
 
 EditorScroll::EditorScroll(QQuickItem* parent) : QQuickItem(parent) {
-  setFlag(ItemClipsChildrenToShape, true);
+  setClip(true);
   setAcceptedMouseButtons(Qt::AllButtons);
 }
 
-void EditorScroll::componentComplete() {
-  QQuickItem::componentComplete();
+void EditorScroll::setContent(QQuickItem* item) {
+  if (content_ == item) return;
 
-  for (auto* child : childItems()) {
-    editor_ = qobject_cast<EditorView*>(child);
+  content_ = item;
 
-    if (editor_) {
-      break;
-    }
+  if (content_) {
+    content_->setParentItem(this);
   }
 
-  syncView();
+  clampAndApply();
+  emit contentChanged();
 }
 
-void EditorScroll::syncView() {
-  if (!editor_) {
-    return;
-  }
+qreal EditorScroll::contentWidth() const {
+  return content_ ? content_->width() : 0.0;
+}
 
-  editor_->setWidth(width());
-  editor_->setHeight(height());
-
-  editor_->setOffsetX(scrollX_);
-  editor_->setOffsetY(scrollY_);
-
-  editor_->update();
+qreal EditorScroll::contentHeight() const {
+  return content_ ? content_->height() : 0.0;
 }
 
 qreal EditorScroll::maxScrollX() const {
-  if (!editor_) return 0;
-  return qMax(0.0, editor_->documentWidth() - width() / 2);
+  return qMax(0.0, contentWidth() - width());
 }
 
 qreal EditorScroll::maxScrollY() const {
-  if (!editor_) return 0;
-  return qMax(0.0, editor_->documentHeight() - height() / 2);
+  return qMax(0.0, contentHeight() - height());
 }
 
 void EditorScroll::setScrollX(qreal x) {
-  const qreal clamped = std::clamp(x, 0.0, maxScrollX());
-
-  if (scrollX_ == clamped) return;
-
-  scrollX_ = clamped;
-  syncView();
+  scrollX_ = qBound(0.0, x, maxScrollX());
+  if (content_) content_->setX(-scrollX_);
   emit scrollXChanged();
 }
 
 void EditorScroll::setScrollY(qreal y) {
-  const qreal clamped = std::clamp(y, 0.0, maxScrollY());
-
-  if (scrollY_ == clamped) return;
-
-  scrollY_ = clamped;
-  syncView();
+  scrollY_ = qBound(0.0, y, maxScrollY());
+  if (content_) content_->setY(-scrollY_);
   emit scrollYChanged();
 }
 
-void EditorScroll::resizeEvent(QResizeEvent*) {
+void EditorScroll::clampAndApply() {
   setScrollX(scrollX_);
   setScrollY(scrollY_);
 }
 
+void EditorScroll::geometryChange(const QRectF& newGeom,
+                                  const QRectF& oldGeom) {
+  QQuickItem::geometryChange(newGeom, oldGeom);
+  clampAndApply();
+}
+
 void EditorScroll::wheelEvent(QWheelEvent* event) {
   QPoint delta = event->pixelDelta();
-
   if (delta.isNull()) delta = event->angleDelta();
 
-  const int dx = delta.x();
-  const int dy = delta.y();
+  const qreal dx = delta.x();
+  const qreal dy = delta.y();
 
   constexpr qreal lockRatio = 1.5;
 

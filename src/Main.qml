@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Window
-import MyEditor 1.0
 import MyScroll 1.0
+import MyEditor 1.0
 
 Window {
     width: 800
@@ -11,8 +11,9 @@ Window {
     EditorScroll {
         anchors.fill: parent
 
-        EditorView {
-            id: editor
+        content: EditorView {
+            width: contentWidth
+            height: contentHeight
         }
     }
 }
