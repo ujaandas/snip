@@ -4,8 +4,6 @@
 
 #include <QPainter>
 
-#include "Log.hpp"
-
 EditorView::EditorView(QQuickItem* parent)
     : QQuickPaintedItem(parent), buf_("README.md"), font_("JetBrains Mono") {
   font_.setPixelSize(14);
@@ -19,12 +17,48 @@ EditorView::EditorView(QQuickItem* parent)
   setOpaquePainting(true);
 }
 
-void EditorView::mousePressEvent(QMouseEvent* event) {
-  QPointF local = event->position();
-  QPointF global = event->globalPosition();
+void EditorView::focusInEvent(QFocusEvent*) {
+  hasFocus_ = true;
+  update();
+}
 
-  Log::debug("local: {},{}", local.x(), local.y());
-  Log::debug("global: {},{}", global.x(), global.y());
+void EditorView::focusOutEvent(QFocusEvent*) {
+  hasFocus_ = false;
+  update();
+}
+
+void EditorView::mousePressEvent(QMouseEvent* event) {
+  setFocus(true);
+
+  QFontMetrics fm(font_);
+
+  const qreal x = event->position().x() - leftMargin_;
+  const qreal y = event->position().y();
+
+  int line = int(y / lineHeight_);
+  line = qBound(0, line, buf_.lineCount() - 1);
+
+  const QString& text = QString(buf_.lineAt(line));
+
+  int col = 0;
+  int currentX = 0;
+
+  for (int i = 0; i < text.size(); ++i) {
+    int charWidth = fm.horizontalAdvance(text[i]);
+
+    if (x < currentX + charWidth / 2.0) {
+      col = i;
+      break;
+    }
+
+    currentX += charWidth;
+    col = i + 1;
+  }
+
+  cursorLine_ = line;
+  cursorCol_ = col;
+
+  update();
 }
 
 void EditorView::paint(QPainter* p) {
@@ -43,6 +77,22 @@ void EditorView::paint(QPainter* p) {
   for (int i = 0; i < qMin(buf_.lineCount(), visibleLines); i++) {
     int y = (i + 1) * lineHeight_;
     p->drawText(leftMargin_, y, QString(buf_.lineAt(i)));
+  }
+
+  // Draw cursor
+  if (hasFocus_) {
+    QFontMetrics fm(font_);
+
+    int charWidth = fm.horizontalAdvance(' ');
+    int x = leftMargin_;
+    for (int i = 0; i < cursorCol_; ++i) {
+      x += fm.horizontalAdvance(buf_.lineAt(cursorLine_)[i]);
+    }
+
+    int y = (cursorLine_ + 1) * lineHeight_;
+
+    p->setPen(Qt::black);
+    p->drawLine(x, y - lineHeight_, x, y);
   }
 }
 

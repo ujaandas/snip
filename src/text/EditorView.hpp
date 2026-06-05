@@ -18,6 +18,9 @@ class EditorView : public QQuickPaintedItem {
  public:
   explicit EditorView(QQuickItem* parent = nullptr);
 
+  void focusInEvent(QFocusEvent*) override;
+  void focusOutEvent(QFocusEvent*) override;
+
   void mousePressEvent(QMouseEvent* event) override;
   // void mouseMoveEvent(QMouseEvent* event) override;
   // void mouseReleaseEvent(QMouseEvent* event) override;
@@ -37,4 +40,8 @@ class EditorView : public QQuickPaintedItem {
 
   int lineHeight_ = 0;
   const int leftMargin_ = 24;
+
+  int cursorLine_ = 0;
+  int cursorCol_ = 0;
+  bool hasFocus_ = false;
 };
