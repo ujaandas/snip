@@ -25,13 +25,13 @@ Item {
             text: controller.text
 
             onEditingFinished: {
-                controller.setText(text)
+                controller.text = text
             }
 
             Connections {
                 target: controller
                 function onTextChanged() {
-                    if (!editor.activeFocus) {
+                    if (editor.text !== controller.text) {
                         editor.text = controller.text
                     }
                 }

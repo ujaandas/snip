@@ -6,7 +6,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 
-#include "Editor.hpp"
+#include "EditorController.hpp"
 
 int main(int argc, char* argv[]) {
   // Initialize app and engine
@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
   QQmlApplicationEngine engine;
 
   // Instantiate controllers
-  Editor editor;
+  EditorController editor;
 
   // Register controllers
   engine.rootContext()->setContextProperty("editor", &editor);
