@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QtGui/qevent.h>
+
 #include <QFont>
 #include <QFontMetrics>
 #include <QQuickPaintedItem>
@@ -15,6 +17,10 @@ class EditorView : public QQuickPaintedItem {
 
  public:
   explicit EditorView(QQuickItem* parent = nullptr);
+
+  void mousePressEvent(QMouseEvent* event) override;
+  // void mouseMoveEvent(QMouseEvent* event) override;
+  // void mouseReleaseEvent(QMouseEvent* event) override;
 
   void paint(QPainter* painter) override;
 

@@ -1,13 +1,30 @@
 #include "EditorView.hpp"
 
+#include <QtGui/qevent.h>
+
 #include <QPainter>
+
+#include "Log.hpp"
 
 EditorView::EditorView(QQuickItem* parent)
     : QQuickPaintedItem(parent), buf_("README.md"), font_("JetBrains Mono") {
   font_.setPixelSize(14);
   lineHeight_ = QFontMetrics(font_).height();
 
+  setAcceptedMouseButtons(Qt::AllButtons);
+  setAcceptHoverEvents(true);
+  setFlag(ItemIsFocusScope, true);
+  setFlag(ItemHasContents, true);
+
   setOpaquePainting(true);
+}
+
+void EditorView::mousePressEvent(QMouseEvent* event) {
+  QPointF local = event->position();
+  QPointF global = event->globalPosition();
+
+  Log::debug("local: {},{}", local.x(), local.y());
+  Log::debug("global: {},{}", global.x(), global.y());
 }
 
 void EditorView::paint(QPainter* p) {
