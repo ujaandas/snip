@@ -3,7 +3,7 @@ import QtQuick.Controls
 
 Item {
     id: root
-    property QtObject controller   // EditorController*
+    property QtObject controller   // Editor*
 
     ScrollView {
         anchors.fill: parent

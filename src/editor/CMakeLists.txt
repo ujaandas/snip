@@ -1,5 +1,5 @@
 add_library(snip_editor
-  EditorController.cpp
+  Editor.cpp
 )
 
 target_include_directories(snip_editor
