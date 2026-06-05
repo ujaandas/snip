@@ -1,18 +1,18 @@
 import QtQuick
 import QtQuick.Window
-import QtQuick.Controls
 import MyEditor 1.0
+import MyScroll 1.0
 
 Window {
-    width: 480
-    height: 240
+    width: 800
+    height: 600
     visible: true
-    title: "snip"
 
-    EditorView {
+    EditorScroll {
         anchors.fill: parent
-        id: editor
-        width: editor.documentWidth
-        height: editor.documentHeight
+
+        EditorView {
+            id: editor
+        }
     }
 }

@@ -22,19 +22,34 @@ void EditorView::paint(QPainter* p) {
   p->setFont(font_);
   p->setPen(Qt::red);
 
-  const qreal scrollY = 0;  // +ve is down, -ve is up
-  const qreal scrollX = 0;  // +ve is right, -ve is left
-
-  const int firstLine = qMax(0, int(scrollY / lineHeight_));
+  const int firstLine = qMax(0, int(offsetY_ / lineHeight_));
   const int visibleLines = int(height() / lineHeight_) + 2;
   const int lastLine = qMin(buf_.lineCount(), firstLine + visibleLines);
 
-  int yPos = -(int(scrollY) % lineHeight_) + lineHeight_;
+  int yPos = -(int(offsetY_) % lineHeight_) + lineHeight_;
 
   for (int i = firstLine; i < lastLine; ++i) {
-    p->drawText(leftMargin_ - scrollX, yPos, QString(buf_.lineAt(i)));
+    p->drawText(leftMargin_ - offsetX_, yPos, QString(buf_.lineAt(i)));
     yPos += lineHeight_;
   }
+}
+
+void EditorView::setOffsetX(qreal x) {
+  if (offsetX_ == x) return;
+
+  offsetX_ = x;
+  update();
+
+  emit offsetXChanged();
+}
+
+void EditorView::setOffsetY(qreal y) {
+  if (offsetY_ == y) return;
+
+  offsetY_ = y;
+  update();
+
+  emit offsetYChanged();
 }
 
 // qreal EditorView::documentHeight() const {

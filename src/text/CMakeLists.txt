@@ -1,6 +1,7 @@
 add_library(snip_text
   FileBuffer.cpp
   EditorView.cpp
+  EditorScroll.cpp
 )
 
 target_include_directories(snip_text
