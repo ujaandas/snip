@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Window
+import QtQuick.Controls
 import MyEditor 1.0
 
 Window {
@@ -8,18 +9,10 @@ Window {
     visible: true
     title: "snip"
 
-    Flickable {
-        id: flick
+    EditorView {
         anchors.fill: parent
-        clip: true
-
-        contentWidth: editor.documentWidth
-        contentHeight: editor.documentHeight
-
-        EditorView {
-            id: editor
-            width: editor.documentWidth
-            height: editor.documentHeight
-        }
+        id: editor
+        width: editor.documentWidth
+        height: editor.documentHeight
     }
 }
