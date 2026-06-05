@@ -13,6 +13,8 @@ Item {
         anchors.fill: parent
         
         TextArea {
+            id: editor
+
             // Styling
             width: parent.width
 
@@ -25,19 +27,9 @@ Item {
             // Data
             text: controller ? controller.text : ""
 
-            onEditingFinished: {
-                controller.text = text
-            }
-
-            Connections {
-                target: controller
-                function onTextChanged() {
-                    if (!controller) 
-                        return
-
-                    if (editor.text !== controller.text) 
-                        editor.text = controller.text
-                }
+            onTextChanged: {
+                if (controller && controller.text !== text)
+                    controller.text = text
             }
         }
     }
