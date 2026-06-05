@@ -1,5 +1,6 @@
 add_subdirectory(text)
 add_subdirectory(log)
+add_subdirectory(viewport)
 
 add_executable(snip
   main.cpp
@@ -9,6 +10,7 @@ add_executable(snip
 target_link_libraries(snip
   PRIVATE
     snip_text
+    snip_viewport
     Qt6::Core
     Qt6::Gui
     Qt6::Qml
