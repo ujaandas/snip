@@ -2,20 +2,21 @@
 
 #include <QQuickItem>
 
-class EditorScroll : public QQuickItem {
-  Q_OBJECT
+class StrictScrollViewport : public QQuickItem {
+  Q_OBJECT;
 
   Q_PROPERTY(
-      QQuickItem* content READ content WRITE setContent NOTIFY contentChanged)
+      QQuickItem* content READ content WRITE setContent NOTIFY contentChanged);
 
-  Q_PROPERTY(qreal scrollX READ scrollX WRITE setScrollX NOTIFY scrollXChanged)
-  Q_PROPERTY(qreal scrollY READ scrollY WRITE setScrollY NOTIFY scrollYChanged)
+  Q_PROPERTY(qreal scrollX READ scrollX WRITE setScrollX NOTIFY scrollXChanged);
+  Q_PROPERTY(qreal scrollY READ scrollY WRITE setScrollY NOTIFY scrollYChanged);
 
-  Q_PROPERTY(qreal contentWidth READ contentWidth NOTIFY contentWidthChanged)
-  Q_PROPERTY(qreal contentHeight READ contentHeight NOTIFY contentHeightChanged)
+  Q_PROPERTY(qreal contentWidth READ contentWidth NOTIFY contentWidthChanged);
+  Q_PROPERTY(
+      qreal contentHeight READ contentHeight NOTIFY contentHeightChanged);
 
  public:
-  explicit EditorScroll(QQuickItem* parent = nullptr);
+  explicit StrictScrollViewport(QQuickItem* parent = nullptr);
 
   QQuickItem* content() const { return content_; }
   void setContent(QQuickItem* item);

@@ -7,10 +7,11 @@
 #include "FileBuffer.hpp"
 
 class EditorView : public QQuickPaintedItem {
-  Q_OBJECT
+  Q_OBJECT;
 
-  Q_PROPERTY(qreal contentWidth READ contentWidth NOTIFY contentWidthChanged)
-  Q_PROPERTY(qreal contentHeight READ contentHeight NOTIFY contentHeightChanged)
+  Q_PROPERTY(qreal contentWidth READ contentWidth NOTIFY contentWidthChanged);
+  Q_PROPERTY(
+      qreal contentHeight READ contentHeight NOTIFY contentHeightChanged);
 
  public:
   explicit EditorView(QQuickItem* parent = nullptr);

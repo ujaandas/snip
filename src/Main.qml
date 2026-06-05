@@ -8,7 +8,7 @@ Window {
     height: 600
     visible: true
 
-    EditorScroll {
+    StrictScrollViewport {
         anchors.fill: parent
 
         content: EditorView {

@@ -5,8 +5,8 @@
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 
-#include "EditorScroll.hpp"
 #include "EditorView.hpp"
+#include "StrictScrollViewport.hpp"
 
 int main(int argc, char* argv[]) {
   QGuiApplication app(argc, argv);
@@ -18,7 +18,8 @@ int main(int argc, char* argv[]) {
   f.setWeight(QFont::Normal);
 
   qmlRegisterType<EditorView>("MyEditor", 1, 0, "EditorView");
-  qmlRegisterType<EditorScroll>("MyScroll", 1, 0, "EditorScroll");
+  qmlRegisterType<StrictScrollViewport>("MyScroll", 1, 0,
+                                        "StrictScrollViewport");
 
   QQmlApplicationEngine engine;
   engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
