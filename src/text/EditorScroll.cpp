@@ -37,28 +37,39 @@ void EditorScroll::syncView() {
   editor_->update();
 }
 
+qreal EditorScroll::maxScrollX() const {
+  if (!editor_) return 0;
+  return qMax(0.0, editor_->documentWidth() - width() / 2);
+}
+
+qreal EditorScroll::maxScrollY() const {
+  if (!editor_) return 0;
+  return qMax(0.0, editor_->documentHeight() - height() / 2);
+}
+
 void EditorScroll::setScrollX(qreal x) {
-  if (scrollX_ == x) {
-    return;
-  }
+  const qreal clamped = std::clamp(x, 0.0, maxScrollX());
 
-  scrollX_ = x;
+  if (scrollX_ == clamped) return;
 
+  scrollX_ = clamped;
   syncView();
-
   emit scrollXChanged();
 }
 
 void EditorScroll::setScrollY(qreal y) {
-  if (scrollY_ == y) {
-    return;
-  }
+  const qreal clamped = std::clamp(y, 0.0, maxScrollY());
 
-  scrollY_ = y;
+  if (scrollY_ == clamped) return;
 
+  scrollY_ = clamped;
   syncView();
-
   emit scrollYChanged();
+}
+
+void EditorScroll::resizeEvent(QResizeEvent*) {
+  setScrollX(scrollX_);
+  setScrollY(scrollY_);
 }
 
 void EditorScroll::wheelEvent(QWheelEvent* event) {

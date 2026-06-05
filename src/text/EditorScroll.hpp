@@ -28,6 +28,10 @@ class EditorScroll : public QQuickItem {
  private:
   void syncView();
 
+  qreal maxScrollX() const;
+  qreal maxScrollY() const;
+  void resizeEvent(QResizeEvent*);
+
   qreal scrollX_ = 0;
   qreal scrollY_ = 0;
 
