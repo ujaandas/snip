@@ -12,6 +12,8 @@ class EditorModel : public QObject {
 
   QTextDocument* document();
 
+  void setDocument(QTextDocument* doc);
+
   QString filePath() const;
 
   void load(const QString& path);
@@ -24,6 +26,6 @@ class EditorModel : public QObject {
   void textChanged();
 
  private:
-  QTextDocument doc_;
+  QTextDocument* doc_ = nullptr;
   QString filePath_;
 };

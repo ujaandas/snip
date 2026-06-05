@@ -2,15 +2,19 @@
 
 #include <QtGui/qtextdocument.h>
 
-EditorController::EditorController(QObject* parent) : QObject(parent) {
+#include "Log.hpp"
+
+EditorController::EditorController(QObject* parent) : QObject(parent) {}
+
+void EditorController::setQuickDocument(QQuickTextDocument* quickDoc) {
+  if (!quickDoc) return;
+  model_.setDocument(quickDoc->textDocument());
   model_.load("README.md");
 }
 
-QTextDocument* EditorController::document() { return model_.document(); }
-
-QString EditorController::text() { return model_.document()->toPlainText(); }
-
-bool EditorController::save() { return model_.save(); }
+void EditorController::save() {
+  if (!model_.save()) Log::fatal("Failed to save file: {}", model_.filePath());
+}
 
 void EditorController::undo() { model_.undo(); }
 

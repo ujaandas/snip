@@ -5,16 +5,19 @@
 
 EditorModel::EditorModel(QObject* parent) : QObject(parent) {}
 
-QTextDocument* EditorModel::document() { return &doc_; }
+QTextDocument* EditorModel::document() { return doc_; }
+
+void EditorModel::setDocument(QTextDocument* doc) { doc_ = doc; }
 
 void EditorModel::load(const QString& path) {
+  if (!doc_) return;
   QFile file(path);
 
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
 
   QTextStream in(&file);
 
-  doc_.setPlainText(in.readAll());
+  doc_->setPlainText(in.readAll());
   filePath_ = path;
 }
 
@@ -26,13 +29,13 @@ bool EditorModel::save() {
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
 
   QTextStream out(&file);
-  out << doc_.toPlainText();
+  out << doc_->toPlainText();
 
   return true;
 }
 
 QString EditorModel::filePath() const { return filePath_; }
 
-void EditorModel::undo() { doc_.undo(); }
+void EditorModel::undo() { doc_->undo(); }
 
-void EditorModel::redo() { doc_.redo(); }
+void EditorModel::redo() { doc_->redo(); }

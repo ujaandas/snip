@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QtGui/qtextdocument.h>
-
 #include <QObject>
+#include <QQuickTextDocument>
+#include <QTextDocument>
 
 #include "EditorModel.hpp"
 
@@ -12,10 +12,9 @@ class EditorController : public QObject {
  public:
   explicit EditorController(QObject* parent = nullptr);
 
-  Q_INVOKABLE QTextDocument* document();
-  Q_INVOKABLE QString text();
+  Q_INVOKABLE void setQuickDocument(QQuickTextDocument* quickDoc);
 
-  Q_INVOKABLE bool save();
+  Q_INVOKABLE void save();
   Q_INVOKABLE void undo();
   Q_INVOKABLE void redo();
 

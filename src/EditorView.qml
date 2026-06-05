@@ -25,7 +25,7 @@ Item {
             font.pixelSize: 14
 
             // Data
-            text: controller ? controller.text() : null
+            Component.onCompleted: controller.setQuickDocument(editor.textDocument)
         }
     }
 }
