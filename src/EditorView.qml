@@ -9,17 +9,33 @@ Item {
         anchors.fill: parent
         
         TextArea {
+            // ID
             id: editor
+
+            // Styling
             width: parent.width
 
             wrapMode: TextArea.NoWrap
             font.family: "JetBrains Mono"
             font.pixelSize: 14
-
+            
             anchors.fill: parent
+
+            // Data
             text: controller.text
 
-            onTextChanged: controller.text = text
+            onEditingFinished: {
+                controller.setText(text)
+            }
+
+            Connections {
+                target: controller
+                function onTextChanged() {
+                    if (!editor.activeFocus) {
+                        editor.text = controller.text
+                    }
+                }
+            }
         }
     }
 }
