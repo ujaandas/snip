@@ -1,20 +1,17 @@
 #include "EditorController.hpp"
 
-#include <QFile>
-#include <QTextStream>
+#include <QtGui/qtextdocument.h>
 
-EditorController::EditorController(QObject* parent)
-    : QObject(parent), model_(this) {
+EditorController::EditorController(QObject* parent) : QObject(parent) {
   model_.load("README.md");
-
-  connect(&model_, &EditorModel::textChanged, this,
-          &EditorController::textChanged);
 }
 
-QString EditorController::text() const { return model_.text(); }
+QTextDocument* EditorController::document() { return model_.document(); }
 
-void EditorController::setText(const QString& t) { model_.setText(t); }
+QString EditorController::text() { return model_.document()->toPlainText(); }
 
 bool EditorController::save() { return model_.save(); }
+
 void EditorController::undo() { model_.undo(); }
+
 void EditorController::redo() { model_.redo(); }

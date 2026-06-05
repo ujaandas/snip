@@ -17,20 +17,15 @@ Item {
 
             // Styling
             width: parent.width
+            height: contentHeight
+            anchors.fill: parent
 
             wrapMode: TextArea.NoWrap
             font.family: "JetBrains Mono"
             font.pixelSize: 14
-            
-            anchors.fill: parent
 
             // Data
-            text: controller ? controller.text : ""
-
-            onTextChanged: {
-                if (controller && controller.text !== text)
-                    controller.text = text
-            }
+            text: controller ? controller.text() : null
         }
     }
 }

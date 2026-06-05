@@ -3,18 +3,9 @@
 #include <QFile>
 #include <QTextStream>
 
-EditorModel::EditorModel(QObject* parent) : QObject(parent) {
-  connect(&doc_, &QTextDocument::contentsChanged, this,
-          &EditorModel::textChanged);
-}
+EditorModel::EditorModel(QObject* parent) : QObject(parent) {}
 
-QString EditorModel::text() const { return doc_.toPlainText(); }
-
-void EditorModel::setText(const QString& text) {
-  if (doc_.toPlainText() == text) return;
-
-  doc_.setPlainText(text);
-}
+QTextDocument* EditorModel::document() { return &doc_; }
 
 void EditorModel::load(const QString& path) {
   QFile file(path);
