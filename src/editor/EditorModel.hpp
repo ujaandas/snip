@@ -13,9 +13,13 @@ class EditorModel : public QObject {
   QString text() const;
   void setText(const QString& t);
 
+  QString filePath() const;
+  void load(const QString& path);
+
  signals:
   void textChanged();
 
  private:
   QString text_;
+  QString filePath_;
 };

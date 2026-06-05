@@ -5,6 +5,10 @@ Item {
     id: root
     property QtObject controller   // Editor*
 
+    EditorShortcuts {
+        editor: controller
+    }
+
     ScrollView {
         anchors.fill: parent
         

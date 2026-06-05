@@ -14,6 +14,10 @@ class EditorController : public QObject {
   QString text() const;
   void setText(const QString& t);
 
+  Q_INVOKABLE bool save();
+  // Q_INVOKABLE bool undo();
+  // Q_INVOKABLE bool redo();
+
  signals:
   void textChanged();
 
