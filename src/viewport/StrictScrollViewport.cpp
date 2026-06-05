@@ -31,14 +31,11 @@ qreal StrictScrollViewport::contentHeight() const {
 }
 
 qreal StrictScrollViewport::maxScrollX() const {
-  const int widthExtraLenience = 4;
-  return qMax(0.0, contentWidth() - (width() / widthExtraLenience));
+  return qMax(0.0, contentWidth() - width());
 }
 
 qreal StrictScrollViewport::maxScrollY() const {
-  const double heightExtraLenience =
-      1.5;  // TODO: more elegant way to get this number?
-  return qMax(0.0, contentHeight() - (height() / heightExtraLenience));
+  return qMax(0.0, contentHeight() - height());
 }
 
 void StrictScrollViewport::setScrollX(qreal x) {

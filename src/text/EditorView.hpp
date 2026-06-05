@@ -27,9 +27,7 @@ class EditorView : public QQuickPaintedItem {
 
  private:
   FileBuffer buf_;
-
   QFont font_;
-  QFontMetrics fm_;
 
   int lineHeight_ = 0;
   const int leftMargin_ = 24;
