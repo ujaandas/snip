@@ -8,7 +8,7 @@ Item {
     property QtObject tabManager
 
     EditorShortcuts {
-        editor: root.tabManager?.activeEditor ?? null
+        tabManager: root.tabManager
     }
 
     Column {
@@ -23,19 +23,6 @@ Item {
             border.color: "#2b313d"
             border.width: 1
             clip: true
-
-            Shortcut {
-                sequences: [ StandardKey.Close ]
-                onActivated: root.tabManager?.closeActiveTab()
-            }
-            Shortcut {
-                sequence: "Ctrl+Tab"
-                onActivated: root.tabManager?.nextTab()
-            }
-            Shortcut {
-                sequence: "Ctrl+Shift+Tab"
-                onActivated: root.tabManager?.prevTab()
-            }
 
             Flickable {
                 id: tabFlickable
