@@ -5,6 +5,7 @@ ApplicationWindow {
     visible: true
     width: 900
     height: 600
+    flags: Qt.Window | Qt.FramelessWindowHint
     color: "#161a22"
 
     SplitView {
