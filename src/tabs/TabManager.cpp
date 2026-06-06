@@ -62,7 +62,6 @@ void TabManager::closeTab(int index) {
   beginRemoveRows(QModelIndex(), index, index);
   tabs_[index].editor->deleteLater();
   tabs_.removeAt(index);
-
   endRemoveRows();
 
   if (tabs_.isEmpty()) {
