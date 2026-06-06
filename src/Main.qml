@@ -11,17 +11,18 @@ ApplicationWindow {
         orientation: Qt.Horizontal
 
         SplitView {
-            SplitView.fillWidth: true
             orientation: Qt.Vertical
+            SplitView.fillWidth: true
+            SplitView.fillHeight: true
 
-            EditorView {
+            TabView {
+                SplitView.fillWidth: true
                 SplitView.fillHeight: true
-                controller: editor
             }
 
             Rectangle {
+                color: "#111111"
                 SplitView.preferredHeight: 150
-                color: "#111111" 
             }
         }
 
