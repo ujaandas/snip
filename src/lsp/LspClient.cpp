@@ -3,6 +3,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QCoreApplication>
 #include "Log.hpp"
 
 LspClient::LspClient(QObject* parent) : QObject(parent) {}
@@ -96,7 +97,6 @@ void LspClient::sendMessage(const QJsonObject& message) {
 
   process_->write(header);
   process_->write(data);
-  process_->flush();
 }
 
 void LspClient::onReadyRead() {
