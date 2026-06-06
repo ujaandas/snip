@@ -1,14 +1,14 @@
 #include "Editor.hpp"
 
 #include <QFile>
+#include <QTextBlock>
+#include <QTextCharFormat>
+#include <QTextCursor>
 #include <QTextStream>
 #include <QUrl>
-#include <QTextCursor>
-#include <QTextCharFormat>
-#include <algorithm>
-#include <QTextBlock>
-#include "LspClient.hpp"
+
 #include "Log.hpp"
+#include "LspClient.hpp"
 #include "SemanticTokens.hpp"
 
 Editor::Editor(const QString& filePath, QObject* parent)
@@ -17,14 +17,13 @@ Editor::Editor(const QString& filePath, QObject* parent)
 void Editor::setQuickDocument(QQuickTextDocument* quickDoc) {
   if (!quickDoc) return;
   doc_ = quickDoc->textDocument();
-  connect(doc_, &QTextDocument::modificationChanged, this, &Editor::modifiedChanged);
+  connect(doc_, &QTextDocument::modificationChanged, this,
+          &Editor::modifiedChanged);
   load(filePath_);
   notifyLspDidOpen();
 }
 
-bool Editor::isModified() const {
-  return doc_ ? doc_->isModified() : false;
-}
+bool Editor::isModified() const { return doc_ ? doc_->isModified() : false; }
 
 void Editor::save() {
   if (!saveDocument()) Log::fatal("Failed to save file: {}", filePath_);
@@ -66,11 +65,13 @@ bool Editor::saveDocument() {
 
 void Editor::setLspClient(LspClient* lspClient) {
   if (lspClient_) {
-    disconnect(lspClient_, &LspClient::semanticTokensReceived, this, &Editor::onSemanticTokens);
+    disconnect(lspClient_, &LspClient::semanticTokensReceived, this,
+               &Editor::onSemanticTokens);
   }
   lspClient_ = lspClient;
   if (lspClient_) {
-    connect(lspClient_, &LspClient::semanticTokensReceived, this, &Editor::onSemanticTokens);
+    connect(lspClient_, &LspClient::semanticTokensReceived, this,
+            &Editor::onSemanticTokens);
   }
 }
 
@@ -90,31 +91,54 @@ void Editor::onSemanticTokens(const QString& uri, const QJsonArray& data) {
   // save modification state
   bool wasModified = doc_->isModified();
 
+  int applied = 0;
+  int skipped = 0;
+
   // apply highlighting to each token
   for (const auto& token : tokens) {
-    // validate line exists
-    if (token.line >= doc_->blockCount()) continue;
+    // get block at token line
+    QTextBlock block = doc_->findBlockByNumber(token.line);
+    if (!block.isValid()) {
+      skipped++;
+      continue;
+    }
 
+    // calculate absolute position in document
+    int startPos = block.position() + token.character;
+    int endPos = startPos + token.length;
+
+    // debug: log some tokens to see what we're getting
+    if (applied < 3) {
+      Log::debug(
+          "Token {}: line={}, char={}, len={}, blockPos={}, blockLen={}, "
+          "startPos={}, endPos={}, docLen={}",
+          applied, token.line, token.character, token.length, block.position(),
+          block.length(), startPos, endPos, doc_->characterCount());
+    }
+
+    // validate positions
+    if (startPos < 0 || endPos > doc_->characterCount()) {
+      skipped++;
+      continue;
+    }
+    if (token.character < 0 ||
+        token.character + token.length > block.length()) {
+      skipped++;
+      continue;
+    }
+
+    // apply formatting
     QTextCursor cursor(doc_);
-    cursor.movePosition(QTextCursor::Start);
-    cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, token.line);
-
-    // validate character position in line
-    int lineStartPos = cursor.position();
-    QTextBlock block = doc_->findBlock(lineStartPos);
-    if (token.character > block.length()) continue;
-
-    cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, token.character);
-
-    int endPos = cursor.position() + token.length;
-    if (endPos > doc_->characterCount()) continue;
-
+    cursor.setPosition(startPos);
     cursor.setPosition(endPos, QTextCursor::KeepAnchor);
 
     QTextCharFormat format;
     format.setForeground(SemanticTokens::typeToColor(token.type));
-    cursor.mergeCharFormat(format);
+    cursor.setCharFormat(format);
+    applied++;
   }
+
+  Log::info("Applied {} tokens, skipped {}", applied, skipped);
 
   // restore modification state
   doc_->setModified(wasModified);

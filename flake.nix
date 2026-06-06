@@ -162,6 +162,7 @@
               prek
               ninja
               gtest
+              tree-sitter
               tree-sitter-grammars.tree-sitter-cpp
             ]
             ++ qtPkgs;
