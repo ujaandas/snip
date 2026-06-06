@@ -5,6 +5,8 @@
 #include <QTextDocument>
 #include <QString>
 
+class LspClient;
+
 class Editor : public QObject {
   Q_OBJECT;
 
@@ -14,6 +16,7 @@ class Editor : public QObject {
   explicit Editor(const QString& filePath, QObject* parent = nullptr);
 
   Q_INVOKABLE void setQuickDocument(QQuickTextDocument* quickDoc);
+  void setLspClient(LspClient* lspClient);
 
   Q_INVOKABLE void save();
   Q_INVOKABLE void undo();
@@ -27,7 +30,9 @@ class Editor : public QObject {
  private:
   void load(const QString& path);
   bool saveDocument();
+  void notifyLspDidOpen();
 
   QTextDocument* doc_ = nullptr;
   QString filePath_;
+  LspClient* lspClient_ = nullptr;
 };
