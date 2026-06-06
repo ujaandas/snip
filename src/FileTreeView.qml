@@ -5,6 +5,7 @@ Item {
     id: root
 
     property QtObject tree
+    property QtObject tabManager
 
     Rectangle {
         anchors.fill: parent
@@ -64,7 +65,7 @@ Item {
                 required property string fileName
                 required property string filePath
 
-                readonly property bool isActive: !hasChildren && tabManager && (filePath === tabManager.activeFilePath)
+                readonly property bool isActive: !hasChildren && (filePath === root.tabManager?.activeFilePath)
 
                 MouseArea {
                     id: mouseArea
@@ -74,7 +75,7 @@ Item {
                         if (hasChildren) {
                             delegateItem.treeView.toggleExpanded(row)
                         } else {
-                            tabManager.openTab(fileName, filePath)
+                            root.tabManager.openTab(fileName, filePath)
                         }
                     }
                 }

@@ -5,8 +5,10 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
+    property QtObject tabManager
+
     EditorShortcuts {
-        editor: tabManager && tabManager.activeTab >= 0 ? tabManager.activeEditor : null
+        editor: root.tabManager?.activeEditor ?? null
     }
 
     Column {
@@ -24,15 +26,15 @@ Item {
 
             Shortcut {
                 sequences: [ StandardKey.Close ]
-                onActivated: tabManager ? tabManager.closeActiveTab() : null
+                onActivated: root.tabManager?.closeActiveTab()
             }
             Shortcut {
                 sequence: "Ctrl+Tab"
-                onActivated: tabManager ? tabManager.nextTab() : null
+                onActivated: root.tabManager?.nextTab()
             }
             Shortcut {
                 sequence: "Ctrl+Shift+Tab"
-                onActivated: tabManager ? tabManager.prevTab() : null
+                onActivated: root.tabManager?.prevTab()
             }
 
             Flickable {
@@ -56,11 +58,11 @@ Item {
 
                     Repeater {
                         id: tabRepeater
-                        model: tabManager
+                        model: root.tabManager
 
                         Item {
                             id: tabItem
-                            property bool isActive: tabManager ? index === tabManager.activeTab : false
+                            property bool isActive: index === root.tabManager?.activeTab
                             width: Math.max(140, tabLabel.implicitWidth + 52)
                             height: tabBar.height
 
@@ -77,7 +79,7 @@ Item {
                             HoverHandler { id: tabHover }
 
                             TapHandler {
-                                onTapped: tabManager.activeTab = index
+                                onTapped: root.tabManager.activeTab = index
                             }
 
                             Rectangle {
@@ -119,7 +121,7 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
 
                                 HoverHandler { id: closeBtnHover }
-                                TapHandler { onTapped: tabManager.closeTab(index) }
+                                TapHandler { onTapped: root.tabManager.closeTab(index) }
 
                                 Rectangle {
                                     anchors.fill: parent
@@ -144,11 +146,11 @@ Item {
             width: parent.width
             height: parent.height - tabBar.height
 
-            currentIndex: tabManager ? tabManager.activeTab : -1
+            currentIndex: root.tabManager?.activeTab ?? -1
 
             Repeater {
-                model: tabManager
-                
+                model: root.tabManager
+
                 EditorView {
                     SplitView.fillHeight: true
                     tabEditor: editor

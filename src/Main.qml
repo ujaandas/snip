@@ -2,12 +2,15 @@ import QtQuick
 import QtQuick.Controls
 
 ApplicationWindow {
-    id: window
+    id: root
     visible: true
     width: 900
     height: 600
     flags: Qt.Window
     color: "#161a22"
+
+    property QtObject tabs: tabManager
+    property QtObject files: fileTree
 
     SplitView {
         anchors.fill: parent
@@ -21,11 +24,13 @@ ApplicationWindow {
         TabView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
+            tabManager: root.tabs
         }
 
         FileTreeView {
             SplitView.preferredWidth: 250
-            tree: fileTree
+            tree: root.files
+            tabManager: root.tabs
         }
     }
 }
