@@ -3,22 +3,22 @@ add_subdirectory(editor)
 add_subdirectory(filetree)
 add_subdirectory(tabs)
 
-add_executable(snip
+add_executable(parity
   main.cpp
   qml.qrc
 )
 
-target_link_libraries(snip
+target_link_libraries(parity
   PRIVATE
-    snip_editor
-    snip_filetree
-    snip_tabs
+    parity_editor
+    parity_filetree
+    parity_tabs
     Qt6::Core
     Qt6::Gui
     Qt6::Qml
     Qt6::Quick
 )
 
-install(TARGETS snip
+install(TARGETS parity
   RUNTIME DESTINATION bin
 )
