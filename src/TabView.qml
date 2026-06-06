@@ -43,6 +43,15 @@ Item {
                         color: checked ? "#1f2430" : (parent.hovered ? "#1b202b" : "#171c26")
                         border.color: checked ? "#2b313d" : "#171c26"
                         border.width: 1
+
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            height: 2
+                            color: "#4d9ef5"
+                            visible: checked
+                        }
                     }
 
                     contentItem: Text {
