@@ -12,6 +12,7 @@ target_include_directories(parity_editor
 target_link_libraries(parity_editor
   PUBLIC
     parity_log
+    parity_lsp
     Qt6::Core
     Qt6::Quick
 )
