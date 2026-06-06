@@ -5,6 +5,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include "JsonRpc.hpp"
+
 class LspClient : public QObject {
   Q_OBJECT
 
