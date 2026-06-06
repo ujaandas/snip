@@ -10,6 +10,7 @@ target_include_directories(snip_tabs
 target_link_libraries(snip_tabs
   PUBLIC
     snip_log
+    snip_editor
     Qt6::Core
     Qt6::Quick
 )

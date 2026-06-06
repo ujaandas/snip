@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   // Register controllers
   engine.rootContext()->setContextProperty("editor", &editor);
   engine.rootContext()->setContextProperty("fileTree", &ft);
-  engine.rootContext()->setContextProperty("tabs", &tabs);
+  engine.rootContext()->setContextProperty("tabManager", &tabs);
 
   // Load font
   QFontDatabase::addApplicationFont(":/assets/fonts/JetBrainsMono[wght].ttf");

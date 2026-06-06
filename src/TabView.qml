@@ -37,14 +37,9 @@ Item {
             Repeater {
                 model: tabManager
                 
-                Rectangle {
-                    color: "#2b2b2b"
-                    
-                    Text {
-                        anchors.centerIn: parent
-                        color: "white"
-                        text: "Editor loaded for: " + tabPath 
-                    }
+                EditorView {
+                    SplitView.fillHeight: true
+                    controller: editor
                 }
             }
         }
