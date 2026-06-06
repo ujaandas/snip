@@ -4,6 +4,7 @@
 #include <QQuickTextDocument>
 #include <QTextDocument>
 #include <QString>
+#include <QJsonArray>
 
 class LspClient;
 
@@ -26,6 +27,9 @@ class Editor : public QObject {
 
  signals:
   void modifiedChanged();
+
+ private slots:
+  void onSemanticTokens(const QString& uri, const QJsonArray& data);
 
  private:
   void load(const QString& path);

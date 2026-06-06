@@ -61,11 +61,23 @@ bool Editor::saveDocument() {
 }
 
 void Editor::setLspClient(LspClient* lspClient) {
+  if (lspClient_) {
+    disconnect(lspClient_, &LspClient::semanticTokensReceived, this, &Editor::onSemanticTokens);
+  }
   lspClient_ = lspClient;
+  if (lspClient_) {
+    connect(lspClient_, &LspClient::semanticTokensReceived, this, &Editor::onSemanticTokens);
+  }
 }
 
 void Editor::notifyLspDidOpen() {
   if (!lspClient_ || filePath_.isEmpty() || !doc_) return;
   QString uri = QUrl::fromLocalFile(filePath_).toString();
   lspClient_->didOpen(uri, "cpp", doc_->toPlainText());
+  lspClient_->requestSemanticTokens(uri);
+}
+
+void Editor::onSemanticTokens(const QString& uri, const QJsonArray& data) {
+  // TODO: apply semantic token colors to text
+  Log::info("Semantic tokens received for {}: {} tokens", uri, data.size());
 }
