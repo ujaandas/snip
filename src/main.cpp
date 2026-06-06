@@ -6,7 +6,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 
-#include "EditorController.hpp"
+// #include "EditorController.hpp"
 #include "filetree/FileTreeController.hpp"
 #include "tabs/TabManager.hpp"
 

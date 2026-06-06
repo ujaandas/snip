@@ -9,23 +9,51 @@ Item {
         editor: controller
     }
 
-    ScrollView {
+    Rectangle {
         anchors.fill: parent
-        
-        TextArea {
-            id: editor
+        color: "#1e1e1e"
 
-            // Styling
-            width: parent.width
-            height: contentHeight
+        ScrollView {
             anchors.fill: parent
+            clip: true
 
-            wrapMode: TextArea.NoWrap
-            font.family: "JetBrains Mono"
-            font.pixelSize: 14
+            TextArea {
+                id: editor
 
-            // Data
-            Component.onCompleted: controller.setQuickDocument(editor.textDocument)
+                // data
+                Component.onCompleted: controller.setQuickDocument(editor.textDocument)
+
+                // layout
+                width: parent.width
+                height: contentHeight
+                anchors.fill: parent
+
+                // editor behavior
+                wrapMode: TextArea.NoWrap
+
+                // font
+                font.family: "JetBrains Mono"
+                font.pixelSize: 14
+
+                // colours
+                color: "#d4d4d4"
+                selectionColor: "#264f78"
+                selectedTextColor: "#ffffff"
+
+                background: Rectangle {
+                    color: "#1e1e1e"
+                }
+
+                leftPadding: 12
+                rightPadding: 12
+                topPadding: 10
+                bottomPadding: 10
+
+                cursorDelegate: Rectangle {
+                    width: 2
+                    color: "#aeafad"
+                }
+            }
         }
     }
 }
