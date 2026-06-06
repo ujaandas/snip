@@ -11,6 +11,7 @@ ApplicationWindow {
         orientation: Qt.Horizontal
 
         SplitView {
+            SplitView.fillWidth: true
             orientation: Qt.Vertical
 
             EditorView {
