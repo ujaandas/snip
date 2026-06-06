@@ -25,7 +25,7 @@ QHash<int, QByteArray> TabManager::roleNames() const {
   QHash<int, QByteArray> roles;
   roles[TitleRole] = "tabTitle";
   roles[PathRole] = "tabPath";
-  roles[EditorRole] = "editorController";
+  roles[EditorRole] = "editor";
   return roles;
 }
 
@@ -47,7 +47,7 @@ void TabManager::openTab(const QString& title, const QString& path) {
     }
   }
 
-  EditorController* newEditor = new EditorController(path, this);
+  Editor* newEditor = new Editor(path, this);
 
   beginInsertRows(QModelIndex(), tabs_.count(), tabs_.count());
   tabs_.append({title, path, newEditor});

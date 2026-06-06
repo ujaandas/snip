@@ -3,10 +3,10 @@ import QtQuick.Controls
 
 Item {
     id: root
-    property QtObject controller   // Editor*
+    property QtObject tabEditor
 
     EditorShortcuts {
-        editor: controller
+        editor: tabEditor
     }
 
     Rectangle {
@@ -46,13 +46,12 @@ Item {
             }
 
             TextArea {
-                id: editor
+                id: editorArea
 
                 // data
-                Component.onCompleted: controller.setQuickDocument(editor.textDocument)
-
-                // layout
-                anchors.fill: parent
+                Component.onCompleted: {
+                    if (tabEditor) tabEditor.setQuickDocument(editorArea.textDocument)
+                }
 
                 // editor behavior
                 wrapMode: TextArea.NoWrap

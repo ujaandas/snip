@@ -3,14 +3,13 @@
 #include <QObject>
 #include <QQuickTextDocument>
 #include <QTextDocument>
+#include <QString>
 
-#include "EditorModel.hpp"
-
-class EditorController : public QObject {
+class Editor : public QObject {
   Q_OBJECT;
 
  public:
-  explicit EditorController(const QString& filePath, QObject* parent = nullptr);
+  explicit Editor(const QString& filePath, QObject* parent = nullptr);
 
   Q_INVOKABLE void setQuickDocument(QQuickTextDocument* quickDoc);
 
@@ -19,6 +18,9 @@ class EditorController : public QObject {
   Q_INVOKABLE void redo();
 
  private:
+  void load(const QString& path);
+  bool saveDocument();
+
+  QTextDocument* doc_ = nullptr;
   QString filePath_;
-  EditorModel model_;
 };

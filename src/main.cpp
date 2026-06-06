@@ -7,8 +7,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 
-// #include "EditorController.hpp"
-#include "filetree/FileTreeController.hpp"
+#include "FileTree.hpp"
 #include "tabs/TabManager.hpp"
 
 int main(int argc, char* argv[]) {
@@ -19,14 +18,10 @@ int main(int argc, char* argv[]) {
   QGuiApplication app(argc, argv);
   QQmlApplicationEngine engine;
 
-  // Instantiate controllers
-  // EditorController editor("README.md");
-  FileTreeController ft;
+  FileTree fileTree;
   TabManager tabs;
 
-  // Register controllers
-  // engine.rootContext()->setContextProperty("editor", &editor);
-  engine.rootContext()->setContextProperty("fileTree", &ft);
+  engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
 
   // Load font

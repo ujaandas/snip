@@ -4,7 +4,7 @@ import QtQuick.Controls
 Item {
     id: root
 
-    property QtObject controller   // FileTreeController*
+    property QtObject tree
 
     Rectangle {
         anchors.fill: parent
@@ -39,8 +39,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            rootIndex: controller ? controller.rootIndex : null
-            model: controller ? controller.model : null
+            rootIndex: root ? root.tree.rootIndex : -1
+            model: root ? root.tree.model : null
             clip: true
 
             Rectangle {

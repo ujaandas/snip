@@ -53,7 +53,7 @@ ApplicationWindow {
 
         FileTreeView {
             SplitView.preferredWidth: 250
-            controller: fileTree
+            tree: fileTree
         }
     }
 }

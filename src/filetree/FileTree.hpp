@@ -1,14 +1,14 @@
 #pragma once
 
-#include <QtCore/qabstractitemmodel.h>
-
+#include <QFileSystemModel>
 #include <QObject>
 #include <QString>
 
-#include "FileSortProxy.hpp"
-#include "FileTreeModel.hpp"
+#include <QtCore/qabstractitemmodel.h>
 
-class FileTreeController : public QObject {
+#include "FileSortProxy.hpp"
+
+class FileTree : public QObject {
   Q_OBJECT;
 
   Q_PROPERTY(QObject* model READ model CONSTANT);
@@ -17,7 +17,7 @@ class FileTreeController : public QObject {
   Q_PROPERTY(QModelIndex rootIndex READ rootIndex NOTIFY rootIndexChanged);
 
  public:
-  explicit FileTreeController(QObject* parent = nullptr);
+  explicit FileTree(QObject* parent = nullptr);
 
   QObject* model();
 
@@ -25,7 +25,6 @@ class FileTreeController : public QObject {
   void setRootPath(const QString& path);
 
   QModelIndex rootIndex() const;
-  void setRootIndex(const QModelIndex index);
 
  signals:
   void rootPathChanged();
@@ -33,7 +32,7 @@ class FileTreeController : public QObject {
 
  private:
   FileSortProxy proxy_;
-  FileTreeModel model_;
+  QFileSystemModel model_;
   QString rootPath_;
   QModelIndex rootIndex_;
 };

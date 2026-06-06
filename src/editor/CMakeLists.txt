@@ -1,6 +1,5 @@
 add_library(parity_editor
-  EditorController.cpp
-  EditorModel.cpp
+  Editor.cpp
 )
 
 target_include_directories(parity_editor

@@ -88,7 +88,7 @@ Item {
                 
                 EditorView {
                     SplitView.fillHeight: true
-                    controller: editorController
+                    tabEditor: editor
                 }
             }
         }
