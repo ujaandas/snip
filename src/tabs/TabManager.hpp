@@ -23,9 +23,15 @@ class TabManager : public QAbstractListModel {
 
   Q_INVOKABLE void openTab(const QString& title, const QString& path);
   Q_INVOKABLE void closeTab(int index);
+  Q_INVOKABLE void closeActiveTab();
+  Q_INVOKABLE void nextTab();
+  Q_INVOKABLE void prevTab();
 
  signals:
   void activeTabChanged();
+
+ private slots:
+  void onEditorModifiedChanged();
 
  private:
   QList<TabData> tabs_;

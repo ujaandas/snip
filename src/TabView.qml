@@ -9,80 +9,128 @@ Item {
         anchors.fill: parent
         spacing: 0
 
-        TabBar {
+        Rectangle {
             id: tabBar
             width: parent.width
             height: 36
-            spacing: 0
-            padding: 0
+            color: "#171c26"
+            border.color: "#2b313d"
+            border.width: 1
+            clip: true
 
-            background: Rectangle {
-                color: "#171c26"
-                border.color: "#2b313d"
-                border.width: 1
+            Shortcut {
+                sequences: [ StandardKey.Close ]
+                onActivated: tabManager ? tabManager.closeActiveTab() : null
+            }
+            Shortcut {
+                sequence: "Ctrl+Tab"
+                onActivated: tabManager ? tabManager.nextTab() : null
+            }
+            Shortcut {
+                sequence: "Ctrl+Shift+Tab"
+                onActivated: tabManager ? tabManager.prevTab() : null
             }
 
-            currentIndex: tabManager ? tabManager.activeTab : -1
-            onCurrentIndexChanged: tabManager ? tabManager.activeTab = currentIndex : null
+            Flickable {
+                id: tabFlickable
+                anchors.fill: parent
+                contentWidth: tabRow.width
+                contentHeight: height
+                clip: true
+                flickableDirection: Flickable.HorizontalFlick
+                interactive: tabRow.width > tabBar.width
 
-            Repeater {
-                model: tabManager
-                
-                TabButton {
-                    checked: index === tabManager ? tabManager.activeTab : -1
+                onContentXChanged: {
+                    if (contentX < 0) contentX = 0
+                    if (contentX > contentWidth - width) contentX = Math.max(0, contentWidth - width)
+                }
 
-                    text: tabTitle
-                    implicitHeight: 35
-                    implicitWidth: Math.max(140, contentItem.implicitWidth + 28)
-                    leftPadding: 12
-                    rightPadding: 30
-                    hoverEnabled: true
+                Row {
+                    id: tabRow
+                    height: tabBar.height
+                    spacing: 0
 
-                    background: Rectangle {
-                        radius: 0
-                        color: checked ? "#1f2430" : (parent.hovered ? "#1b202b" : "#171c26")
-                        border.color: checked ? "#2b313d" : "#171c26"
-                        border.width: 1
+                    Repeater {
+                        id: tabRepeater
+                        model: tabManager
 
-                        Rectangle {
-                            anchors.bottom: parent.bottom
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            height: 2
-                            color: "#4d9ef5"
-                            visible: checked
+                        Item {
+                            id: tabItem
+                            property bool isActive: tabManager ? index === tabManager.activeTab : false
+                            width: Math.max(140, tabLabel.implicitWidth + 52)
+                            height: tabBar.height
+
+                            onIsActiveChanged: {
+                                if (!isActive) return
+                                var left = tabItem.x
+                                var right = tabItem.x + tabItem.width
+                                if (left < tabFlickable.contentX)
+                                    tabFlickable.contentX = left
+                                else if (right > tabFlickable.contentX + tabFlickable.width)
+                                    tabFlickable.contentX = right - tabFlickable.width
+                            }
+
+                            HoverHandler { id: tabHover }
+
+                            TapHandler {
+                                onTapped: tabManager.activeTab = index
+                            }
+
+                            Rectangle {
+                                anchors.fill: parent
+                                color: tabItem.isActive ? "#1f2430" : (tabHover.hovered ? "#1b202b" : "#171c26")
+                                border.color: tabItem.isActive ? "#2b313d" : "#171c26"
+                                border.width: 1
+
+                                Rectangle {
+                                    anchors.bottom: parent.bottom
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    height: 2
+                                    color: "#4d9ef5"
+                                    visible: tabItem.isActive
+                                }
+                            }
+
+                            Text {
+                                id: tabLabel
+                                anchors.left: parent.left
+                                anchors.leftMargin: 12
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: closeBtn.left
+                                anchors.rightMargin: 4
+                                text: tabTitle
+                                elide: Text.ElideRight
+                                color: tabItem.isActive ? "#e6ecf8" : "#a9b2c3"
+                                font.pixelSize: 12
+                                font.family: "JetBrains Mono"
+                            }
+
+                            Item {
+                                id: closeBtn
+                                width: 18
+                                height: 18
+                                anchors.right: parent.right
+                                anchors.rightMargin: 6
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                HoverHandler { id: closeBtnHover }
+                                TapHandler { onTapped: tabManager.closeTab(index) }
+
+                                Rectangle {
+                                    anchors.fill: parent
+                                    color: closeBtnHover.hovered ? "#3a4152" : "transparent"
+                                }
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: tabModified ? "●" : "✕"
+                                    color: tabModified ? "#e6bd6a" : "#9aa4b5"
+                                    font.family: "JetBrains Mono"
+                                    font.pixelSize: tabModified ? 10 : 12
+                                }
+                            }
                         }
-                    }
-
-                    contentItem: Text {
-                        text: parent.text
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                        color: parent.checked ? "#e6ecf8" : "#a9b2c3"
-                        font.pixelSize: 12
-                        font.family: "JetBrains Mono"
-                    }
-                    
-                    Button {
-                        text: "x"
-                        width: 18
-                        height: 18
-                        anchors.right: parent.right
-                        anchors.rightMargin: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                        background: Rectangle {
-                            radius: 0
-                            color: parent.hovered ? "#3a4152" : "transparent"
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            color: "#9aa4b5"
-                            font.family: "JetBrains Mono"
-                            font.pixelSize: 12
-                        }
-                        onClicked: tabManager.closeTab(index)
                     }
                 }
             }

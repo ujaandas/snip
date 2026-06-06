@@ -10,4 +10,4 @@ struct TabData {
   Editor* editor;
 };
 
-enum TabRoles { TitleRole = Qt::UserRole + 1, PathRole, EditorRole };
+enum TabRoles { TitleRole = Qt::UserRole + 1, PathRole, EditorRole, ModifiedRole };

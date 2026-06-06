@@ -17,6 +17,7 @@ QVariant TabManager::data(const QModelIndex& index, int role) const {
   if (role == TitleRole) return tab.title;
   if (role == PathRole) return tab.path;
   if (role == EditorRole) return QVariant::fromValue(tab.editor);
+  if (role == ModifiedRole) return tab.editor ? tab.editor->isModified() : false;
 
   return QVariant();
 }
@@ -26,6 +27,7 @@ QHash<int, QByteArray> TabManager::roleNames() const {
   roles[TitleRole] = "tabTitle";
   roles[PathRole] = "tabPath";
   roles[EditorRole] = "editor";
+  roles[ModifiedRole] = "tabModified";
   return roles;
 }
 
@@ -48,6 +50,7 @@ void TabManager::openTab(const QString& title, const QString& path) {
   }
 
   Editor* newEditor = new Editor(path, this);
+  connect(newEditor, &Editor::modifiedChanged, this, &TabManager::onEditorModifiedChanged);
 
   beginInsertRows(QModelIndex(), tabs_.count(), tabs_.count());
   tabs_.append({title, path, newEditor});
@@ -76,5 +79,31 @@ void TabManager::closeTab(int index) {
     setActiveTab(tabs_.count() - 1);
   } else {
     emit activeTabChanged();
+  }
+}
+
+void TabManager::closeActiveTab() {
+  closeTab(activeTab_);
+}
+
+void TabManager::nextTab() {
+  if (tabs_.isEmpty()) return;
+  setActiveTab((activeTab_ + 1) % tabs_.count());
+}
+
+void TabManager::prevTab() {
+  if (tabs_.isEmpty()) return;
+  setActiveTab((activeTab_ - 1 + tabs_.count()) % tabs_.count());
+}
+
+void TabManager::onEditorModifiedChanged() {
+  auto* editor = qobject_cast<Editor*>(sender());
+  if (!editor) return;
+  for (int i = 0; i < tabs_.count(); ++i) {
+    if (tabs_[i].editor == editor) {
+      const QModelIndex idx = index(i);
+      emit dataChanged(idx, idx, {ModifiedRole});
+      return;
+    }
   }
 }

@@ -11,7 +11,12 @@ Editor::Editor(const QString& filePath, QObject* parent)
 void Editor::setQuickDocument(QQuickTextDocument* quickDoc) {
   if (!quickDoc) return;
   doc_ = quickDoc->textDocument();
+  connect(doc_, &QTextDocument::modificationChanged, this, &Editor::modifiedChanged);
   load(filePath_);
+}
+
+bool Editor::isModified() const {
+  return doc_ ? doc_->isModified() : false;
 }
 
 void Editor::save() {
@@ -35,6 +40,7 @@ void Editor::load(const QString& path) {
   QTextStream in(&file);
 
   doc_->setPlainText(in.readAll());
+  doc_->setModified(false);
   filePath_ = path;
 }
 
@@ -47,5 +53,6 @@ bool Editor::saveDocument() {
   QTextStream out(&file);
   out << doc_->toPlainText();
 
+  doc_->setModified(false);
   return true;
 }
