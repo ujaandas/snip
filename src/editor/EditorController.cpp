@@ -1,20 +1,21 @@
 #include "EditorController.hpp"
 
-#include <QFile>
-#include <QTextStream>
+#include <QtGui/qtextdocument.h>
 
-EditorController::EditorController(QObject* parent)
-    : QObject(parent), model_(this) {
-  QFile file("README.md");
-  if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    QTextStream in(&file);
-    model_.setText(in.readAll());
-  }
+#include "Log.hpp"
 
-  connect(&model_, &EditorModel::textChanged, this,
-          &EditorController::textChanged);
+EditorController::EditorController(QObject* parent) : QObject(parent) {}
+
+void EditorController::setQuickDocument(QQuickTextDocument* quickDoc) {
+  if (!quickDoc) return;
+  model_.setDocument(quickDoc->textDocument());
+  model_.load("README.md");
 }
 
-QString EditorController::text() const { return model_.text(); }
+void EditorController::save() {
+  if (!model_.save()) Log::fatal("Failed to save file: {}", model_.filePath());
+}
 
-void EditorController::setText(const QString& t) { model_.setText(t); }
+void EditorController::undo() { model_.undo(); }
+
+void EditorController::redo() { model_.redo(); }

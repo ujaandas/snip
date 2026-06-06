@@ -5,37 +5,27 @@ Item {
     id: root
     property QtObject controller   // Editor*
 
+    EditorShortcuts {
+        editor: controller
+    }
+
     ScrollView {
         anchors.fill: parent
         
         TextArea {
-            // ID
             id: editor
 
             // Styling
             width: parent.width
+            height: contentHeight
+            anchors.fill: parent
 
             wrapMode: TextArea.NoWrap
             font.family: "JetBrains Mono"
             font.pixelSize: 14
-            
-            anchors.fill: parent
 
             // Data
-            text: controller.text
-
-            onEditingFinished: {
-                controller.text = text
-            }
-
-            Connections {
-                target: controller
-                function onTextChanged() {
-                    if (editor.text !== controller.text) {
-                        editor.text = controller.text
-                    }
-                }
-            }
+            Component.onCompleted: controller.setQuickDocument(editor.textDocument)
         }
     }
 }

@@ -91,6 +91,7 @@ This keeps editor behavior independent from terminal backend details and makes b
 ## Contributing
 
 Take care to adhere to the following rules when adding new functionality to `snip`:
+
 - Each new library should have a short `README.md` detailing the responsibilities thereof.
 - Try to include a short comment before each function.
 - Each class should have a brief and simple explanation of what it does at the top-level.
@@ -102,4 +103,3 @@ Take care to adhere to the following rules when adding new functionality to `sni
 - Add language-aware capabilities (highlighting, structure, diagnostics)
 - Improve rendering performance and terminal capability detection
 - Keep plugin surfaces extensible while protecting core simplicity
-

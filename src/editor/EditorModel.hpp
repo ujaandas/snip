@@ -2,20 +2,30 @@
 
 #include <QObject>
 #include <QString>
+#include <QTextDocument>
 
 class EditorModel : public QObject {
-  Q_OBJECT
-  Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+  Q_OBJECT;
 
  public:
   explicit EditorModel(QObject* parent = nullptr);
 
-  QString text() const;
-  void setText(const QString& t);
+  QTextDocument* document();
+
+  void setDocument(QTextDocument* doc);
+
+  QString filePath() const;
+
+  void load(const QString& path);
+  bool save();
+
+  void undo();
+  void redo();
 
  signals:
   void textChanged();
 
  private:
-  QString text_;
+  QTextDocument* doc_ = nullptr;
+  QString filePath_;
 };
