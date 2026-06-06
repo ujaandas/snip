@@ -6,6 +6,8 @@ StrictScroll {
     id: viewport
 
     property QtObject tabEditor
+    property alias textArea: editorArea
+    property alias scrollY: viewport.scrollY
 
     content: TextArea {
         id: editorArea

@@ -1,6 +1,7 @@
 add_library(parity_editor
   Editor.cpp
   StrictScroll.cpp
+  Gutter.cpp
 )
 
 target_include_directories(parity_editor

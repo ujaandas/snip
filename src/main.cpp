@@ -8,8 +8,9 @@
 #include <QtQml/QQmlContext>
 
 #include "FileTree.hpp"
-#include "editor/StrictScroll.hpp"
-#include "tabs/TabManager.hpp"
+#include "StrictScroll.hpp"
+#include "Gutter.hpp"
+#include "TabManager.hpp"
 
 int main(int argc, char* argv[]) {
   // Use a non-native Quick Controls style so QML control customization is supported.
@@ -23,6 +24,7 @@ int main(int argc, char* argv[]) {
   TabManager tabs;
 
   qmlRegisterType<StrictScroll>("Snip.Editor", 1, 0, "StrictScroll");
+  qmlRegisterType<Gutter>("Snip.Editor", 1, 0, "Gutter");
 
   engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);

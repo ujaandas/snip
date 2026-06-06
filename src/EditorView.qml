@@ -15,9 +15,23 @@ Item {
         border.color: "#2b313d"
         border.width: 1
 
-        EditorViewport {
+        Row {
             anchors.fill: parent
-            tabEditor: root.tabEditor
+            spacing: 0
+
+            Gutter {
+                id: gutter
+                height: parent.height
+                textArea: viewport.textArea
+                scrollY: viewport.scrollY
+            }
+
+            EditorViewport {
+                id: viewport
+                height: parent.height
+                width: parent.width - gutter.width
+                tabEditor: root.tabEditor
+            }
         }
     }
 }
