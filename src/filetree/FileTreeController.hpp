@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QString>
 
+#include "FileSortProxy.hpp"
 #include "FileTreeModel.hpp"
 
 class FileTreeController : public QObject {
@@ -18,7 +19,7 @@ class FileTreeController : public QObject {
  public:
   explicit FileTreeController(QObject* parent = nullptr);
 
-  QObject* model() const;
+  QObject* model();
 
   QString rootPath() const;
   void setRootPath(const QString& path);
@@ -31,6 +32,7 @@ class FileTreeController : public QObject {
   void rootIndexChanged();
 
  private:
+  FileSortProxy proxy_;
   FileTreeModel model_;
   QString rootPath_;
   QModelIndex rootIndex_;

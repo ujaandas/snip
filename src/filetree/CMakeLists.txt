@@ -1,6 +1,7 @@
 add_library(snip_filetree
   FileTreeModel.cpp
   FileTreeController.cpp
+  FileSortProxy.cpp
 )
 
 target_include_directories(snip_filetree
