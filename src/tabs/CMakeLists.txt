@@ -11,6 +11,7 @@ target_link_libraries(parity_tabs
   PUBLIC
     parity_log
     parity_editor
+    parity_lsp
     Qt6::Core
     Qt6::Quick
 )
