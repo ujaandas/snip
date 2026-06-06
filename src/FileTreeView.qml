@@ -39,7 +39,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            rootIndex: root.tree ? root.tree.rootIndex : -1
+            rootIndex: root.tree ? root.tree.rootIndex : undefined
             model: root.tree ? root.tree.model : null
             clip: true
 

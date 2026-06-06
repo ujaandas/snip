@@ -62,8 +62,18 @@ void StrictScroll::geometryChange(const QRectF& newGeom,
 }
 
 void StrictScroll::wheelEvent(QWheelEvent* event) {
-  QPoint delta = event->pixelDelta();
-  if (delta.isNull()) delta = event->angleDelta();
+  QPoint pixelDelta = event->pixelDelta();
+  QPointF delta;
+
+  if (!pixelDelta.isNull()) {
+    delta = pixelDelta;
+  } else {
+    constexpr qreal linesPerNotch = 3.0;
+    constexpr qreal pixelsPerLine = 20.0;
+    constexpr qreal unitsPerNotch = 120.0;
+    const qreal scale = linesPerNotch * pixelsPerLine / unitsPerNotch;
+    delta = QPointF(event->angleDelta()) * scale;
+  }
 
   const qreal dx = delta.x();
   const qreal dy = delta.y();
