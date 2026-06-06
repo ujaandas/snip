@@ -1,105 +1,47 @@
 # parity
 
-`parity` is a Nix-first terminal editor for people who want everything essential in one place: fast editing, clean architecture, and zero feature bloat.
+`parity` is a Nix-backed IDE for fully reproducible development environments.
+
+Every project ships its own IDE. Languages, SDKs, LSPs, formatters, linters, build tools, and AI tooling are all defined by the project itself and built into the environment.
+
+No setup guides, version drift, or "it works on my machine" - all without the sluggishness of Docker.
+
+Open a project and get _exactly_ the tooling that project requires.
 
 ## Philosophy
 
-`parity` includes the pieces you actually need to ship and use a serious terminal editor:
+Development environments should be part of the codebase.
 
-- Yoinks LSPs from your Nix shell, eliminating need for plugins
-- Highly performant and concurrent event-driven app loop for predictable behavior
-- Typed message/update pipeline for explicit state transitions and easy testing
-- Non-blocking (deferred) command execution via background workers
-- Terminal input + rendering split into clean runtime/UI boundaries for system-agnostic operation
+`parity` uses Nix to build hermetic, project-specific IDEs. Every developer, CI runner, and AI agent gets the same tools, the same versions, and the same behavior.
 
-## Quick Start
+Whether you're working in a small repository or a massive polyglot monorepo, everyone operates from the same environment.
 
-### Build with Nix
+The goal is simple:
 
-```bash
-nix build
-```
+* Complete parity across teams
+* Reproducible development environments
+* Zero global dependencies
+* Fast local workflows
+* Minimal operational overhead
 
-Run all checks:
+## Why parity?
 
-```bash
-nix flake check
-```
+Most modern IDEs are built on Chromium and JavaScript stacks, but `parity` isn't.
 
-### Without Nix
+It's written in modern C++ and Qt6/QtQuick, with a focus on speed, efficiency, and keeping resource usage predictable.
 
-```bash
-cmake -S . -B build
-cmake --build build -j
-./build/parity
-```
+The editor is native, cross-platform, and designed around a minimal core rather than an ever-growing plugin ecosystem.
 
-## Architecture
+Features are added because they're necessary, not because they're fashionable.
 
-The project is split into focused modules with strict responsibilities.
+## What You Get
 
-### `parity-core`
-
-Concurrency and scheduling primitives:
-
-- event loop
-- event sources
-- signaling pipe
-- concurrent queue
-- thread pool
-
-### `parity-runtime`
-
-Runtime integration layer:
-
-- input decoding
-- command execution and orchestration
-
-### `parity-file`
-
-Filesystem integration layer:
-
-- stateless file read/write helpers
-- line-range extraction utilities
-
-### `parity-term`
-
-Terminal integration layer:
-
-- terminal session lifecycle
-- terminal sizing/output utilities
-
-### `parity-editor`
-
-Editor domain layer:
-
-- editor state/model
-- operations and update logic
-- message handling
-- UI-agnostic view model generation
-
-### `parity-render`
-
-Rendering backend layer:
-
-- ViewModel to Frame IR rendering
-- styling and formatting helpers
-- Frame to ANSI translation
-
-This keeps editor behavior independent from terminal backend details and makes backend evolution straightforward.
-
-## Contributing
-
-Take care to adhere to the following rules when adding new functionality to `parity`:
-
-- Each new library should have a short `README.md` detailing the responsibilities thereof.
-- Try to include a short comment before each function.
-- Each class should have a brief and simple explanation of what it does at the top-level.
-
-## Roadmap
-
-- Expand modal editing semantics toward complete workflows
-- Add richer navigation, search, and picker workflows
-- Add language-aware capabilities (highlighting, structure, diagnostics)
-- Improve rendering performance and terminal capability detection
-- Keep plugin surfaces extensible while protecting core simplicity
+* Hermetic development environments built from Nix
+* Project-provided languages, SDKs, and runtimes
+* Project-provided LSPs, formatters, and linters
+* Consistent tooling across developers, CI, and AI agents
+* Native C++ and Qt6 implementation
+* Cross-platform support
+* Fast startup and low resource usage
+* Minimal, focused user experience
+* No dependency on globally installed tooling
