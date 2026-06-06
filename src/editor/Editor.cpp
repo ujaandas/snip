@@ -82,13 +82,26 @@ void Editor::notifyLspDidOpen() {
 }
 
 void Editor::onSemanticTokens(const QString& uri, const QJsonArray& data) {
+  if (!doc_) return;
+
   auto tokens = SemanticTokens::parse(data);
   Log::info("Parsed {} semantic tokens for {}", tokens.size(), uri);
 
-  // Log first few tokens for debugging
-  for (int i = 0; i < qMin(5, tokens.size()); ++i) {
-    const auto& t = tokens[i];
-    Log::debug("Token {}: line={}, char={}, len={}, type={}, mod={}",
-               i, t.line, t.character, t.length, t.type, t.modifiers);
+  // apply highlighting to each token
+  for (const auto& token : tokens) {
+    // calculate position in document (line 0-indexed, convert to QTextCursor position)
+    QTextCursor cursor(doc_);
+    cursor.movePosition(QTextCursor::Start);
+    cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, token.line);
+    cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, token.character);
+
+    // select token length
+    int endPos = cursor.position() + token.length;
+    cursor.setPosition(endPos, QTextCursor::KeepAnchor);
+
+    // apply color format
+    QTextCharFormat format;
+    format.setForeground(SemanticTokens::typeToColor(token.type));
+    cursor.mergeCharFormat(format);
   }
 }
