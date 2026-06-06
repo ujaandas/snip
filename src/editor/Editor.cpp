@@ -2,7 +2,9 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QUrl>
 
+#include "LspClient.hpp"
 #include "Log.hpp"
 
 Editor::Editor(const QString& filePath, QObject* parent)
@@ -13,6 +15,7 @@ void Editor::setQuickDocument(QQuickTextDocument* quickDoc) {
   doc_ = quickDoc->textDocument();
   connect(doc_, &QTextDocument::modificationChanged, this, &Editor::modifiedChanged);
   load(filePath_);
+  notifyLspDidOpen();
 }
 
 bool Editor::isModified() const {
@@ -55,4 +58,14 @@ bool Editor::saveDocument() {
 
   doc_->setModified(false);
   return true;
+}
+
+void Editor::setLspClient(LspClient* lspClient) {
+  lspClient_ = lspClient;
+}
+
+void Editor::notifyLspDidOpen() {
+  if (!lspClient_ || filePath_.isEmpty() || !doc_) return;
+  QString uri = QUrl::fromLocalFile(filePath_).toString();
+  lspClient_->didOpen(uri, "cpp", doc_->toPlainText());
 }
