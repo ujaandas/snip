@@ -45,6 +45,19 @@ int Gutter::lineCount() const {
   return textDocument_->textDocument()->blockCount();
 }
 
+int Gutter::digitCount() const {
+  int count = lineCount();
+  int digits = 1;
+  while (count >= 10) { count /= 10; ++digits; }
+  return qMax(2, digits);
+}
+
+void Gutter::setCursorLine(int line) {
+  if (cursorLine_ == line) return;
+  cursorLine_ = line;
+  emit cursorLineChanged();
+}
+
 qreal Gutter::lineYPosition(int lineNumber) const {
   if (!textDocument_ || !textDocument_->textDocument()) return 0.0;
 

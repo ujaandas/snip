@@ -6,10 +6,8 @@ Rectangle {
 
     property var textArea: null
     property real scrollY: 0
-    property int cursorLine: -1
 
-    readonly property int digitCount: Math.max(2, controller.lineCount.toString().length)
-    width: fontMetrics.averageCharacterWidth * digitCount + 28
+    width: fontMetrics.averageCharacterWidth * controller.digitCount + 28
     clip: true
     color: "#1a1e26"
     border.color: "#2b313d"
@@ -18,6 +16,12 @@ Rectangle {
     Gutter {
         id: controller
         textDocument: root.textArea ? root.textArea.textDocument : null
+        cursorLine: {
+            if (!root.textArea) return -1
+            var pos = root.textArea.cursorPosition
+            var text = root.textArea.text.substring(0, pos)
+            return text.split("\n").length - 1
+        }
     }
 
     FontMetrics {
@@ -38,7 +42,7 @@ Rectangle {
 
             text: index + 1
             font: fontMetrics.font
-            color: index === root.cursorLine ? "#c8cdd5" : "#4e5668"
+            color: index === controller.cursorLine ? "#c8cdd5" : "#4e5668"
         }
     }
 }

@@ -24,7 +24,6 @@ Item {
                 height: parent.height
                 textArea: viewport.textArea
                 scrollY: viewport.scrollY
-                cursorLine: viewport.cursorLine
             }
 
             EditorViewport {

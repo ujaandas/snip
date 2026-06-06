@@ -14,6 +14,8 @@ class Gutter : public QObject {
       QQuickTextDocument* textDocument READ textDocument WRITE setTextDocument
           NOTIFY textDocumentChanged);
   Q_PROPERTY(int lineCount READ lineCount NOTIFY lineCountChanged);
+  Q_PROPERTY(int digitCount READ digitCount NOTIFY lineCountChanged);
+  Q_PROPERTY(int cursorLine READ cursorLine WRITE setCursorLine NOTIFY cursorLineChanged);
 
  public:
   explicit Gutter(QObject* parent = nullptr);
@@ -22,6 +24,10 @@ class Gutter : public QObject {
   void setTextDocument(QQuickTextDocument* doc);
 
   int lineCount() const;
+  int digitCount() const;
+
+  int cursorLine() const { return cursorLine_; }
+  void setCursorLine(int line);
 
   Q_INVOKABLE qreal lineYPosition(int lineNumber) const;
   Q_INVOKABLE qreal lineHeight(int lineNumber) const;
@@ -30,9 +36,11 @@ class Gutter : public QObject {
   void textDocumentChanged();
   void lineCountChanged();
   void documentLayoutChanged();
+  void cursorLineChanged();
 
  private:
   void connectDocumentSignals();
 
   QPointer<QQuickTextDocument> textDocument_;
+  int cursorLine_ = -1;
 };
