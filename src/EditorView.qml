@@ -4,11 +4,12 @@ import QtQuick.Controls
 Item {
     id: root
     property QtObject tabEditor
+    property QtObject theme
 
     Rectangle {
         anchors.fill: parent
-        color: "#1f2430"
-        border.color: "#2b313d"
+        color: root.theme.bgEditor
+        border.color: root.theme.borderPrimary
         border.width: 1
 
         Row {
@@ -18,6 +19,7 @@ Item {
             Gutter {
                 id: gutter
                 height: parent.height
+                theme: root.theme
                 textArea: viewport.textArea
                 scrollY: viewport.scrollY
             }
@@ -26,6 +28,7 @@ Item {
                 id: viewport
                 height: parent.height
                 width: parent.width - gutter.width
+                theme: root.theme
                 tabEditor: root.tabEditor
             }
         }

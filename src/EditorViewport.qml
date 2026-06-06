@@ -6,6 +6,7 @@ StrictScroll {
     id: viewport
 
     property QtObject tabEditor
+    property QtObject theme
     property alias textArea: editorArea
     property alias scrollY: viewport.scrollY
 
@@ -28,7 +29,7 @@ StrictScroll {
         anchors.right: parent.right
         anchors.rightMargin: 2
         width: 6
-        color: "#4a5268"
+        color: root.theme.scrollbar
 
         visible: viewport.vThumbNeeded
         opacity: (hoverHandler.hovered || dragHandler.active || viewport._scrollbarVisible) ? 0.8 : 0
@@ -54,7 +55,7 @@ StrictScroll {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 2
         height: 6
-        color: "#4a5268"
+        color: root.theme.scrollbar
 
         visible: viewport.hThumbNeeded
         opacity: (hHoverHandler.hovered || hDragHandler.active || viewport._scrollbarVisible) ? 0.8 : 0
@@ -87,22 +88,22 @@ StrictScroll {
 
         wrapMode: viewport.wordWrap ? TextArea.Wrap : TextArea.NoWrap
 
-        font.family: "JetBrains Mono"
-        font.pixelSize: 14
+        font.family: root.theme.fontFamily
+        font.pixelSize: root.theme.fontSizeLarge
 
-        color: "#cfd6e4"
-        selectionColor: "#214b78"
-        selectedTextColor: "#ffffff"
+        color: root.theme.textPrimary
+        selectionColor: root.theme.selectionBg
+        selectedTextColor: root.theme.selectionFg
 
         background: Rectangle {
-            color: "#1f2430"
+            color: root.theme.bgEditor
 
             Rectangle {
                 x: 0
                 y: editorArea.positionToRectangle(editorArea.cursorPosition).y
                 width: parent.width
                 height: editorArea.positionToRectangle(editorArea.cursorPosition).height
-                color: "#2a3040"
+                color: root.theme.bgCursorLine
                 visible: editorArea.activeFocus
             }
         }
@@ -115,7 +116,7 @@ StrictScroll {
         cursorDelegate: Rectangle {
             width: 2
             height: fontMetrics.height
-            color: "#99c4ff"
+            color: root.theme.accentBlueLight
 
             FontMetrics {
                 id: fontMetrics

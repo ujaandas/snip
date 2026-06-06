@@ -7,10 +7,11 @@ ApplicationWindow {
     width: 900
     height: 600
     flags: Qt.Window
-    color: "#161a22"
+    color: root.appTheme.bgWindow
 
     property QtObject tabs: tabManager
     property QtObject files: fileTree
+    property QtObject appTheme: theme
 
     SplitView {
         anchors.fill: parent
@@ -18,19 +19,21 @@ ApplicationWindow {
         handle: Rectangle {
             implicitWidth: 1
             implicitHeight: 1
-            color: "#2b313d"
+            color: root.appTheme.borderPrimary
         }
 
         TabView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             tabManager: root.tabs
+            theme: root.appTheme
         }
 
         FileTreeView {
             SplitView.preferredWidth: 250
             tree: root.files
             tabManager: root.tabs
+            theme: root.appTheme
         }
     }
 }

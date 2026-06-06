@@ -6,6 +6,7 @@ Item {
     id: root
 
     property QtObject tabManager
+    property QtObject theme
 
     EditorShortcuts {
         tabManager: root.tabManager
@@ -19,8 +20,8 @@ Item {
             id: tabBar
             width: parent.width
             height: 36
-            color: "#171c26"
-            border.color: "#2b313d"
+            color: root.theme.bgTabBar
+            border.color: root.theme.borderPrimary
             border.width: 1
             clip: true
 
@@ -71,8 +72,8 @@ Item {
 
                             Rectangle {
                                 anchors.fill: parent
-                                color: tabItem.isActive ? "#1f2430" : (tabHover.hovered ? "#1b202b" : "#171c26")
-                                border.color: tabItem.isActive ? "#2b313d" : "#171c26"
+                                color: tabItem.isActive ? root.theme.bgTabActive : (tabHover.hovered ? root.theme.bgTabHover : root.theme.bgTabBar)
+                                border.color: tabItem.isActive ? root.theme.borderPrimary : root.theme.borderInactive
                                 border.width: 1
 
                                 Rectangle {
@@ -80,7 +81,7 @@ Item {
                                     anchors.left: parent.left
                                     anchors.right: parent.right
                                     height: 2
-                                    color: "#4d9ef5"
+                                    color: root.theme.accentBlue
                                     visible: tabItem.isActive
                                 }
                             }
@@ -94,9 +95,9 @@ Item {
                                 anchors.rightMargin: 4
                                 text: tabTitle
                                 elide: Text.ElideRight
-                                color: tabItem.isActive ? "#e6ecf8" : "#a9b2c3"
-                                font.pixelSize: 12
-                                font.family: "JetBrains Mono"
+                                color: tabItem.isActive ? root.theme.textPrimary : root.theme.textSecondary
+                                font.pixelSize: root.theme.fontSizeNormal
+                                font.family: root.theme.fontFamily
                             }
 
                             Item {
@@ -112,14 +113,14 @@ Item {
 
                                 Rectangle {
                                     anchors.fill: parent
-                                    color: closeBtnHover.hovered ? "#3a4152" : "transparent"
+                                    color: closeBtnHover.hovered ? root.theme.closeBtnHover : "transparent"
                                 }
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: tabModified ? "●" : "✕"
-                                    color: tabModified ? "#e6bd6a" : "#9aa4b5"
-                                    font.family: "JetBrains Mono"
+                                    color: tabModified ? root.theme.accentOrange : root.theme.textMuted
+                                    font.family: root.theme.fontFamily
                                     font.pixelSize: tabModified ? 10 : 12
                                 }
                             }
@@ -140,6 +141,7 @@ Item {
 
                 EditorView {
                     SplitView.fillHeight: true
+                    theme: root.theme
                     tabEditor: editor
                 }
             }
