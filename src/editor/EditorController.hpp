@@ -10,7 +10,7 @@ class EditorController : public QObject {
   Q_OBJECT;
 
  public:
-  explicit EditorController(QObject* parent = nullptr);
+  explicit EditorController(const QString& filePath, QObject* parent = nullptr);
 
   Q_INVOKABLE void setQuickDocument(QQuickTextDocument* quickDoc);
 
@@ -19,5 +19,6 @@ class EditorController : public QObject {
   Q_INVOKABLE void redo();
 
  private:
+  QString filePath_;
   EditorModel model_;
 };

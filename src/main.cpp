@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
   QQmlApplicationEngine engine;
 
   // Instantiate controllers
-  EditorController editor;
+  EditorController editor("README.md");
   FileTreeController ft;
   TabManager tabs;
 

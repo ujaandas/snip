@@ -4,12 +4,13 @@
 
 #include "Log.hpp"
 
-EditorController::EditorController(QObject* parent) : QObject(parent) {}
+EditorController::EditorController(const QString& filePath, QObject* parent)
+    : QObject(parent), filePath_(filePath) {}
 
 void EditorController::setQuickDocument(QQuickTextDocument* quickDoc) {
   if (!quickDoc) return;
   model_.setDocument(quickDoc->textDocument());
-  model_.load("README.md");
+  model_.load(filePath_);
 }
 
 void EditorController::save() {
