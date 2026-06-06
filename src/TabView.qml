@@ -12,6 +12,9 @@ Item {
             id: tabBar
             width: parent.width
 
+            currentIndex: tabManager.activeTab
+            onCurrentIndexChanged: tabManager.activeTab = currentIndex
+
             Repeater {
                 model: tabManager
                 
@@ -32,7 +35,8 @@ Item {
         StackLayout {
             width: parent.width
             height: parent.height - tabBar.height
-            currentIndex: tabBar.currentIndex
+
+            currentIndex: tabManager.activeTab
 
             Repeater {
                 model: tabManager

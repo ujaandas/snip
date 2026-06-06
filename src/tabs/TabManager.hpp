@@ -5,11 +5,12 @@
 #include "TabData.hpp"
 
 class TabManager : public QAbstractListModel {
-  Q_OBJECT
+  Q_OBJECT;
+
+  Q_PROPERTY(
+      int activeTab READ activeTab WRITE setActiveTab NOTIFY activeTabChanged);
 
  public:
-  enum TabRoles { TitleRole = Qt::UserRole + 1, PathRole };
-
   explicit TabManager(QObject* parent = nullptr);
 
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -17,9 +18,16 @@ class TabManager : public QAbstractListModel {
                 int role = Qt::DisplayRole) const override;
   QHash<int, QByteArray> roleNames() const override;
 
+  int activeTab() const;
+  void setActiveTab(int index);
+
   Q_INVOKABLE void openTab(const QString& title, const QString& path);
   Q_INVOKABLE void closeTab(int index);
 
+ signals:
+  void activeTabChanged();
+
  private:
   QList<TabData> tabs_;
+  int activeTab_ = -1;
 };

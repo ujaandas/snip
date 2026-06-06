@@ -29,9 +29,20 @@ QHash<int, QByteArray> TabManager::roleNames() const {
   return roles;
 }
 
+void TabManager::setActiveTab(int index) {
+  if (index < 0 || index >= tabs_.count()) return;
+  if (activeTab_ == index) return;
+
+  activeTab_ = index;
+  emit activeTabChanged();
+}
+
+int TabManager::activeTab() const { return activeTab_; }
+
 void TabManager::openTab(const QString& title, const QString& path) {
   for (int i = 0; i < tabs_.count(); ++i) {
     if (tabs_[i].path == path) {
+      setActiveTab(i);
       return;
     }
   }
@@ -41,15 +52,24 @@ void TabManager::openTab(const QString& title, const QString& path) {
   beginInsertRows(QModelIndex(), tabs_.count(), tabs_.count());
   tabs_.append({title, path, newEditor});
   endInsertRows();
+
+  setActiveTab(tabs_.count() - 1);
 }
 
 void TabManager::closeTab(int index) {
   if (index < 0 || index >= tabs_.count()) return;
 
   beginRemoveRows(QModelIndex(), index, index);
-
   tabs_[index].editor->deleteLater();
   tabs_.removeAt(index);
-
   endRemoveRows();
+
+  if (tabs_.isEmpty()) {
+    activeTab_ = -1;
+    emit activeTabChanged();
+  } else if (activeTab_ >= tabs_.count()) {
+    setActiveTab(tabs_.count() - 1);
+  } else {
+    emit activeTabChanged();
+  }
 }
