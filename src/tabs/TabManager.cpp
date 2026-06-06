@@ -46,6 +46,11 @@ Editor* TabManager::activeEditor() const {
   return tabs_[activeTab_].editor;
 }
 
+QString TabManager::activeFilePath() const {
+  if (activeTab_ < 0 || activeTab_ >= tabs_.count()) return QString();
+  return tabs_[activeTab_].path;
+}
+
 void TabManager::openTab(const QString& title, const QString& path) {
   for (int i = 0; i < tabs_.count(); ++i) {
     if (tabs_[i].path == path) {

@@ -29,12 +29,13 @@ Item {
                 text: "Explorer"
                 color: "#9aa4b5"
                 font.family: "JetBrains Mono"
-                font.pixelSize: 12
+                font.pixelSize: 11
+                font.letterSpacing: 1.2
             }
         }
 
         TreeView {
-            id: tree
+            id: treeView
             anchors.top: header.bottom
             anchors.left: parent.left
             anchors.right: parent.right
@@ -43,14 +44,10 @@ Item {
             model: root.tree ? root.tree.model : null
             clip: true
 
-            Rectangle {
-                anchors.fill: parent
-                color: "transparent"
-            }
-
             delegate: Item {
-                implicitHeight: 24
-                implicitWidth: tree.width
+                id: delegateItem
+                implicitHeight: 26
+                implicitWidth: treeView.width
 
                 required property TreeView treeView
                 required property bool isTreeNode
@@ -63,29 +60,41 @@ Item {
                 required property string fileName
                 required property string filePath
 
-                HoverHandler {
-                    id: hoverHandler
-                }
+                readonly property bool isActive: !hasChildren && tabManager && (filePath === tabManager.activeFilePath)
 
-                Rectangle {
+                MouseArea {
+                    id: mouseArea
                     anchors.fill: parent
-                    color: hoverHandler.hovered ? "#262d3a" : "transparent"
-                }
-
-                TapHandler {
-                    onTapped: {
+                    hoverEnabled: true
+                    onClicked: {
                         if (hasChildren) {
-                            treeView.toggleExpanded(row)
+                            delegateItem.treeView.toggleExpanded(row)
                         } else {
                             tabManager.openTab(fileName, filePath)
                         }
                     }
                 }
 
+                Rectangle {
+                    anchors.fill: parent
+                    color: isActive
+                        ? "#1e3a5f"
+                        : mouseArea.containsMouse ? "#222839" : "transparent"
+                }
+
+                Rectangle {
+                    visible: isActive
+                    x: 0
+                    y: 0
+                    width: 2
+                    height: parent.height
+                    color: "#99c4ff"
+                }
+
                 Row {
                     anchors.verticalCenter: parent.verticalCenter
                     x: depth * 14 + 8
-                    spacing: 6
+                    spacing: 5
 
                     Text {
                         visible: hasChildren
@@ -93,6 +102,7 @@ Item {
                         color: "#8f99aa"
                         font.pixelSize: 12
                         font.family: "JetBrains Mono"
+                        anchors.verticalCenter: parent.verticalCenter
                     }
 
                     Text {
@@ -106,7 +116,7 @@ Item {
                     Text {
                         text: display
                         elide: Text.ElideRight
-                        color: "#d7deeb"
+                        color: isActive ? "#e8edf5" : "#d7deeb"
                         font.pixelSize: 13
                         font.family: "JetBrains Mono"
                     }

@@ -97,15 +97,9 @@ StrictScroll {
 
             Rectangle {
                 x: 0
-                y: {
-                    var r = editorArea.positionToRectangle(editorArea.cursorPosition)
-                    return r.y - viewport.scrollY
-                }
+                y: editorArea.positionToRectangle(editorArea.cursorPosition).y
                 width: parent.width
-                height: {
-                    var r = editorArea.positionToRectangle(editorArea.cursorPosition)
-                    return r.height
-                }
+                height: editorArea.positionToRectangle(editorArea.cursorPosition).height
                 color: "#2a3040"
                 visible: editorArea.activeFocus
             }
