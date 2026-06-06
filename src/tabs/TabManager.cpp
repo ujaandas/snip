@@ -2,6 +2,8 @@
 
 #include <QFileInfo>
 
+#include "LspClient.hpp"
+
 TabManager::TabManager(QObject* parent) : QAbstractListModel(parent) {}
 
 int TabManager::rowCount(const QModelIndex& parent) const {
@@ -60,6 +62,7 @@ void TabManager::openTab(const QString& title, const QString& path) {
   }
 
   Editor* newEditor = new Editor(path, this);
+  newEditor->setLspClient(lspClient_);
   connect(newEditor, &Editor::modifiedChanged, this, &TabManager::onEditorModifiedChanged);
 
   beginInsertRows(QModelIndex(), tabs_.count(), tabs_.count());
@@ -104,6 +107,14 @@ void TabManager::nextTab() {
 void TabManager::prevTab() {
   if (tabs_.isEmpty()) return;
   setActiveTab((activeTab_ - 1 + tabs_.count()) % tabs_.count());
+}
+
+void TabManager::setLspClient(LspClient* lspClient) {
+  lspClient_ = lspClient;
+  // Update existing editors
+  for (const auto& tab : tabs_) {
+    if (tab.editor) tab.editor->setLspClient(lspClient);
+  }
 }
 
 void TabManager::onEditorModifiedChanged() {
