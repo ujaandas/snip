@@ -52,6 +52,7 @@ int main(int argc, char* argv[]) {
 
   Theme* theme = new Theme(&app);
   LspClient* lspClient = new LspClient(&app);
+  tabs.setLspClient(lspClient);
 
   engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
