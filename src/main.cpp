@@ -11,6 +11,7 @@
 
 #include "FileTree.hpp"
 #include "Gutter.hpp"
+#include "LspClient.hpp"
 #include "StrictScroll.hpp"
 #include "TabManager.hpp"
 #include "Theme.hpp"
@@ -50,10 +51,12 @@ int main(int argc, char* argv[]) {
   qmlRegisterType<Gutter>("Snip.Editor", 1, 0, "Gutter");
 
   Theme* theme = new Theme(&app);
+  LspClient* lspClient = new LspClient(&app);
 
   engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
   engine.rootContext()->setContextProperty("theme", theme);
+  engine.rootContext()->setContextProperty("lspClient", lspClient);
 
   // Load font
   QFontDatabase::addApplicationFont(":/assets/fonts/JetBrainsMono[wght].ttf");
@@ -62,6 +65,9 @@ int main(int argc, char* argv[]) {
   engine.load(QUrl(QStringLiteral("qrc:/Main.qml")));
 
   if (engine.rootObjects().isEmpty()) return -1;
+
+  // Start LSP client
+  lspClient->start(pathName);
 
   return app.exec();
 }
