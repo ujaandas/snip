@@ -31,6 +31,8 @@ class TabManager : public QAbstractListModel {
   Q_INVOKABLE void nextTab();
   Q_INVOKABLE void prevTab();
 
+  void setLspClient(class LspClient* lspClient);
+
  signals:
   void activeTabChanged();
 
@@ -40,4 +42,5 @@ class TabManager : public QAbstractListModel {
  private:
   QList<TabData> tabs_;
   int activeTab_ = -1;
+  class LspClient* lspClient_ = nullptr;
 };
