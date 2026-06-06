@@ -1,5 +1,5 @@
 {
-  description = "Build and develop the 'snip' editor.";
+  description = "Build and develop the 'parity' editor.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -80,12 +80,12 @@
           '';
         };
 
-        snip = pkgs.clangStdenv.mkDerivation {
-          pname = "snip";
+        parity = pkgs.clangStdenv.mkDerivation {
+          pname = "parity";
           version = "0.1.0";
           src = ./.;
           meta = {
-            mainProgram = "snip";
+            mainProgram = "parity";
             description = "A badonkers-fast, Nix-first editor for gigachads.";
           };
 
@@ -116,15 +116,15 @@
 
       in
       {
-        packages.default = snip;
+        packages.default = parity;
 
         checks = {
-          default = snip;
+          default = parity;
         };
 
         apps = {
-          default = (flake-utils.lib.mkApp { drv = snip; }) // {
-            meta.description = "Run the default snip executable.";
+          default = (flake-utils.lib.mkApp { drv = parity; }) // {
+            meta.description = "Run the default parity executable.";
           };
 
           configure = {

@@ -4,7 +4,7 @@ add_executable(core_tests
 
 target_link_libraries(core_tests
   PRIVATE
-    snip_core
+    parity_core
     GTest::gtest_main
 )
 

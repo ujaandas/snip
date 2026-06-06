@@ -1,10 +1,10 @@
-# snip
+# parity
 
-`snip` is a Nix-first terminal editor for people who want everything essential in one place: fast editing, clean architecture, and zero feature bloat.
+`parity` is a Nix-first terminal editor for people who want everything essential in one place: fast editing, clean architecture, and zero feature bloat.
 
 ## Philosophy
 
-`snip` includes the pieces you actually need to ship and use a serious terminal editor:
+`parity` includes the pieces you actually need to ship and use a serious terminal editor:
 
 - Yoinks LSPs from your Nix shell, eliminating need for plugins
 - Highly performant and concurrent event-driven app loop for predictable behavior
@@ -31,14 +31,14 @@ nix flake check
 ```bash
 cmake -S . -B build
 cmake --build build -j
-./build/snip
+./build/parity
 ```
 
 ## Architecture
 
 The project is split into focused modules with strict responsibilities.
 
-### `snip-core`
+### `parity-core`
 
 Concurrency and scheduling primitives:
 
@@ -48,28 +48,28 @@ Concurrency and scheduling primitives:
 - concurrent queue
 - thread pool
 
-### `snip-runtime`
+### `parity-runtime`
 
 Runtime integration layer:
 
 - input decoding
 - command execution and orchestration
 
-### `snip-file`
+### `parity-file`
 
 Filesystem integration layer:
 
 - stateless file read/write helpers
 - line-range extraction utilities
 
-### `snip-term`
+### `parity-term`
 
 Terminal integration layer:
 
 - terminal session lifecycle
 - terminal sizing/output utilities
 
-### `snip-editor`
+### `parity-editor`
 
 Editor domain layer:
 
@@ -78,7 +78,7 @@ Editor domain layer:
 - message handling
 - UI-agnostic view model generation
 
-### `snip-render`
+### `parity-render`
 
 Rendering backend layer:
 
@@ -90,7 +90,7 @@ This keeps editor behavior independent from terminal backend details and makes b
 
 ## Contributing
 
-Take care to adhere to the following rules when adding new functionality to `snip`:
+Take care to adhere to the following rules when adding new functionality to `parity`:
 
 - Each new library should have a short `README.md` detailing the responsibilities thereof.
 - Try to include a short comment before each function.
