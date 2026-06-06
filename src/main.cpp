@@ -3,6 +3,7 @@
 #include <QtCore/QUrl>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QGuiApplication>
+#include <QQuickStyle>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 
@@ -11,6 +12,9 @@
 #include "tabs/TabManager.hpp"
 
 int main(int argc, char* argv[]) {
+  // Use a non-native Quick Controls style so QML control customization is supported.
+  QQuickStyle::setStyle("Basic");
+
   // Initialize app and engine
   QGuiApplication app(argc, argv);
   QQmlApplicationEngine engine;

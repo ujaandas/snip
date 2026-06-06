@@ -12,9 +12,9 @@ Item {
         TabBar {
             id: tabBar
             width: parent.width
-            height: 40
-            spacing: 2
-            padding: 6
+            height: 36
+            spacing: 0
+            padding: 0
 
             background: Rectangle {
                 color: "#171c26"
@@ -30,16 +30,16 @@ Item {
                 
                 TabButton {
                     text: tabTitle
-                    implicitHeight: 28
+                    implicitHeight: 35
                     implicitWidth: Math.max(140, contentItem.implicitWidth + 28)
                     leftPadding: 12
                     rightPadding: 30
                     hoverEnabled: true
 
                     background: Rectangle {
-                        radius: 6
-                        color: checked ? "#242b38" : (parent.hovered ? "#1f2532" : "transparent")
-                        border.color: checked ? "#3a4456" : "transparent"
+                        radius: 0
+                        color: checked ? "#1f2430" : (parent.hovered ? "#1b202b" : "#171c26")
+                        border.color: checked ? "#2b313d" : "#171c26"
                         border.width: 1
                     }
 
@@ -60,7 +60,7 @@ Item {
                         anchors.rightMargin: 6
                         anchors.verticalCenter: parent.verticalCenter
                         background: Rectangle {
-                            radius: 4
+                            radius: 0
                             color: parent.hovered ? "#3a4152" : "transparent"
                         }
                         contentItem: Text {

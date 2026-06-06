@@ -52,8 +52,6 @@ Item {
                 Component.onCompleted: controller.setQuickDocument(editor.textDocument)
 
                 // layout
-                width: parent.width
-                height: contentHeight
                 anchors.fill: parent
 
                 // editor behavior
