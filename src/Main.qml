@@ -5,15 +5,26 @@ ApplicationWindow {
     visible: true
     width: 900
     height: 600
+    color: "#161a22"
 
     SplitView {
         anchors.fill: parent
         orientation: Qt.Horizontal
+        handle: Rectangle {
+            implicitWidth: 1
+            implicitHeight: 1
+            color: "#2b313d"
+        }
 
         SplitView {
             orientation: Qt.Vertical
             SplitView.fillWidth: true
             SplitView.fillHeight: true
+            handle: Rectangle {
+                implicitWidth: 1
+                implicitHeight: 1
+                color: "#2b313d"
+            }
 
             TabView {
                 SplitView.fillWidth: true
@@ -21,8 +32,20 @@ ApplicationWindow {
             }
 
             Rectangle {
-                color: "#111111"
+                color: "#171c26"
+                border.color: "#2b313d"
+                border.width: 1
                 SplitView.preferredHeight: 150
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Output"
+                    color: "#9aa4b5"
+                    font.family: "JetBrains Mono"
+                    font.pixelSize: 12
+                }
             }
         }
 
