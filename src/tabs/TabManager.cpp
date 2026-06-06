@@ -41,6 +41,11 @@ void TabManager::setActiveTab(int index) {
 
 int TabManager::activeTab() const { return activeTab_; }
 
+Editor* TabManager::activeEditor() const {
+  if (activeTab_ < 0 || activeTab_ >= tabs_.count()) return nullptr;
+  return tabs_[activeTab_].editor;
+}
+
 void TabManager::openTab(const QString& title, const QString& path) {
   for (int i = 0; i < tabs_.count(); ++i) {
     if (tabs_[i].path == path) {

@@ -5,10 +5,6 @@ Item {
     id: root
     property QtObject tabEditor
 
-    EditorShortcuts {
-        editor: tabEditor
-    }
-
     Rectangle {
         anchors.fill: parent
         color: "#1f2430"

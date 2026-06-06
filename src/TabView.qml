@@ -5,6 +5,10 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
+    EditorShortcuts {
+        editor: tabManager && tabManager.activeTab >= 0 ? tabManager.activeEditor : null
+    }
+
     Column {
         anchors.fill: parent
         spacing: 0

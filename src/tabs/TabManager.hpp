@@ -9,6 +9,7 @@ class TabManager : public QAbstractListModel {
 
   Q_PROPERTY(
       int activeTab READ activeTab WRITE setActiveTab NOTIFY activeTabChanged);
+  Q_PROPERTY(Editor* activeEditor READ activeEditor NOTIFY activeTabChanged);
 
  public:
   explicit TabManager(QObject* parent = nullptr);
@@ -20,6 +21,7 @@ class TabManager : public QAbstractListModel {
 
   int activeTab() const;
   void setActiveTab(int index);
+  Editor* activeEditor() const;
 
   Q_INVOKABLE void openTab(const QString& title, const QString& path);
   Q_INVOKABLE void closeTab(int index);
