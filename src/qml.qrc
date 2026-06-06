@@ -3,6 +3,7 @@
         <file>Main.qml</file>
         <file>EditorView.qml</file>
         <file>EditorShortcuts.qml</file>
+        <file>FileTreeView.qml</file>
         <file>../assets/fonts/JetBrainsMono[wght].ttf</file>
     </qresource>
 </RCC>
