@@ -3,9 +3,13 @@
 #include <QFile>
 #include <QTextStream>
 #include <QUrl>
+#include <QTextCursor>
+#include <QTextCharFormat>
+#include <algorithm>
 
 #include "LspClient.hpp"
 #include "Log.hpp"
+#include "SemanticTokens.hpp"
 
 Editor::Editor(const QString& filePath, QObject* parent)
     : QObject(parent), filePath_(filePath) {}
@@ -78,6 +82,13 @@ void Editor::notifyLspDidOpen() {
 }
 
 void Editor::onSemanticTokens(const QString& uri, const QJsonArray& data) {
-  // TODO: apply semantic token colors to text
-  Log::info("Semantic tokens received for {}: {} tokens", uri, data.size());
+  auto tokens = SemanticTokens::parse(data);
+  Log::info("Parsed {} semantic tokens for {}", tokens.size(), uri);
+
+  // Log first few tokens for debugging
+  for (int i = 0; i < qMin(5, tokens.size()); ++i) {
+    const auto& t = tokens[i];
+    Log::debug("Token {}: line={}, char={}, len={}, type={}, mod={}",
+               i, t.line, t.character, t.length, t.type, t.modifiers);
+  }
 }

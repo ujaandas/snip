@@ -1,5 +1,6 @@
 add_library(parity_lsp
   LspClient.cpp
+  SemanticTokens.cpp
 )
 
 target_include_directories(parity_lsp
