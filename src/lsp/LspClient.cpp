@@ -83,6 +83,8 @@ void LspClient::didClose(const QString& uri) {
 
 void LspClient::requestSemanticTokens(const QString& uri) {
   if (!initialized_) return;
+  int id = requestId_;
+  pendingSemanticTokenRequests_[id] = uri;
   auto params = QJsonObject{{"textDocument", JsonRpc::textDocument(uri)}};
   sendMessage(JsonRpc::request("textDocument/semanticTokens/full", params, requestId_));
 }
@@ -162,15 +164,16 @@ void LspClient::handleMessage(const QByteArray& data) {
 
       sendMessage(JsonRpc::notification("initialized"));
     } else if (result.contains("data")) {
-      handleSemanticTokensResponse(result);
+      int responseId = obj["id"].toInt();
+      handleSemanticTokensResponse(responseId, result);
     }
   }
 }
 
-void LspClient::handleSemanticTokensResponse(const QJsonObject& result) {
-  // emit with empty uri n the editor would need to track requests
+void LspClient::handleSemanticTokensResponse(int requestId, const QJsonObject& result) {
+  QString uri = pendingSemanticTokenRequests_.take(requestId);
   QJsonArray data = result["data"].toArray();
-  emit semanticTokensReceived(QString(), data);
+  emit semanticTokensReceived(uri, data);
 }
 
 void LspClient::onProcessError(QProcess::ProcessError error) {

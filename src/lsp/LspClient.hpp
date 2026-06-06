@@ -38,11 +38,12 @@ class LspClient : public QObject {
  private:
   void sendMessage(const QJsonObject& message);
   void handleMessage(const QByteArray& data);
-  void handleSemanticTokensResponse(const QJsonObject& result);
+  void handleSemanticTokensResponse(int requestId, const QJsonObject& result);
 
   QProcess* process_ = nullptr;
   QByteArray readBuffer_;
   int expectedLength_ = -1;
   bool initialized_ = false;
   int requestId_ = 1;
+  QHash<int, QString> pendingSemanticTokenRequests_;  // id -> uri
 };
