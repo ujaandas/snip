@@ -87,21 +87,26 @@ void Editor::onSemanticTokens(const QString& uri, const QJsonArray& data) {
   auto tokens = SemanticTokens::parse(data);
   Log::info("Parsed {} semantic tokens for {}", tokens.size(), uri);
 
+  // save modification state
+  bool wasModified = doc_->isModified();
+
   // apply highlighting to each token
   for (const auto& token : tokens) {
-    // calculate position in document (line 0-indexed, convert to QTextCursor position)
     QTextCursor cursor(doc_);
     cursor.movePosition(QTextCursor::Start);
     cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, token.line);
     cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, token.character);
 
-    // select token length
     int endPos = cursor.position() + token.length;
+    if (endPos > doc_->characterCount()) continue;
+
     cursor.setPosition(endPos, QTextCursor::KeepAnchor);
 
-    // apply color format
     QTextCharFormat format;
     format.setForeground(SemanticTokens::typeToColor(token.type));
     cursor.mergeCharFormat(format);
   }
+
+  // restore modification state
+  doc_->setModified(wasModified);
 }
