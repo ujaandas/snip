@@ -7,6 +7,7 @@
 #include <QtQml/QQmlContext>
 
 #include "EditorController.hpp"
+#include "filetree/FileTreeController.hpp"
 
 int main(int argc, char* argv[]) {
   // Initialize app and engine
@@ -15,9 +16,11 @@ int main(int argc, char* argv[]) {
 
   // Instantiate controllers
   EditorController editor;
+  FileTreeController ft;
 
   // Register controllers
   engine.rootContext()->setContextProperty("editor", &editor);
+  engine.rootContext()->setContextProperty("fileTree", &ft);
 
   // Load font
   QFontDatabase::addApplicationFont(":/assets/fonts/JetBrainsMono[wght].ttf");
