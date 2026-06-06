@@ -24,10 +24,16 @@ Item {
             required property int row
             required property int column
 
+            required property string fileName
+            required property string filePath
+
             TapHandler {
                 onTapped: {
-                    if (hasChildren)
+                    if (hasChildren) {
                         treeView.toggleExpanded(row)
+                    } else {
+                        tabManager.openTab(fileName, filePath)
+                    }
                 }
             }
 

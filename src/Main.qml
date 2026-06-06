@@ -15,19 +15,9 @@ ApplicationWindow {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            SplitView {
-                orientation: Qt.Vertical
+            TabView {
                 SplitView.fillWidth: true
                 SplitView.fillHeight: true
-
-                TabView {
-                    SplitView.preferredHeight: 40
-                }
-
-                EditorView {
-                    SplitView.fillHeight: true
-                    controller: editor
-                }
             }
 
             Rectangle {

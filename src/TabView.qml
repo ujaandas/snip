@@ -39,7 +39,7 @@ Item {
                 
                 EditorView {
                     SplitView.fillHeight: true
-                    controller: editor
+                    controller: editorController
                 }
             }
         }

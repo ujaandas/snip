@@ -16,12 +16,12 @@ int main(int argc, char* argv[]) {
   QQmlApplicationEngine engine;
 
   // Instantiate controllers
-  EditorController editor("README.md");
+  // EditorController editor("README.md");
   FileTreeController ft;
   TabManager tabs;
 
   // Register controllers
-  engine.rootContext()->setContextProperty("editor", &editor);
+  // engine.rootContext()->setContextProperty("editor", &editor);
   engine.rootContext()->setContextProperty("fileTree", &ft);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
 
