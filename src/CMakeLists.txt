@@ -17,6 +17,7 @@ target_link_libraries(parity
     Qt6::Gui
     Qt6::Qml
     Qt6::Quick
+    Qt6::QuickControls2
 )
 
 install(TARGETS parity

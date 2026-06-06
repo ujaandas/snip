@@ -1,6 +1,5 @@
 add_library(parity_filetree
-  FileTreeModel.cpp
-  FileTreeController.cpp
+  FileTree.cpp
   FileSortProxy.cpp
 )
 

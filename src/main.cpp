@@ -3,26 +3,30 @@
 #include <QtCore/QUrl>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QGuiApplication>
+#include <QQuickStyle>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 
-// #include "EditorController.hpp"
-#include "filetree/FileTreeController.hpp"
-#include "tabs/TabManager.hpp"
+#include "FileTree.hpp"
+#include "StrictScroll.hpp"
+#include "Gutter.hpp"
+#include "TabManager.hpp"
 
 int main(int argc, char* argv[]) {
+  // Use a non-native Quick Controls style so QML control customization is supported.
+  QQuickStyle::setStyle("Basic");
+
   // Initialize app and engine
   QGuiApplication app(argc, argv);
   QQmlApplicationEngine engine;
 
-  // Instantiate controllers
-  // EditorController editor("README.md");
-  FileTreeController ft;
+  FileTree fileTree;
   TabManager tabs;
 
-  // Register controllers
-  // engine.rootContext()->setContextProperty("editor", &editor);
-  engine.rootContext()->setContextProperty("fileTree", &ft);
+  qmlRegisterType<StrictScroll>("Snip.Editor", 1, 0, "StrictScroll");
+  qmlRegisterType<Gutter>("Snip.Editor", 1, 0, "Gutter");
+
+  engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
 
   // Load font

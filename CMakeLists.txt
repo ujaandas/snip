@@ -11,7 +11,7 @@ set(CMAKE_AUTOUIC ON)
 
 enable_testing()
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2)
 
 add_subdirectory(src)
 add_subdirectory(tests)

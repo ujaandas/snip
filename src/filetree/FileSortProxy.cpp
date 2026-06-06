@@ -1,5 +1,3 @@
-#pragma once
-
 #include "FileSortProxy.hpp"
 
 FileSortProxy::FileSortProxy(QObject* parent) : QSortFilterProxyModel(parent) {

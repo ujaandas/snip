@@ -1,6 +1,7 @@
 add_library(parity_editor
-  EditorController.cpp
-  EditorModel.cpp
+  Editor.cpp
+  StrictScroll.cpp
+  Gutter.cpp
 )
 
 target_include_directories(parity_editor

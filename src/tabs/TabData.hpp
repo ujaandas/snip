@@ -2,12 +2,12 @@
 
 #include <QString>
 
-#include "EditorController.hpp"
+#include "Editor.hpp"
 
 struct TabData {
   QString title;
   QString path;
-  EditorController* editor;
+  Editor* editor;
 };
 
-enum TabRoles { TitleRole = Qt::UserRole + 1, PathRole, EditorRole };
+enum TabRoles { TitleRole = Qt::UserRole + 1, PathRole, EditorRole, ModifiedRole };
