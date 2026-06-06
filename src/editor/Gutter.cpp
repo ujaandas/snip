@@ -52,10 +52,22 @@ int Gutter::digitCount() const {
   return qMax(2, digits);
 }
 
-void Gutter::setCursorLine(int line) {
-  if (cursorLine_ == line) return;
-  cursorLine_ = line;
-  emit cursorLineChanged();
+void Gutter::setCursorPosition(int position) {
+  if (cursorPosition_ == position) return;
+  cursorPosition_ = position;
+
+  int newLine = -1;
+  if (textDocument_ && textDocument_->textDocument() && position >= 0) {
+    QTextBlock block = textDocument_->textDocument()->findBlock(position);
+    if (block.isValid()) {
+      newLine = block.blockNumber();
+    }
+  }
+
+  if (cursorLine_ != newLine) {
+    cursorLine_ = newLine;
+    emit cursorLineChanged();
+  }
 }
 
 qreal Gutter::lineYPosition(int lineNumber) const {

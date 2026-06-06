@@ -5,28 +5,24 @@ Rectangle {
     id: root
 
     property var textArea: null
+    property QtObject theme
     property real scrollY: 0
 
     width: fontMetrics.averageCharacterWidth * controller.digitCount + 28
     clip: true
-    color: "#1a1e26"
-    border.color: "#2b313d"
+    color: root.theme.bgGutter
+    border.color: root.theme.borderPrimary
     border.width: 1
 
     Gutter {
         id: controller
-        textDocument: root.textArea ? root.textArea.textDocument : null
-        cursorLine: {
-            if (!root.textArea) return -1
-            var pos = root.textArea.cursorPosition
-            var text = root.textArea.text.substring(0, pos)
-            return text.split("\n").length - 1
-        }
+        textDocument: root.textArea?.textDocument ?? null
+        cursorPosition: root.textArea?.cursorPosition ?? -1
     }
 
     FontMetrics {
         id: fontMetrics
-        font: root.textArea ? root.textArea.font : ({ family: "JetBrains Mono", pixelSize: 14 })
+        font: root.textArea?.font ?? ({ family: root.theme.fontFamily, pixelSize: root.theme.fontSizeLarge })
     }
 
     Repeater {
@@ -34,7 +30,7 @@ Rectangle {
 
         Text {
             x: 0
-            y: controller.lineYPosition(index) - root.scrollY + (root.textArea ? root.textArea.topPadding : 12)
+            y: controller.lineYPosition(index) - root.scrollY + (root.textArea?.topPadding ?? 12)
             width: root.width - 10
             height: Math.max(fontMetrics.height, controller.lineHeight(index))
             horizontalAlignment: Text.AlignRight
@@ -42,7 +38,7 @@ Rectangle {
 
             text: index + 1
             font: fontMetrics.font
-            color: index === controller.cursorLine ? "#c8cdd5" : "#4e5668"
+            color: index === controller.cursorLine ? root.theme.textPrimary : root.theme.textDisabled
         }
     }
 }

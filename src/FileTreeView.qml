@@ -5,11 +5,13 @@ Item {
     id: root
 
     property QtObject tree
+    property QtObject tabManager
+    property QtObject theme
 
     Rectangle {
         anchors.fill: parent
-        color: "#181d27"
-        border.color: "#2b313d"
+        color: root.theme.bgSidebar
+        border.color: root.theme.borderPrimary
         border.width: 1
 
         Rectangle {
@@ -18,8 +20,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             height: 34
-            color: "#161b24"
-            border.color: "#2b313d"
+            color: root.theme.bgHeader
+            border.color: root.theme.borderPrimary
             border.width: 1
 
             Text {
@@ -27,9 +29,9 @@ Item {
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Explorer"
-                color: "#9aa4b5"
-                font.family: "JetBrains Mono"
-                font.pixelSize: 11
+                color: root.theme.textMuted
+                font.family: root.theme.fontFamily
+                font.pixelSize: root.theme.fontSizeSmall
                 font.letterSpacing: 1.2
             }
         }
@@ -64,7 +66,7 @@ Item {
                 required property string fileName
                 required property string filePath
 
-                readonly property bool isActive: !hasChildren && tabManager && (filePath === tabManager.activeFilePath)
+                readonly property bool isActive: !hasChildren && (filePath === root.tabManager?.activeFilePath)
 
                 MouseArea {
                     id: mouseArea
@@ -74,7 +76,7 @@ Item {
                         if (hasChildren) {
                             delegateItem.treeView.toggleExpanded(row)
                         } else {
-                            tabManager.openTab(fileName, filePath)
+                            root.tabManager.openTab(fileName, filePath)
                         }
                     }
                 }
@@ -82,7 +84,7 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     color: isActive
-                        ? "#1e3a5f"
+                        ? root.theme.accentBlueDark
                         : mouseArea.containsMouse ? "#222839" : "transparent"
                 }
 
@@ -92,7 +94,7 @@ Item {
                     y: 0
                     width: 2
                     height: parent.height
-                    color: "#99c4ff"
+                    color: root.theme.accentBlueLight
                 }
 
                 Row {
@@ -104,25 +106,25 @@ Item {
                     Text {
                         visible: hasChildren
                         text: expanded ? "▾" : "▸"
-                        color: "#8f99aa"
-                        font.pixelSize: 12
-                        font.family: "JetBrains Mono"
+                        color: root.theme.treeChevron
+                        font.pixelSize: root.theme.fontSizeNormal
+                        font.family: root.theme.fontFamily
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
                     Text {
                         visible: !hasChildren
                         text: "•"
-                        color: "#6e7787"
+                        color: root.theme.treeBullet
                         font.pixelSize: 9
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
                     Text {
                         text: display
-                        color: isActive ? "#e8edf5" : "#d7deeb"
-                        font.pixelSize: 13
-                        font.family: "JetBrains Mono"
+                        color: isActive ? root.theme.textTreeActive : root.theme.textTree
+                        font.pixelSize: root.theme.fontSizeMedium
+                        font.family: root.theme.fontFamily
                     }
                 }
             }

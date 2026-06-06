@@ -5,8 +5,11 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
+    property QtObject tabManager
+    property QtObject theme
+
     EditorShortcuts {
-        editor: tabManager && tabManager.activeTab >= 0 ? tabManager.activeEditor : null
+        tabManager: root.tabManager
     }
 
     Column {
@@ -17,23 +20,10 @@ Item {
             id: tabBar
             width: parent.width
             height: 36
-            color: "#171c26"
-            border.color: "#2b313d"
+            color: root.theme.bgTabBar
+            border.color: root.theme.borderPrimary
             border.width: 1
             clip: true
-
-            Shortcut {
-                sequences: [ StandardKey.Close ]
-                onActivated: tabManager ? tabManager.closeActiveTab() : null
-            }
-            Shortcut {
-                sequence: "Ctrl+Tab"
-                onActivated: tabManager ? tabManager.nextTab() : null
-            }
-            Shortcut {
-                sequence: "Ctrl+Shift+Tab"
-                onActivated: tabManager ? tabManager.prevTab() : null
-            }
 
             Flickable {
                 id: tabFlickable
@@ -56,11 +46,11 @@ Item {
 
                     Repeater {
                         id: tabRepeater
-                        model: tabManager
+                        model: root.tabManager
 
                         Item {
                             id: tabItem
-                            property bool isActive: tabManager ? index === tabManager.activeTab : false
+                            property bool isActive: index === root.tabManager?.activeTab
                             width: Math.max(140, tabLabel.implicitWidth + 52)
                             height: tabBar.height
 
@@ -77,13 +67,13 @@ Item {
                             HoverHandler { id: tabHover }
 
                             TapHandler {
-                                onTapped: tabManager.activeTab = index
+                                onTapped: root.tabManager.activeTab = index
                             }
 
                             Rectangle {
                                 anchors.fill: parent
-                                color: tabItem.isActive ? "#1f2430" : (tabHover.hovered ? "#1b202b" : "#171c26")
-                                border.color: tabItem.isActive ? "#2b313d" : "#171c26"
+                                color: tabItem.isActive ? root.theme.bgTabActive : (tabHover.hovered ? root.theme.bgTabHover : root.theme.bgTabBar)
+                                border.color: tabItem.isActive ? root.theme.borderPrimary : root.theme.borderInactive
                                 border.width: 1
 
                                 Rectangle {
@@ -91,7 +81,7 @@ Item {
                                     anchors.left: parent.left
                                     anchors.right: parent.right
                                     height: 2
-                                    color: "#4d9ef5"
+                                    color: root.theme.accentBlue
                                     visible: tabItem.isActive
                                 }
                             }
@@ -105,9 +95,9 @@ Item {
                                 anchors.rightMargin: 4
                                 text: tabTitle
                                 elide: Text.ElideRight
-                                color: tabItem.isActive ? "#e6ecf8" : "#a9b2c3"
-                                font.pixelSize: 12
-                                font.family: "JetBrains Mono"
+                                color: tabItem.isActive ? root.theme.textPrimary : root.theme.textSecondary
+                                font.pixelSize: root.theme.fontSizeNormal
+                                font.family: root.theme.fontFamily
                             }
 
                             Item {
@@ -119,18 +109,18 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
 
                                 HoverHandler { id: closeBtnHover }
-                                TapHandler { onTapped: tabManager.closeTab(index) }
+                                TapHandler { onTapped: root.tabManager.closeTab(index) }
 
                                 Rectangle {
                                     anchors.fill: parent
-                                    color: closeBtnHover.hovered ? "#3a4152" : "transparent"
+                                    color: closeBtnHover.hovered ? root.theme.closeBtnHover : "transparent"
                                 }
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: tabModified ? "●" : "✕"
-                                    color: tabModified ? "#e6bd6a" : "#9aa4b5"
-                                    font.family: "JetBrains Mono"
+                                    color: tabModified ? root.theme.accentOrange : root.theme.textMuted
+                                    font.family: root.theme.fontFamily
                                     font.pixelSize: tabModified ? 10 : 12
                                 }
                             }
@@ -144,13 +134,14 @@ Item {
             width: parent.width
             height: parent.height - tabBar.height
 
-            currentIndex: tabManager ? tabManager.activeTab : -1
+            currentIndex: root.tabManager?.activeTab ?? -1
 
             Repeater {
-                model: tabManager
-                
+                model: root.tabManager
+
                 EditorView {
                     SplitView.fillHeight: true
+                    theme: root.theme
                     tabEditor: editor
                 }
             }

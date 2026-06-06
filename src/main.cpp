@@ -13,6 +13,7 @@
 #include "Gutter.hpp"
 #include "StrictScroll.hpp"
 #include "TabManager.hpp"
+#include "Theme.hpp"
 
 int main(int argc, char* argv[]) {
   // Use a non-native Quick Controls style so QML control customization is
@@ -48,8 +49,11 @@ int main(int argc, char* argv[]) {
   qmlRegisterType<StrictScroll>("Snip.Editor", 1, 0, "StrictScroll");
   qmlRegisterType<Gutter>("Snip.Editor", 1, 0, "Gutter");
 
+  Theme* theme = new Theme(&app);
+
   engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
+  engine.rootContext()->setContextProperty("theme", theme);
 
   // Load font
   QFontDatabase::addApplicationFont(":/assets/fonts/JetBrainsMono[wght].ttf");

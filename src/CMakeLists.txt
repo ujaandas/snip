@@ -5,6 +5,7 @@ add_subdirectory(tabs)
 
 add_executable(parity
   main.cpp
+  Theme.cpp
   qml.qrc
 )
 

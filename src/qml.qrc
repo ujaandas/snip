@@ -7,6 +7,7 @@
         <file>Gutter.qml</file>
         <file>FileTreeView.qml</file>
         <file>TabView.qml</file>
+        <file>Theme.qml</file>
         <file>../assets/fonts/JetBrainsMono[wght].ttf</file>
     </qresource>
 </RCC>
