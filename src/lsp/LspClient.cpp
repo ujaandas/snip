@@ -32,7 +32,7 @@ void LspClient::start(const QString& workspacePath) {
     return;
   }
 
-  // Build initialize params inline
+  // build initialize params inline
   QJsonObject params;
   params["processId"] = QCoreApplication::applicationPid();
   params["rootUri"] = QUrl::fromLocalFile(workspacePath).toString();
@@ -98,7 +98,7 @@ void LspClient::sendMessage(const QJsonObject& message) {
   process_->write(header);
   process_->write(data);
 
-  // Log sent message
+  // log sent message
   QString method = message["method"].toString();
   int id = message["id"].toInt();
   if (!method.isEmpty()) {
@@ -143,7 +143,7 @@ void LspClient::handleMessage(const QByteArray& data) {
 
   QJsonObject obj = doc.object();
 
-  // Log received message
+  // log received message
   int id = obj["id"].toInt();
   QString method = obj["method"].toString();
   if (obj.contains("result")) {
@@ -168,8 +168,7 @@ void LspClient::handleMessage(const QByteArray& data) {
 }
 
 void LspClient::handleSemanticTokensResponse(const QJsonObject& result) {
-  // Note: This would need to be correlated with the request
-  // For now, emit with empty URI n the editor would need to track requests
+  // emit with empty uri n the editor would need to track requests
   QJsonArray data = result["data"].toArray();
   emit semanticTokensReceived(QString(), data);
 }
