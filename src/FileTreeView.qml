@@ -16,12 +16,39 @@ Item {
             implicitHeight: 24
             implicitWidth: tree.width
 
-            Text {
-                text: model.display
+            required property TreeView treeView
+            required property bool isTreeNode
+            required property bool expanded
+            required property bool hasChildren
+            required property int depth
+            required property int row
+            required property int column
+
+            TapHandler {
+                onTapped: {
+                    if (hasChildren)
+                        treeView.toggleExpanded(row)
+                }
+            }
+
+            Row {
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
-                font.pixelSize: 13
-                elide: Text.ElideRight
+                x: depth * 16 + 4
+                spacing: 4
+
+                Text {
+                    visible: hasChildren
+                    text: expanded ? "▾" : "▸"
+                    color: "white"
+                    font.pixelSize: 13
+                }
+
+                Text {
+                    text: display
+                    elide: Text.ElideRight
+                    color: "white" 
+                    font.pixelSize: 13
+                }
             }
         }
     }
