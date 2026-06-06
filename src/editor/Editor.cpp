@@ -6,7 +6,7 @@
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include <algorithm>
-
+#include <QTextBlock>
 #include "LspClient.hpp"
 #include "Log.hpp"
 #include "SemanticTokens.hpp"
@@ -92,9 +92,18 @@ void Editor::onSemanticTokens(const QString& uri, const QJsonArray& data) {
 
   // apply highlighting to each token
   for (const auto& token : tokens) {
+    // validate line exists
+    if (token.line >= doc_->blockCount()) continue;
+
     QTextCursor cursor(doc_);
     cursor.movePosition(QTextCursor::Start);
     cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, token.line);
+
+    // validate character position in line
+    int lineStartPos = cursor.position();
+    QTextBlock block = doc_->findBlock(lineStartPos);
+    if (token.character > block.length()) continue;
+
     cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, token.character);
 
     int endPos = cursor.position() + token.length;
