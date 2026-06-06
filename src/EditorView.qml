@@ -51,6 +51,7 @@ Item {
                 // data
                 Component.onCompleted: {
                     if (tabEditor) tabEditor.setQuickDocument(editorArea.textDocument)
+                    editorArea.cursorPosition = 0
                 }
 
                 // editor behavior
