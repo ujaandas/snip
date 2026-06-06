@@ -8,6 +8,7 @@
 #include <QtQml/QQmlContext>
 
 #include "FileTree.hpp"
+#include "editor/StrictScroll.hpp"
 #include "tabs/TabManager.hpp"
 
 int main(int argc, char* argv[]) {
@@ -20,6 +21,8 @@ int main(int argc, char* argv[]) {
 
   FileTree fileTree;
   TabManager tabs;
+
+  qmlRegisterType<StrictScroll>("Snip.Editor", 1, 0, "StrictScroll");
 
   engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
