@@ -97,6 +97,13 @@ void LspClient::sendMessage(const QJsonObject& message) {
 
   process_->write(header);
   process_->write(data);
+
+  // Log sent message
+  QString method = message["method"].toString();
+  int id = message["id"].toInt();
+  if (!method.isEmpty()) {
+    Log::info("LSP -> {} (id={})", method, id);
+  }
 }
 
 void LspClient::onReadyRead() {
@@ -135,6 +142,17 @@ void LspClient::handleMessage(const QByteArray& data) {
   if (!doc.isObject()) return;
 
   QJsonObject obj = doc.object();
+
+  // Log received message
+  int id = obj["id"].toInt();
+  QString method = obj["method"].toString();
+  if (obj.contains("result")) {
+    Log::info("LSP <- result (id={})", id);
+  } else if (obj.contains("error")) {
+    Log::warning("LSP <- error (id={})", id);
+  } else if (!method.isEmpty()) {
+    Log::info("LSP <- {} (id={})", method, id);
+  }
 
   if (obj.contains("id") && obj.contains("result")) {
     QJsonObject result = obj["result"].toObject();
