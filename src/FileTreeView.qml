@@ -39,8 +39,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            rootIndex: root ? root.tree.rootIndex : -1
-            model: root ? root.tree.model : null
+            rootIndex: root.tree ? root.tree.rootIndex : -1
+            model: root.tree ? root.tree.model : null
             clip: true
 
             Rectangle {

@@ -23,7 +23,7 @@ Item {
             }
 
             currentIndex: tabManager ? tabManager.activeTab : -1
-            onCurrentIndexChanged: tabManager.activeTab = currentIndex
+            onCurrentIndexChanged: tabManager ? tabManager.activeTab = currentIndex : null
 
             Repeater {
                 model: tabManager
