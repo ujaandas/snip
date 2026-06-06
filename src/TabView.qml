@@ -29,6 +29,8 @@ Item {
                 model: tabManager
                 
                 TabButton {
+                    checked: index === tabManager ? tabManager.activeTab : -1
+
                     text: tabTitle
                     implicitHeight: 35
                     implicitWidth: Math.max(140, contentItem.implicitWidth + 28)

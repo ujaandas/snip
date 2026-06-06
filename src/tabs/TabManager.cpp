@@ -59,6 +59,7 @@ void TabManager::openTab(const QString& title, const QString& path) {
 void TabManager::closeTab(int index) {
   if (index < 0 || index >= tabs_.count()) return;
 
+  const int previousActiveTab = activeTab_;
   beginRemoveRows(QModelIndex(), index, index);
   tabs_[index].editor->deleteLater();
   tabs_.removeAt(index);
@@ -67,6 +68,10 @@ void TabManager::closeTab(int index) {
   if (tabs_.isEmpty()) {
     activeTab_ = -1;
     emit activeTabChanged();
+  } else if (previousActiveTab == index) {
+    setActiveTab(qMin(index, tabs_.count() - 1));
+  } else if (previousActiveTab > index) {
+    setActiveTab(previousActiveTab - 1);
   } else if (activeTab_ >= tabs_.count()) {
     setActiveTab(tabs_.count() - 1);
   } else {
