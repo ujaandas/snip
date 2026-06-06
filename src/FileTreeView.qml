@@ -44,10 +44,14 @@ Item {
             model: root.tree ? root.tree.model : null
             clip: true
 
+            columnWidthProvider: function(col) { return col === 0 ? -1 : 0 }
+
             delegate: Item {
                 id: delegateItem
                 implicitHeight: 26
-                implicitWidth: treeView.width
+                implicitWidth: Math.max(treeView.width, depth * 14 + 8 + rowContents.implicitWidth + 12)
+
+                visible: column === 0
 
                 required property TreeView treeView
                 required property bool isTreeNode
@@ -92,6 +96,7 @@ Item {
                 }
 
                 Row {
+                    id: rowContents
                     anchors.verticalCenter: parent.verticalCenter
                     x: depth * 14 + 8
                     spacing: 5
@@ -115,7 +120,6 @@ Item {
 
                     Text {
                         text: display
-                        elide: Text.ElideRight
                         color: isActive ? "#e8edf5" : "#d7deeb"
                         font.pixelSize: 13
                         font.family: "JetBrains Mono"

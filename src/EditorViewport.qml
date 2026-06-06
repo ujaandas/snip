@@ -10,6 +10,20 @@ StrictScroll {
     property alias scrollY: viewport.scrollY
 
     property bool _scrollbarVisible: false
+    property int indentSize: 4
+    property bool wordWrap: false
+
+    readonly property int cursorLine: {
+        if (!editorArea.text) return 1
+        return editorArea.text.substring(0, editorArea.cursorPosition).split("\n").length
+    }
+    readonly property int cursorColumn: {
+        if (!editorArea.text) return 1
+        var pos = editorArea.cursorPosition
+        var textBefore = editorArea.text.substring(0, pos)
+        var lastNewline = textBefore.lastIndexOf("\n")
+        return pos - lastNewline
+    }
 
     Timer {
         id: scrollbarFadeTimer
@@ -83,7 +97,7 @@ StrictScroll {
             editorArea.cursorPosition = 0
         }
 
-        wrapMode: TextArea.NoWrap
+        wrapMode: viewport.wordWrap ? TextArea.Wrap : TextArea.NoWrap
 
         font.family: "JetBrains Mono"
         font.pixelSize: 14
