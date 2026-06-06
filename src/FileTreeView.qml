@@ -39,8 +39,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            rootIndex: controller.rootIndex
-            model: controller.model
+            rootIndex: controller ? controller.rootIndex : null
+            model: controller ? controller.model : null
             clip: true
 
             Rectangle {

@@ -2,10 +2,11 @@ import QtQuick
 import QtQuick.Controls
 
 ApplicationWindow {
+    id: window
     visible: true
     width: 900
     height: 600
-    flags: Qt.Window | Qt.FramelessWindowHint
+    flags: Qt.Window
     color: "#161a22"
 
     SplitView {

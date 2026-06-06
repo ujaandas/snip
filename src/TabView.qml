@@ -22,7 +22,7 @@ Item {
                 border.width: 1
             }
 
-            currentIndex: tabManager.activeTab
+            currentIndex: tabManager ? tabManager.activeTab : -1
             onCurrentIndexChanged: tabManager.activeTab = currentIndex
 
             Repeater {
@@ -81,7 +81,7 @@ Item {
             width: parent.width
             height: parent.height - tabBar.height
 
-            currentIndex: tabManager.activeTab
+            currentIndex: tabManager ? tabManager.activeTab : -1
 
             Repeater {
                 model: tabManager
