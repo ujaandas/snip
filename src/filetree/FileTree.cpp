@@ -2,7 +2,7 @@
 
 #include <QDir>
 
-FileTree::FileTree(QObject* parent) : QObject(parent) {
+FileTree::FileTree(QString path, QObject* parent) : QObject(parent) {
   model_.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
   model_.setResolveSymlinks(true);
 
@@ -10,7 +10,7 @@ FileTree::FileTree(QObject* parent) : QObject(parent) {
   proxy_.setDynamicSortFilter(true);
   proxy_.sort(0);
 
-  setRootPath(QDir::currentPath());
+  setRootPath(path);
 }
 
 QObject* FileTree::model() { return &proxy_; }

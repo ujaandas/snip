@@ -1,10 +1,10 @@
 #pragma once
 
+#include <QtCore/qabstractitemmodel.h>
+
 #include <QFileSystemModel>
 #include <QObject>
 #include <QString>
-
-#include <QtCore/qabstractitemmodel.h>
 
 #include "FileSortProxy.hpp"
 
@@ -17,7 +17,7 @@ class FileTree : public QObject {
   Q_PROPERTY(QModelIndex rootIndex READ rootIndex NOTIFY rootIndexChanged);
 
  public:
-  explicit FileTree(QObject* parent = nullptr);
+  explicit FileTree(QString path, QObject* parent = nullptr);
 
   QObject* model();
 

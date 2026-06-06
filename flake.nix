@@ -1,6 +1,6 @@
 {
   description = "Build and develop the 'parity' editor.";
- 
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
@@ -116,7 +116,10 @@
 
       in
       {
-        packages.default = parity;
+        packages = {
+          default = parity;
+          parity = parity;
+        };
 
         checks = {
           default = parity;
