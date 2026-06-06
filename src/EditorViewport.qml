@@ -13,18 +13,6 @@ StrictScroll {
     property int indentSize: 4
     property bool wordWrap: false
 
-    readonly property int cursorLine: {
-        if (!editorArea.text) return 1
-        return editorArea.text.substring(0, editorArea.cursorPosition).split("\n").length
-    }
-    readonly property int cursorColumn: {
-        if (!editorArea.text) return 1
-        var pos = editorArea.cursorPosition
-        var textBefore = editorArea.text.substring(0, pos)
-        var lastNewline = textBefore.lastIndexOf("\n")
-        return pos - lastNewline
-    }
-
     Timer {
         id: scrollbarFadeTimer
         interval: 1200
