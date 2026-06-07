@@ -1,4 +1,5 @@
 add_subdirectory(log)
+add_subdirectory(theme)
 add_subdirectory(editor)
 add_subdirectory(filetree)
 add_subdirectory(tabs)
@@ -7,12 +8,12 @@ add_subdirectory(tree-sitter)
 
 add_executable(parity
   main.cpp
-  Theme.cpp
   qml.qrc
 )
 
 target_link_libraries(parity
   PRIVATE
+    parity_theme
     parity_editor
     parity_filetree
     parity_tabs

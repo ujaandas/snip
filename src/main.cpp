@@ -12,6 +12,7 @@
 #include "FileTree.hpp"
 #include "Gutter.hpp"
 #include "LspClient.hpp"
+#include "SemanticTokens.hpp"
 #include "StrictScroll.hpp"
 #include "TabManager.hpp"
 #include "Theme.hpp"
@@ -57,6 +58,10 @@ int main(int argc, char* argv[]) {
 
   // load tree-sitter for C++
   TreeSitter* treeSitter = new TreeSitter(&app);
+
+  // Set theme for syntax highlighting
+  treeSitter->setTheme(theme);
+  SemanticTokens::setTheme(theme);
   bool cppLoaded = treeSitter->loadLanguage(
     "/nix/store/sly5g0s5p9dnhlpnj7wpmh7mdqacjpfk-tree-sitter-cpp-0.23.4/parser",
     "/nix/store/sly5g0s5p9dnhlpnj7wpmh7mdqacjpfk-tree-sitter-cpp-0.23.4/queries"
