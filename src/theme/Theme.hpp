@@ -64,6 +64,24 @@ class Theme : public QObject {
   Q_PROPERTY(QColor hlVariable MEMBER hlVariable CONSTANT);
   Q_PROPERTY(QColor hlParameter MEMBER hlParameter CONSTANT);
 
+  // Diagnostic/Comment highlights
+  Q_PROPERTY(QColor hlError MEMBER hlError CONSTANT);
+  Q_PROPERTY(QColor hlWarning MEMBER hlWarning CONSTANT);
+  Q_PROPERTY(QColor hlTodo MEMBER hlTodo CONSTANT);
+  Q_PROPERTY(QColor hlInfo MEMBER hlInfo CONSTANT);
+
+  // Markup/Tag highlights
+  Q_PROPERTY(QColor hlTag MEMBER hlTag CONSTANT);
+  Q_PROPERTY(QColor hlAttribute MEMBER hlAttribute CONSTANT);
+
+  // Module/Import highlights
+  Q_PROPERTY(QColor hlModule MEMBER hlModule CONSTANT);
+
+  // Diff highlights
+  Q_PROPERTY(QColor hlDiffAdd MEMBER hlDiffAdd CONSTANT);
+  Q_PROPERTY(QColor hlDiffDelete MEMBER hlDiffDelete CONSTANT);
+  Q_PROPERTY(QColor hlDiffChange MEMBER hlDiffChange CONSTANT);
+
 public:
   explicit Theme(QObject *parent = nullptr);
 
@@ -123,4 +141,22 @@ public:
   QColor hlFunction = "#89dceb";      // Sky: myFunc
   QColor hlVariable = "#f2cdcd";      // Flamingo: myVar
   QColor hlParameter = "#f2cdcd";    // Flamingo: param
+
+  // Diagnostic/Comment highlights (Catppuccin Mocha)
+  QColor hlError = "#f38ba8";         // Red: error comments
+  QColor hlWarning = "#f9e2af";       // Yellow: warning comments
+  QColor hlTodo = "#cba6f7";          // Mauve: TODO/FIXME
+  QColor hlInfo = "#89b4fa";          // Blue: NOTE/INFO
+
+  // Markup/Tag highlights (Catppuccin Mocha)
+  QColor hlTag = "#cba6f7";           // Mauve: HTML/XML tags
+  QColor hlAttribute = "#fab387";     // Peach: attributes
+
+  // Module/Import highlights (Catppuccin Mocha)
+  QColor hlModule = "#b4befe";        // Lavender: import paths
+
+  // Diff highlights (Catppuccin Mocha)
+  QColor hlDiffAdd = "#a6e3a1";       // Green: added lines
+  QColor hlDiffDelete = "#f38ba8";    // Red: removed lines
+  QColor hlDiffChange = "#f9e2af";    // Yellow: changed lines
 };
