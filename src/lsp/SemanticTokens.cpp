@@ -39,35 +39,6 @@ QString SemanticTokens::typeToString(int type) {
 }
 
 QColor SemanticTokens::typeToColor(int type) {
-  if (!theme_) {
-    // Fallback to Catppuccin Mocha defaults if no theme set
-    switch (type) {
-      case 0: return QColor("#b4befe");   // namespace - Lavender
-      case 1: return QColor("#f9e2af");   // type - Yellow
-      case 2: return QColor("#f9e2af");   // class - Yellow
-      case 3: return QColor("#f9e2af");   // enum - Yellow
-      case 4: return QColor("#f9e2af");   // interface - Yellow
-      case 5: return QColor("#f9e2af");   // struct - Yellow
-      case 6: return QColor("#f9e2af");   // typeParameter - Yellow
-      case 7: return QColor("#f2cdcd");   // parameter - Flamingo
-      case 8: return QColor("#f2cdcd");   // variable - Flamingo
-      case 9: return QColor("#f2cdcd");   // property - Flamingo
-      case 10: return QColor("#f9e2af");  // enumMember - Yellow
-      case 11: return QColor("#fab387");  // event - Peach
-      case 12: return QColor("#89dceb");  // function - Sky
-      case 13: return QColor("#89dceb");  // method - Sky
-      case 14: return QColor("#cba6f7");  // macro - Mauve
-      case 15: return QColor("#cba6f7");  // keyword - Mauve
-      case 16: return QColor("#cba6f7");  // modifier - Mauve
-      case 17: return QColor("#7f849c");  // comment - Overlay1
-      case 18: return QColor("#a6e3a1");  // string - Green
-      case 19: return QColor("#fab387");  // number - Peach
-      case 20: return QColor("#f5c2e7");  // regexp - Pink
-      case 21: return QColor("#cdd6f4");  // operator - Text
-      default: return QColor("#cdd6f4");  // unknown - Text
-    }
-  }
-
   switch (type) {
     case 0: return theme_->hlModule;       // namespace
     case 1: return theme_->hlType;           // type
