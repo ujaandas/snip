@@ -11,8 +11,12 @@
 #include <tree_sitter/api.h>
 
 #include "Log.hpp"
+#include "Theme.hpp"
 
-TreeSitter::TreeSitter(QObject *parent) : QObject(parent) {
+TreeSitter::TreeSitter(QObject *parent) : QObject(parent) {}
+
+void TreeSitter::setTheme(Theme *theme) {
+  theme_ = theme;
   setupCaptureColors();
 }
 
@@ -26,16 +30,18 @@ TreeSitter::~TreeSitter() {
 }
 
 void TreeSitter::setupCaptureColors() {
-  // VS Code dark theme inspired colors
-  captureColors_["keyword"] = QColor("#C586C0");     // purple (if, for, return)
-  captureColors_["operator"] = QColor("#D4D4D4");    // white (+, -, =)
-  captureColors_["string"] = QColor("#CE9178");      // orange-ish ("hello")
-  captureColors_["comment"] = QColor("#6A9955");     // green (// comment)
-  captureColors_["number"] = QColor("#B5CEA8");      // light green (42)
-  captureColors_["function"] = QColor("#DCDCAA");    // yellow (myFunc)
-  captureColors_["type"] = QColor("#4EC9B0");        // teal (MyClass)
-  captureColors_["variable"] = QColor("#9CDCFE");    // light blue (myVar)
-  captureColors_["punctuation"] = QColor("#D4D4D4"); // white ({, }, (, ))
+  if (!theme_) return;
+
+  // use theme colors for syntax highlighting
+  captureColors_["keyword"] = theme_->hlKeyword;
+  captureColors_["operator"] = theme_->hlOperator;
+  captureColors_["string"] = theme_->hlString;
+  captureColors_["comment"] = theme_->hlComment;
+  captureColors_["number"] = theme_->hlNumber;
+  captureColors_["function"] = theme_->hlFunction;
+  captureColors_["type"] = theme_->hlType;
+  captureColors_["variable"] = theme_->hlVariable;
+  captureColors_["punctuation"] = theme_->hlPunctuation;
 }
 
 QString TreeSitter::readQueryFile(const QString &queryDir,
@@ -156,8 +162,8 @@ void TreeSitter::highlight(QTextDocument *doc) {
     if (startPos < 0 || endPos > doc->characterCount())
       continue;
 
-    // get color for capture
-    QColor color = captureColors_.value(captureName, QColor("#D4D4D4"));
+    // get color for capture (fallback to text color if not in theme)
+    QColor color = captureColors_.value(captureName, theme_ ? theme_->textPrimary : QColor("#cdd6f4"));
 
     // apply formatting
     QTextCursor textCursor(doc);

@@ -5,6 +5,8 @@
 #include <QObject>
 #include <tree_sitter/api.h>
 
+#include "Theme.hpp"
+
 class QTextDocument;
 
 class TreeSitter : public QObject {
@@ -23,6 +25,9 @@ public:
   // check if language is loaded
   bool isLoaded() const { return language_ != nullptr; }
 
+  // set theme for syntax highlighting colors
+  void setTheme(Theme *theme);
+
 private:
   void *grammarHandle_ = nullptr;        // dlopen handle
   const TSLanguage *language_ = nullptr; // from dlsym
@@ -31,6 +36,8 @@ private:
 
   // map capture names to colors (e.g., "keyword" to yellow)
   QMap<QString, QColor> captureColors_;
+
+  Theme *theme_ = nullptr;
 
   void setupCaptureColors();
   QString readQueryFile(const QString &queryDir, const QString &filename);
