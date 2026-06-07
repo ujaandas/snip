@@ -10,6 +10,7 @@ target_include_directories(parity_lsp
 
 target_link_libraries(parity_lsp
   PUBLIC
+    parity_theme
     parity_log
     Qt6::Core
     Qt6::Network
