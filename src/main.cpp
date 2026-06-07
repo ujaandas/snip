@@ -15,6 +15,7 @@
 #include "StrictScroll.hpp"
 #include "TabManager.hpp"
 #include "Theme.hpp"
+#include "TreeSitter.hpp"
 
 int main(int argc, char* argv[]) {
   // Use a non-native Quick Controls style so QML control customization is
@@ -54,10 +55,21 @@ int main(int argc, char* argv[]) {
   LspClient* lspClient = new LspClient(&app);
   tabs.setLspClient(lspClient);
 
+  // load tree-sitter for C++
+  TreeSitter* treeSitter = new TreeSitter(&app);
+  bool cppLoaded = treeSitter->loadLanguage(
+    "/nix/store/sly5g0s5p9dnhlpnj7wpmh7mdqacjpfk-tree-sitter-cpp-0.23.4/parser",
+    "/nix/store/sly5g0s5p9dnhlpnj7wpmh7mdqacjpfk-tree-sitter-cpp-0.23.4/queries"
+  );
+  if (cppLoaded) {
+    tabs.setTreeSitter(treeSitter);
+  }
+
   engine.rootContext()->setContextProperty("fileTree", &fileTree);
   engine.rootContext()->setContextProperty("tabManager", &tabs);
   engine.rootContext()->setContextProperty("theme", theme);
   engine.rootContext()->setContextProperty("lspClient", lspClient);
+  engine.rootContext()->setContextProperty("treeSitter", treeSitter);
 
   // Load font
   QFontDatabase::addApplicationFont(":/assets/fonts/JetBrainsMono[wght].ttf");
