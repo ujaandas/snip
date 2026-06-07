@@ -4,6 +4,8 @@
 
 #include "TabData.hpp"
 
+class TreeSitter;
+
 class TabManager : public QAbstractListModel {
   Q_OBJECT;
 
@@ -32,6 +34,7 @@ class TabManager : public QAbstractListModel {
   Q_INVOKABLE void prevTab();
 
   void setLspClient(class LspClient* lspClient);
+  void setTreeSitter(TreeSitter* treeSitter);
 
  signals:
   void activeTabChanged();
@@ -43,4 +46,5 @@ class TabManager : public QAbstractListModel {
   QList<TabData> tabs_;
   int activeTab_ = -1;
   class LspClient* lspClient_ = nullptr;
+  TreeSitter* treeSitter_ = nullptr;
 };
