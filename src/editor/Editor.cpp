@@ -10,6 +10,7 @@
 #include "Log.hpp"
 #include "LspClient.hpp"
 #include "SemanticTokens.hpp"
+#include "TreeSitter.hpp"
 
 Editor::Editor(const QString& filePath, QObject* parent)
     : QObject(parent), filePath_(filePath) {}
@@ -48,6 +49,11 @@ void Editor::load(const QString& path) {
   doc_->setPlainText(in.readAll());
   doc_->setModified(false);
   filePath_ = path;
+
+  // apply tree-sitter syntax highlighting
+  if (treeSitter_) {
+    treeSitter_->highlight(doc_);
+  }
 }
 
 bool Editor::saveDocument() {
@@ -73,6 +79,10 @@ void Editor::setLspClient(LspClient* lspClient) {
     connect(lspClient_, &LspClient::semanticTokensReceived, this,
             &Editor::onSemanticTokens);
   }
+}
+
+void Editor::setTreeSitter(TreeSitter* treeSitter) {
+  treeSitter_ = treeSitter;
 }
 
 void Editor::notifyLspDidOpen() {
