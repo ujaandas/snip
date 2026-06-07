@@ -10,6 +10,8 @@
 #include <dlfcn.h>
 #include <tree_sitter/api.h>
 
+#include "Log.hpp"
+
 TreeSitter::TreeSitter(QObject *parent) : QObject(parent) {
   setupCaptureColors();
 }
@@ -110,6 +112,8 @@ void TreeSitter::highlight(QTextDocument *doc) {
   // save modification state
   bool wasModified = doc->isModified();
 
+  Log::info("tree-sitter: highlighting document with {} characters", doc->characterCount());
+
   // get document text as UTF-8
   QString text = doc->toPlainText();
   QByteArray utf8Text = text.toUtf8();
@@ -130,6 +134,7 @@ void TreeSitter::highlight(QTextDocument *doc) {
   // apply colors to QTextDocument
   TSQueryMatch match;
   uint32_t captureIndex;
+  int applied = 0;
 
   while (ts_query_cursor_next_capture(cursor, &match, &captureIndex)) {
     uint32_t nameLen = 0;
@@ -162,7 +167,10 @@ void TreeSitter::highlight(QTextDocument *doc) {
     QTextCharFormat format;
     format.setForeground(color);
     textCursor.setCharFormat(format);
+    applied++;
   }
+
+  Log::info("tree-sitter: applied {} highlight captures", applied);
 
   // cleanup
   ts_query_cursor_delete(cursor);

@@ -11,6 +11,7 @@ target_include_directories(parity_tree_sitter
 target_link_libraries(
   parity_tree_sitter
   PUBLIC
+  parity_log
   Qt6::Core
   Qt6::Gui
   PkgConfig::TREE_SITTER
