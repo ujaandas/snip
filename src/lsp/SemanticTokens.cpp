@@ -12,36 +12,33 @@ void SemanticTokens::setTheme(Theme *theme) {
 
 QString SemanticTokens::typeToString(int type) {
   switch (type) {
-    case 0: return "type";
-    case 1: return "function";
-    case 2: return "variable";
-    case 3: return "parameter";
-    case 4: return "class";
-    case 5: return "enum";
-    case 6: return "interface";
-    case 7: return "struct";
-    case 8: return "typeParameter";
+    case 0: return "namespace";
+    case 1: return "type";
+    case 2: return "class";
+    case 3: return "enum";
+    case 4: return "interface";
+    case 5: return "struct";
+    case 6: return "typeParameter";
+    case 7: return "parameter";
+    case 8: return "variable";
+    case 9: return "property";
+    case 10: return "enumMember";
+    case 11: return "event";
+    case 12: return "function";
+    case 13: return "method";
+    case 14: return "macro";
+    case 15: return "keyword";
+    case 16: return "modifier";
+    case 17: return "comment";
+    case 18: return "string";
+    case 19: return "number";
+    case 20: return "regexp";
+    case 21: return "operator";
     default: return "unknown";
   }
 }
 
 QColor SemanticTokens::typeToColor(int type) {
-  if (!theme_) {
-    // Fallback to Catppuccin Mocha defaults if no theme set
-    switch (type) {
-      case 0: return QColor("#f9e2af");   // type - Yellow
-      case 1: return QColor("#89dceb");   // function - Sky
-      case 2: return QColor("#f2cdcd");   // variable - Flamingo
-      case 3: return QColor("#f2cdcd");   // parameter - Flamingo
-      case 4: return QColor("#f9e2af");   // class - Yellow
-      case 5: return QColor("#f9e2af");   // enum - Yellow
-      case 6: return QColor("#f9e2af");   // interface - Yellow
-      case 7: return QColor("#f9e2af");   // struct - Yellow
-      case 8: return QColor("#f9e2af");   // typeParameter - Yellow
-      default: return QColor("#cdd6f4");  // unknown - Text
-    }
-  }
-
   switch (type) {
     case 0: return theme_->hlType;        // type
     case 1: return theme_->hlFunction;    // function
