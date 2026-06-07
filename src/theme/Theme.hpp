@@ -73,47 +73,54 @@ public:
   int fontSizeMedium = 13;
   int fontSizeLarge = 14;
 
-  QColor bgWindow = "#161a22";
-  QColor bgSidebar = "#181d27";
-  QColor bgHeader = "#161b24";
-  QColor bgTabBar = "#171c26";
-  QColor bgTabActive = "#1f2430";
-  QColor bgTabHover = "#1b202b";
-  QColor bgEditor = "#1f2430";
-  QColor bgGutter = "#1a1e26";
-  QColor bgCursorLine = "#2a3040";
+  // Catppuccin Mocha - Base tones
+  QColor bgWindow = "#1e1e2e";      // Base
+  QColor bgSidebar = "#181825";     // Mantle
+  QColor bgHeader = "#181825";      // Mantle
+  QColor bgTabBar = "#11111b";      // Crust
+  QColor bgTabActive = "#1e1e2e";   // Base
+  QColor bgTabHover = "#313244";    // Surface0
+  QColor bgEditor = "#1e1e2e";      // Base
+  QColor bgGutter = "#181825";      // Mantle
+  QColor bgCursorLine = "#313244";  // Surface0
 
-  QColor borderPrimary = "#2b313d";
-  QColor borderInactive = "#171c26";
+  // Catppuccin Mocha - Surface tones for borders
+  QColor borderPrimary = "#45475a";   // Surface1
+  QColor borderInactive = "#313244";  // Surface0
 
-  QColor textPrimary = "#e6ecf8";
-  QColor textSecondary = "#a9b2c3";
-  QColor textMuted = "#9aa4b5";
-  QColor textDisabled = "#4e5668";
-  QColor textTree = "#d7deeb";
-  QColor textTreeActive = "#e8edf5";
+  // Catppuccin Mocha - Text tones
+  QColor textPrimary = "#cdd6f4";     // Text
+  QColor textSecondary = "#bac2de";   // Subtext1
+  QColor textMuted = "#a6adc8";       // Subtext0
+  QColor textDisabled = "#6c7086";    // Overlay0
+  QColor textTree = "#bac2de";        // Subtext1
+  QColor textTreeActive = "#cdd6f4";  // Text
 
-  QColor accentBlue = "#4d9ef5";
-  QColor accentBlueLight = "#99c4ff";
-  QColor accentBlueDark = "#1e3a5f";
-  QColor accentOrange = "#e6bd6a";
+  // Catppuccin Mocha - Accent colors
+  QColor accentBlue = "#89b4fa";        // Blue
+  QColor accentBlueLight = "#b4befe";   // Lavender
+  QColor accentBlueDark = "#1e1e2e";    // Base
+  QColor accentOrange = "#fab387";      // Peach
 
-  QColor scrollbar = "#4a5268";
-  QColor selectionBg = "#214b78";
-  QColor selectionFg = "#ffffff";
-  QColor closeBtnHover = "#3a4152";
-  QColor treeChevron = "#8f99aa";
-  QColor treeBullet = "#6e7787";
+  // Catppuccin Mocha - UI elements
+  QColor scrollbar = "#585b70";         // Surface2
+  QColor selectionBg = "#45475a";       // Surface1
+  QColor selectionFg = "#cdd6f4";       // Text
+  QColor closeBtnHover = "#313244";     // Surface0
+  QColor treeChevron = "#7f849c";       // Overlay1
+  QColor treeBullet = "#6c7086";        // Overlay0
 
-  QColor hlKeyword = "#C586C0";     // purple: if, for, return
-  QColor hlOperator = "#D4D4D4";    // white: +, -, =
-  QColor hlString = "#CE9178";      // orange: "hello"
-  QColor hlComment = "#6A9955";     // green: // comment
-  QColor hlNumber = "#B5CEA8";      // light green: 42
-  QColor hlPunctuation = "#D4D4D4"; // white: {, }, (, )
+  // Catppuccin Mocha - Syntax highlighting (tree-sitter)
+  QColor hlKeyword = "#cba6f7";      // Mauve: if, for, return
+  QColor hlOperator = "#cdd6f4";    // Text: +, -, =
+  QColor hlString = "#a6e3a1";       // Green: "hello"
+  QColor hlComment = "#7f849c";     // Overlay1: // comment
+  QColor hlNumber = "#fab387";       // Peach: 42
+  QColor hlPunctuation = "#9399b2"; // Overlay2: {, }, (, )
 
-  QColor hlType = "#4EC9B0";      // teal: MyClass, int
-  QColor hlFunction = "#DCDCAA";  // yellow: myFunc
-  QColor hlVariable = "#9CDCFE";  // light blue: myVar
-  QColor hlParameter = "#9CDCFE"; // light blue: param
+  // Catppuccin Mocha - LSP Semantic Tokens
+  QColor hlType = "#f9e2af";         // Yellow: MyClass, int
+  QColor hlFunction = "#89dceb";      // Sky: myFunc
+  QColor hlVariable = "#f2cdcd";      // Flamingo: myVar
+  QColor hlParameter = "#f2cdcd";    // Flamingo: param
 };
