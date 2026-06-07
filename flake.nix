@@ -30,6 +30,7 @@
               cmake
               ninja
               gtest
+              pkg-config
             ]
             ++ qtPkgs;
           text = ''
@@ -49,6 +50,7 @@
               cmake
               ninja
               gtest
+              pkg-config
             ]
             ++ qtPkgs;
           text = ''
@@ -92,6 +94,7 @@
           nativeBuildInputs = with pkgs; [
             cmake
             ninja
+            pkg-config
             qt6.wrapQtAppsHook
           ];
 
@@ -105,6 +108,7 @@
             with pkgs;
             [
               gtest
+              tree-sitter
             ]
             ++ qtPkgs;
 
