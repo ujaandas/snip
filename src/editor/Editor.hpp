@@ -7,6 +7,7 @@
 #include <QJsonArray>
 
 class LspClient;
+class TreeSitter;
 
 class Editor : public QObject {
   Q_OBJECT;
@@ -18,6 +19,7 @@ class Editor : public QObject {
 
   Q_INVOKABLE void setQuickDocument(QQuickTextDocument* quickDoc);
   void setLspClient(LspClient* lspClient);
+  void setTreeSitter(TreeSitter* treeSitter);
 
   Q_INVOKABLE void save();
   Q_INVOKABLE void undo();
@@ -39,4 +41,5 @@ class Editor : public QObject {
   QTextDocument* doc_ = nullptr;
   QString filePath_;
   LspClient* lspClient_ = nullptr;
+  TreeSitter* treeSitter_ = nullptr;
 };
