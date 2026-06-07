@@ -125,9 +125,63 @@ bool TreeSitter::loadLanguage(const QString& parserSoPath, const QString& queryD
 void TreeSitter::highlight(QTextDocument* doc) {
   if (!parser_ || !highlightsQuery_ || !doc) return;
 
-  // TODO: Implement highlighting in next chunk
-  // 1. get document text as UTF-8
-  // 2. parse with tree-sitter
-  // 3. execute highlights query
-  // 4. apply colors to QTextDocument
+  // save modification state
+  bool wasModified = doc->isModified();
+
+  // get document text as UTF-8
+  QString text = doc->toPlainText();
+  QByteArray utf8Text = text.toUtf8();
+
+  // parse with tree-sitter
+  TSTree* tree = ts_parser_parse_string(
+    parser_,
+    nullptr,  // no old tree for now (full re-parse)
+    utf8Text.constData(),
+    utf8Text.size()
+  );
+  if (!tree) return;
+
+  // execute highlights query
+  TSQueryCursor* cursor = ts_query_cursor_new();
+  TSNode rootNode = ts_tree_root_node(tree);
+  ts_query_cursor_exec(cursor, highlightsQuery_, rootNode);
+
+  // apply colors to QTextDocument
+  uint32_t captureIndex;
+  TSNode captureNode;
+  while (ts_query_cursor_next_capture(cursor, &captureIndex, &captureNode)) {
+    uint32_t nameLen = 0;
+    const char* namePtr = ts_query_capture_name_for_id(highlightsQuery_, captureIndex, &nameLen);
+    QString captureName = QString::fromUtf8(namePtr, nameLen);
+
+    // get byte positions and convert to character positions
+    uint32_t startByte = ts_node_start_byte(captureNode);
+    uint32_t endByte = ts_node_end_byte(captureNode);
+
+    // convert UTF-8 byte offset to QString character index
+    int startPos = QString::fromUtf8(utf8Text.left(startByte)).length();
+    int endPos = QString::fromUtf8(utf8Text.left(endByte)).length();
+
+    // validate positions
+    if (startPos < 0 || endPos > doc->characterCount()) continue;
+
+    // get color for capture
+    QColor color = captureColors_.value(captureName, QColor("#D4D4D4"));
+
+    // apply formatting
+    QTextCursor textCursor(doc);
+    textCursor.setPosition(startPos);
+    textCursor.setPosition(endPos, QTextCursor::KeepAnchor);
+
+    QTextCharFormat format;
+    format.setForeground(color);
+    textCursor.setCharFormat(format);
+  }
+
+  // cleanup
+  ts_query_cursor_delete(cursor);
+  ts_tree_delete(tree);
+
+  // restore modification state
+  doc->setModified(wasModified);
 }
