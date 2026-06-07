@@ -3,6 +3,8 @@
 #include <QJsonArray>
 #include <QList>
 
+#include "Theme.hpp"
+
 struct SemanticToken {
   int line;
   int character;
@@ -11,7 +13,7 @@ struct SemanticToken {
   int modifiers;
 };
 
-// LSP token types (order matters - matches what we sent in capabilities)
+// LSP token types (order matters)
 enum class TokenType {
   Type = 0,
   Function = 1,
@@ -30,4 +32,9 @@ class SemanticTokens {
   static QList<SemanticToken> parse(const QJsonArray& data);
   static QString typeToString(int type);
   static QColor typeToColor(int type);
+
+  static void setTheme(Theme *theme);
+
+ private:
+  static Theme *theme_;
 };

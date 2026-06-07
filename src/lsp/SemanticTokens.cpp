@@ -4,6 +4,12 @@
 
 #include "Log.hpp"
 
+Theme *SemanticTokens::theme_ = nullptr;
+
+void SemanticTokens::setTheme(Theme *theme) {
+  theme_ = theme;
+}
+
 QString SemanticTokens::typeToString(int type) {
   switch (type) {
     case 0: return "type";
@@ -20,17 +26,33 @@ QString SemanticTokens::typeToString(int type) {
 }
 
 QColor SemanticTokens::typeToColor(int type) {
+  if (!theme_) {
+    // Fallback to Catppuccin Mocha defaults if no theme set
+    switch (type) {
+      case 0: return QColor("#f9e2af");   // type - Yellow
+      case 1: return QColor("#89dceb");   // function - Sky
+      case 2: return QColor("#f2cdcd");   // variable - Flamingo
+      case 3: return QColor("#f2cdcd");   // parameter - Flamingo
+      case 4: return QColor("#f9e2af");   // class - Yellow
+      case 5: return QColor("#f9e2af");   // enum - Yellow
+      case 6: return QColor("#f9e2af");   // interface - Yellow
+      case 7: return QColor("#f9e2af");   // struct - Yellow
+      case 8: return QColor("#f9e2af");   // typeParameter - Yellow
+      default: return QColor("#cdd6f4");  // unknown - Text
+    }
+  }
+
   switch (type) {
-    case 0: return QColor("#4EC9B0");   // type - teal
-    case 1: return QColor("#DCDCAA");   // function - yellow
-    case 2: return QColor("#9CDCFE");   // variable - light blue
-    case 3: return QColor("#9CDCFE");   // parameter - light blue
-    case 4: return QColor("#4EC9B0");   // class - teal
-    case 5: return QColor("#4EC9B0");   // enum - teal
-    case 6: return QColor("#4EC9B0");   // interface - teal
-    case 7: return QColor("#4EC9B0");   // struct - teal
-    case 8: return QColor("#4EC9B0");   // typeParameter - teal
-    default: return QColor("#D4D4D4");  // unknown - default text
+    case 0: return theme_->hlType;        // type
+    case 1: return theme_->hlFunction;    // function
+    case 2: return theme_->hlVariable;    // variable
+    case 3: return theme_->hlParameter;   // parameter
+    case 4: return theme_->hlType;        // class
+    case 5: return theme_->hlType;        // enum
+    case 6: return theme_->hlType;        // interface
+    case 7: return theme_->hlType;        // struct
+    case 8: return theme_->hlType;        // typeParameter
+    default: return theme_->textPrimary;  // unknown
   }
 }
 
