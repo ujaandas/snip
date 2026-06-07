@@ -164,6 +164,7 @@
               gtest
               tree-sitter
               tree-sitter-grammars.tree-sitter-cpp
+              pkg-config
             ]
             ++ qtPkgs;
 

@@ -3,11 +3,9 @@ add_library(
   TreeSitter.cpp
 )
 
-target_include_directories(
-  parity_tree_sitter
+target_include_directories(parity_tree_sitter
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/src/log
 )
 
 target_link_libraries(
@@ -15,5 +13,5 @@ target_link_libraries(
   PUBLIC
   Qt6::Core
   Qt6::Gui
-  ${CMAKE_DL_LIBS}
+  PkgConfig::TREE_SITTER
 )

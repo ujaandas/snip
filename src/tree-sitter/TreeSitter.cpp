@@ -1,70 +1,52 @@
 #include "TreeSitter.hpp"
 
-#include <QFile>
-#include <QTextStream>
 #include <QDir>
+#include <QFile>
+#include <QTextBlock>
+#include <QTextCharFormat>
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QTextStream>
 #include <dlfcn.h>
+#include <tree_sitter/api.h>
 
-// C API subset we need
-extern "C" {
-typedef struct TSLanguage TSLanguage;
-typedef struct TSParser TSParser;
-typedef struct TSQuery TSQuery;
-typedef struct TSQueryCursor TSQueryCursor;
-typedef struct TSTree TSTree;
-typedef struct TSNode TSNode;
-
-TSParser* ts_parser_new(void);
-void ts_parser_delete(TSParser* parser);
-bool ts_parser_set_language(TSParser* parser, const TSLanguage* language);
-TSTree* ts_parser_parse_string(TSParser* parser, const TSTree* old_tree, const char* string, uint32_t len);
-void ts_tree_delete(TSTree* tree);
-TSNode ts_tree_root_node(const TSTree* tree);
-
-TSQuery* ts_query_new(const TSLanguage* language, const char* source, uint32_t source_len, uint32_t* error_offset, int32_t* error_type);
-void ts_query_delete(TSQuery* query);
-uint32_t ts_query_capture_count(const TSQuery* query);
-const char* ts_query_capture_name_for_id(const TSQuery* query, uint32_t id, uint32_t* length);
-
-TSQueryCursor* ts_query_cursor_new(void);
-void ts_query_cursor_delete(TSQueryCursor* cursor);
-void ts_query_cursor_exec(TSQueryCursor* cursor, const TSQuery* query, TSNode node);
-bool ts_query_cursor_next_capture(TSQueryCursor* cursor, uint32_t* capture_index, TSNode* capture_node);
-uint32_t ts_node_start_byte(TSNode node);
-uint32_t ts_node_end_byte(TSNode node);
-}
-
-TreeSitter::TreeSitter(QObject* parent) : QObject(parent) {
+TreeSitter::TreeSitter(QObject *parent) : QObject(parent) {
   setupCaptureColors();
 }
 
 TreeSitter::~TreeSitter() {
-  if (highlightsQuery_) ts_query_delete(highlightsQuery_);
-  if (parser_) ts_parser_delete(parser_);
-  if (grammarHandle_) dlclose(grammarHandle_);
+  if (highlightsQuery_)
+    ts_query_delete(highlightsQuery_);
+  if (parser_)
+    ts_parser_delete(parser_);
+  if (grammarHandle_)
+    dlclose(grammarHandle_);
 }
 
 void TreeSitter::setupCaptureColors() {
   // VS Code dark theme inspired colors
-  captureColors_["keyword"] = QColor("#C586C0");      // purple (if, for, return)
-  captureColors_["operator"] = QColor("#D4D4D4");      // white (+, -, =)
+  captureColors_["keyword"] = QColor("#C586C0");     // purple (if, for, return)
+  captureColors_["operator"] = QColor("#D4D4D4");    // white (+, -, =)
   captureColors_["string"] = QColor("#CE9178");      // orange-ish ("hello")
   captureColors_["comment"] = QColor("#6A9955");     // green (// comment)
   captureColors_["number"] = QColor("#B5CEA8");      // light green (42)
-  captureColors_["function"] = QColor("#DCDCAA");      // yellow (myFunc)
-  captureColors_["type"] = QColor("#4EC9B0");          // teal (MyClass)
-  captureColors_["variable"] = QColor("#9CDCFE");     // light blue (myVar)
-  captureColors_["punctuation"] = QColor("#D4D4D4");  // white ({, }, (, ))
+  captureColors_["function"] = QColor("#DCDCAA");    // yellow (myFunc)
+  captureColors_["type"] = QColor("#4EC9B0");        // teal (MyClass)
+  captureColors_["variable"] = QColor("#9CDCFE");    // light blue (myVar)
+  captureColors_["punctuation"] = QColor("#D4D4D4"); // white ({, }, (, ))
 }
 
-QString TreeSitter::readQueryFile(const QString& queryDir, const QString& filename) {
+QString TreeSitter::readQueryFile(const QString &queryDir,
+                                  const QString &filename) {
   QFile file(QDir(queryDir).filePath(filename));
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return QString();
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    return QString();
   QTextStream in(&file);
   return in.readAll();
 }
 
-bool TreeSitter::loadLanguage(const QString& parserSoPath, const QString& queryDir) {
+bool TreeSitter::loadLanguage(const QString &parserSoPath,
+                              const QString &queryDir) {
   // dlopen the grammar .so
   grammarHandle_ = dlopen(parserSoPath.toUtf8().constData(), RTLD_LAZY);
   if (!grammarHandle_) {
@@ -72,10 +54,12 @@ bool TreeSitter::loadLanguage(const QString& parserSoPath, const QString& queryD
   }
 
   // get the language function (name pattern: tree_sitter_<lang>)
-  QString langName = QFileInfo(parserSoPath).baseName().remove("libtree-sitter-");
+  QString langName =
+      QFileInfo(parserSoPath).baseName().remove("libtree-sitter-");
   QString symbolName = "tree_sitter_" + langName;
 
-  auto* langFunc = reinterpret_cast<const TSLanguage* (*)()>(dlsym(grammarHandle_, symbolName.toUtf8().constData()));
+  auto *langFunc = reinterpret_cast<const TSLanguage *(*)()>(
+      dlsym(grammarHandle_, symbolName.toUtf8().constData()));
   if (!langFunc) {
     dlclose(grammarHandle_);
     grammarHandle_ = nullptr;
@@ -109,21 +93,19 @@ bool TreeSitter::loadLanguage(const QString& parserSoPath, const QString& queryD
 
   if (!highlightsScm.isEmpty()) {
     uint32_t error_offset = 0;
-    int32_t error_type = 0;
-    highlightsQuery_ = ts_query_new(
-      language_,
-      highlightsScm.toUtf8().constData(),
-      highlightsScm.length(),
-      &error_offset,
-      &error_type
-    );
+    TSQueryError error_type;
+
+    highlightsQuery_ =
+        ts_query_new(language_, highlightsScm.toUtf8().constData(),
+                     highlightsScm.length(), &error_offset, &error_type);
   }
 
   return true;
 }
 
-void TreeSitter::highlight(QTextDocument* doc) {
-  if (!parser_ || !highlightsQuery_ || !doc) return;
+void TreeSitter::highlight(QTextDocument *doc) {
+  if (!parser_ || !highlightsQuery_ || !doc)
+    return;
 
   // save modification state
   bool wasModified = doc->isModified();
@@ -133,28 +115,31 @@ void TreeSitter::highlight(QTextDocument* doc) {
   QByteArray utf8Text = text.toUtf8();
 
   // parse with tree-sitter
-  TSTree* tree = ts_parser_parse_string(
-    parser_,
-    nullptr,  // no old tree for now (full re-parse)
-    utf8Text.constData(),
-    utf8Text.size()
-  );
-  if (!tree) return;
+  TSTree *tree =
+      ts_parser_parse_string(parser_,
+                             nullptr, // no old tree for now (full re-parse)
+                             utf8Text.constData(), utf8Text.size());
+  if (!tree)
+    return;
 
   // execute highlights query
-  TSQueryCursor* cursor = ts_query_cursor_new();
+  TSQueryCursor *cursor = ts_query_cursor_new();
   TSNode rootNode = ts_tree_root_node(tree);
   ts_query_cursor_exec(cursor, highlightsQuery_, rootNode);
 
   // apply colors to QTextDocument
+  TSQueryMatch match;
   uint32_t captureIndex;
-  TSNode captureNode;
-  while (ts_query_cursor_next_capture(cursor, &captureIndex, &captureNode)) {
+
+  while (ts_query_cursor_next_capture(cursor, &match, &captureIndex)) {
     uint32_t nameLen = 0;
-    const char* namePtr = ts_query_capture_name_for_id(highlightsQuery_, captureIndex, &nameLen);
+    const char *namePtr =
+        ts_query_capture_name_for_id(highlightsQuery_, captureIndex, &nameLen);
     QString captureName = QString::fromUtf8(namePtr, nameLen);
 
     // get byte positions and convert to character positions
+    TSNode captureNode = match.captures[captureIndex].node;
+
     uint32_t startByte = ts_node_start_byte(captureNode);
     uint32_t endByte = ts_node_end_byte(captureNode);
 
@@ -163,7 +148,8 @@ void TreeSitter::highlight(QTextDocument* doc) {
     int endPos = QString::fromUtf8(utf8Text.left(endByte)).length();
 
     // validate positions
-    if (startPos < 0 || endPos > doc->characterCount()) continue;
+    if (startPos < 0 || endPos > doc->characterCount())
+      continue;
 
     // get color for capture
     QColor color = captureColors_.value(captureName, QColor("#D4D4D4"));

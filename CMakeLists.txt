@@ -13,5 +13,8 @@ enable_testing()
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(TREE_SITTER REQUIRED IMPORTED_TARGET tree-sitter)
+
 add_subdirectory(src)
 add_subdirectory(tests)
