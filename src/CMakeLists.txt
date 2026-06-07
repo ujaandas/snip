@@ -3,6 +3,7 @@ add_subdirectory(editor)
 add_subdirectory(filetree)
 add_subdirectory(tabs)
 add_subdirectory(lsp)
+add_subdirectory(tree-sitter)
 
 add_executable(parity
   main.cpp
@@ -16,6 +17,7 @@ target_link_libraries(parity
     parity_filetree
     parity_tabs
     parity_lsp
+    parity_tree_sitter
     Qt6::Core
     Qt6::Gui
     Qt6::Qml
