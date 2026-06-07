@@ -3,6 +3,7 @@
 #include <QFileInfo>
 
 #include "LspClient.hpp"
+#include "TreeSitter.hpp"
 
 TabManager::TabManager(QObject* parent) : QAbstractListModel(parent) {}
 
@@ -63,6 +64,7 @@ void TabManager::openTab(const QString& title, const QString& path) {
 
   Editor* newEditor = new Editor(path, this);
   newEditor->setLspClient(lspClient_);
+  newEditor->setTreeSitter(treeSitter_);
   connect(newEditor, &Editor::modifiedChanged, this, &TabManager::onEditorModifiedChanged);
 
   beginInsertRows(QModelIndex(), tabs_.count(), tabs_.count());
@@ -114,6 +116,14 @@ void TabManager::setLspClient(LspClient* lspClient) {
   // Update existing editors
   for (const auto& tab : tabs_) {
     if (tab.editor) tab.editor->setLspClient(lspClient);
+  }
+}
+
+void TabManager::setTreeSitter(TreeSitter* treeSitter) {
+  treeSitter_ = treeSitter;
+  // Update existing editors
+  for (const auto& tab : tabs_) {
+    if (tab.editor) tab.editor->setTreeSitter(treeSitter);
   }
 }
 
