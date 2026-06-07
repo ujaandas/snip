@@ -32,7 +32,7 @@ private:
   void *grammarHandle_ = nullptr;        // dlopen handle
   const TSLanguage *language_ = nullptr; // from dlsym
   TSParser *parser_ = nullptr;           // tree-sitter parser instance
-  TSQuery *highlightsQuery_ = nullptr;   // compiled highlights.scm
+  TSQuery *highlightsQuery_ = nullptr;   // compiled query (highlights + injections + tags)
 
   // map capture names to colors (e.g., "keyword" to yellow)
   QMap<QString, QColor> captureColors_;

@@ -2,6 +2,8 @@
 
 #include <QDir>
 #include <QFile>
+#include <QSet>
+#include <QStringList>
 #include <QTextBlock>
 #include <QTextCharFormat>
 #include <QTextCursor>
@@ -52,19 +54,22 @@ void TreeSitter::setupCaptureColors() {
   captureColors_["storageclass"] = theme_->hlKeyword;
   captureColors_["label"] = theme_->hlKeyword;
 
-  // Types
-  captureColors_["type"] = theme_->hlType;
-  captureColors_["type.builtin"] = theme_->hlType;
-  captureColors_["type.definition"] = theme_->hlType;
-  captureColors_["type.qualifier"] = theme_->hlKeyword;
-  captureColors_["type.parameter"] = theme_->hlType;
-  captureColors_["namespace"] = theme_->hlType;
+  // Types (C++ class names, built-in types)
+  captureColors_["type"] = theme_->hlType;               // class names (MyClass)
+  captureColors_["type.builtin"] = theme_->hlType;       // int, char, bool
+  captureColors_["type.definition"] = theme_->hlType;      // class/struct/enum definitions
+  captureColors_["type.qualifier"] = theme_->hlKeyword;    // const, volatile
+  captureColors_["type.parameter"] = theme_->hlType;     // template <typename T>
+  captureColors_["namespace"] = theme_->hlModule;        // namespace names
   captureColors_["class"] = theme_->hlType;
   captureColors_["struct"] = theme_->hlType;
   captureColors_["enum"] = theme_->hlType;
   captureColors_["union"] = theme_->hlType;
   captureColors_["interface"] = theme_->hlType;
   captureColors_["typedef"] = theme_->hlType;
+  captureColors_["primitive"] = theme_->hlType;          // built-in types
+  captureColors_["constructor"] = theme_->hlFunction;    // ClassName()
+  captureColors_["destructor"] = theme_->hlFunction;     // ~ClassName()
 
   // Functions
   captureColors_["function"] = theme_->hlFunction;
@@ -83,24 +88,24 @@ void TreeSitter::setupCaptureColors() {
 
   // Variables
   captureColors_["variable"] = theme_->hlVariable;
-  captureColors_["variable.builtin"] = theme_->hlVariable;
+  captureColors_["variable.builtin"] = theme_->hlKeyword;   // this, nullptr
   captureColors_["variable.parameter"] = theme_->hlParameter;
   captureColors_["variable.member"] = theme_->hlVariable;
   captureColors_["parameter"] = theme_->hlParameter;
   captureColors_["field"] = theme_->hlVariable;
   captureColors_["property"] = theme_->hlVariable;
   captureColors_["member"] = theme_->hlVariable;
-  captureColors_["constant"] = theme_->hlVariable;
-  captureColors_["constant.builtin"] = theme_->hlKeyword;
   captureColors_["constant.macro"] = theme_->hlVariable;
   captureColors_["self"] = theme_->hlKeyword;
   captureColors_["this"] = theme_->hlKeyword;
+  captureColors_["attribute"] = theme_->hlKeyword;         // [[nodiscard]], etc.
 
   // Literals
   captureColors_["number"] = theme_->hlNumber;
   captureColors_["number.float"] = theme_->hlNumber;
   captureColors_["float"] = theme_->hlNumber;
   captureColors_["string"] = theme_->hlString;
+  captureColors_["@string"] = theme_->hlString;
   captureColors_["string.documentation"] = theme_->hlComment;
   captureColors_["string.regex"] = theme_->hlString;
   captureColors_["string.escape"] = theme_->hlKeyword;
@@ -110,6 +115,8 @@ void TreeSitter::setupCaptureColors() {
   captureColors_["character"] = theme_->hlString;
   captureColors_["character.special"] = theme_->hlKeyword;
   captureColors_["boolean"] = theme_->hlKeyword;
+  captureColors_["constant"] = theme_->hlKeyword;          // nullptr, true, false (C++ grammar)
+  captureColors_["constant.builtin"] = theme_->hlKeyword;  // nullptr, true, false
   captureColors_["null"] = theme_->hlKeyword;
   captureColors_["undefined"] = theme_->hlKeyword;
   captureColors_["literal"] = theme_->hlString;
@@ -125,11 +132,14 @@ void TreeSitter::setupCaptureColors() {
   // Operators & Punctuation
   captureColors_["operator"] = theme_->hlOperator;
   captureColors_["punctuation"] = theme_->hlPunctuation;
-  captureColors_["punctuation.delimiter"] = theme_->hlPunctuation;
-  captureColors_["punctuation.bracket"] = theme_->hlPunctuation;
+  captureColors_["punctuation.delimiter"] = theme_->hlPunctuation;   // ; : , . ->
+  captureColors_["punctuation.bracket"] = theme_->hlPunctuation;      // () {} []
   captureColors_["punctuation.special"] = theme_->hlPunctuation;
   captureColors_["punctuation.definition.string"] = theme_->hlString;
   captureColors_["punctuation.definition.comment"] = theme_->hlComment;
+  captureColors_["punctuation.scope"] = theme_->hlPunctuation;       // namespace scope ::
+  captureColors_["punctuation.accessor"] = theme_->hlPunctuation;   // . ->
+  captureColors_["punctuation.template"] = theme_->hlPunctuation;    // <> for templates
 
   // Tags (for HTML/XML/markup)
   captureColors_["tag"] = theme_->hlTag;
@@ -138,11 +148,19 @@ void TreeSitter::setupCaptureColors() {
   captureColors_["attribute"] = theme_->hlAttribute;
   captureColors_["attribute.builtin"] = theme_->hlAttribute;
 
-  // Preprocessor/Directives
+  // Preprocessor/Directives (C/C++ specific)
   captureColors_["preproc"] = theme_->hlKeyword;
   captureColors_["define"] = theme_->hlKeyword;
   captureColors_["preprocessor"] = theme_->hlKeyword;
   captureColors_["directive"] = theme_->hlKeyword;
+  captureColors_["keyword.directive"] = theme_->hlKeyword;  // #include, #define
+  captureColors_["keyword.control"] = theme_->hlKeyword;    // if, else, for, while
+  captureColors_["keyword.storage"] = theme_->hlKeyword;     // static, const, mutable
+  captureColors_["keyword.modifier"] = theme_->hlKeyword;   // virtual, override, final
+  captureColors_["keyword.function"] = theme_->hlKeyword;   // new, delete
+  captureColors_["keyword.operator"] = theme_->hlKeyword;   // operator
+  captureColors_["keyword.type"] = theme_->hlType;           // typename
+  captureColors_["keyword.coroutine"] = theme_->hlKeyword;  // co_await, co_return
 
   // Special
   captureColors_["module"] = theme_->hlModule;
@@ -210,20 +228,37 @@ bool TreeSitter::loadLanguage(const QString &parserSoPath,
     return false;
   }
 
-  // load highlights.scm query
-  QString highlightsScm = readQueryFile(queryDir, "highlights.scm");
-  if (highlightsScm.isEmpty()) {
-    // try importing from another file
-    highlightsScm = readQueryFile(queryDir, "../highlights.scm");
+  // load all query files and combine them
+  QStringList queryFiles = {"highlights.scm", "injections.scm", "tags.scm"};
+  QStringList queryTexts;
+
+  for (const QString &filename : queryFiles) {
+    QString content = readQueryFile(queryDir, filename);
+    if (content.isEmpty()) {
+      // try parent directory
+      content = readQueryFile(queryDir, "../" + filename);
+    }
+    if (!content.isEmpty()) {
+      queryTexts.append(content);
+      Log::debug("tree-sitter: loaded {} ({} chars)", filename, content.length());
+    }
   }
 
-  if (!highlightsScm.isEmpty()) {
+  // combine all queries into one
+  if (!queryTexts.isEmpty()) {
+    QString combinedQuery = queryTexts.join("\n");
     uint32_t error_offset = 0;
     TSQueryError error_type;
 
     highlightsQuery_ =
-        ts_query_new(language_, highlightsScm.toUtf8().constData(),
-                     highlightsScm.length(), &error_offset, &error_type);
+        ts_query_new(language_, combinedQuery.toUtf8().constData(),
+                     combinedQuery.length(), &error_offset, &error_type);
+
+    if (!highlightsQuery_) {
+      Log::warning("tree-sitter: failed to compile query at offset {}", error_offset);
+    } else {
+      Log::info("tree-sitter: compiled combined query ({} bytes)", combinedQuery.length());
+    }
   }
 
   return true;
@@ -259,6 +294,8 @@ void TreeSitter::highlight(QTextDocument *doc) {
   TSQueryMatch match;
   uint32_t captureIndex;
   int applied = 0;
+  int unknownCount = 0;
+  QSet<QString> unknownCaptures;
 
   while (ts_query_cursor_next_capture(cursor, &match, &captureIndex)) {
     uint32_t nameLen = 0;
@@ -281,7 +318,18 @@ void TreeSitter::highlight(QTextDocument *doc) {
       continue;
 
     // get color for capture (fallback to text color if not in theme)
-    QColor color = captureColors_.value(captureName, theme_ ? theme_->textPrimary : QColor("#cdd6f4"));
+    QColor color;
+    if (captureColors_.contains(captureName)) {
+      color = captureColors_[captureName];
+    } else {
+      color = theme_ ? theme_->textPrimary : QColor("#cdd6f4");
+      // track unknown captures for debugging
+      if (!unknownCaptures.contains(captureName) && unknownCaptures.size() < 10) {
+        unknownCaptures.insert(captureName);
+        Log::debug("tree-sitter: unknown capture '@{}'", captureName);
+      }
+      unknownCount++;
+    }
 
     // apply formatting
     QTextCursor textCursor(doc);
@@ -294,7 +342,12 @@ void TreeSitter::highlight(QTextDocument *doc) {
     applied++;
   }
 
-  Log::info("tree-sitter: applied {} highlight captures", applied);
+  if (unknownCount > 0) {
+    Log::info("tree-sitter: applied {} captures, {} unknown ({} unique)",
+              applied, unknownCount, unknownCaptures.size());
+  } else {
+    Log::info("tree-sitter: applied {} highlight captures", applied);
+  }
 
   // cleanup
   ts_query_cursor_delete(cursor);
