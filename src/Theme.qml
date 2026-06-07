@@ -9,46 +9,40 @@ QtObject {
     property int fontSizeMedium: 13
     property int fontSizeLarge: 14
 
-    // Background colors
-    property color bgWindow: "#161a22"
-    property color bgSidebar: "#181d27"
-    property color bgHeader: "#161b24"
-    property color bgTabBar: "#171c26"
-    property color bgTabActive: "#1f2430"
-    property color bgTabHover: "#1b202b"
-    property color bgEditor: "#1f2430"
-    property color bgGutter: "#1a1e26"
-    property color bgCursorLine: "#2a3040"
+    // Catppuccin Mocha - Base tones
+    property color bgWindow: "#1e1e2e"      // Base
+    property color bgSidebar: "#181825"     // Mantle
+    property color bgHeader: "#181825"      // Mantle
+    property color bgTabBar: "#11111b"      // Crust
+    property color bgTabActive: "#1e1e2e"   // Base
+    property color bgTabHover: "#313244"    // Surface0
+    property color bgEditor: "#1e1e2e"      // Base
+    property color bgGutter: "#181825"      // Mantle
+    property color bgCursorLine: "#313244"  // Surface0
 
-    // Border colors
-    property color borderPrimary: "#2b313d"
-    property color borderInactive: "#171c26"
+    // Catppuccin Mocha - Surface tones for borders
+    property color borderPrimary: "#45475a"   // Surface1
+    property color borderInactive: "#313244"  // Surface0
 
-    // Text colors
-    property color textPrimary: "#e6ecf8"
-    property color textSecondary: "#a9b2c3"
-    property color textMuted: "#9aa4b5"
-    property color textDisabled: "#4e5668"
-    property color textTree: "#d7deeb"
-    property color textTreeActive: "#e8edf5"
+    // Catppuccin Mocha - Text tones
+    property color textPrimary: "#cdd6f4"     // Text
+    property color textSecondary: "#bac2de"   // Subtext1
+    property color textMuted: "#a6adc8"       // Subtext0
+    property color textDisabled: "#6c7086"    // Overlay0
+    property color textTree: "#bac2de"        // Subtext1
+    property color textTreeActive: "#cdd6f4"  // Text
 
-    // Accent colors
-    property color accentBlue: "#4d9ef5"
-    property color accentBlueLight: "#99c4ff"
-    property color accentBlueDark: "#1e3a5f"
-    property color accentOrange: "#e6bd6a"
+    // Catppuccin Mocha - Accent colors
+    property color accentBlue: "#89b4fa"        // Blue
+    property color accentBlueLight: "#b4befe"   // Lavender
+    property color accentBlueDark: "#1e1e2e"    // Base
+    property color accentOrange: "#fab387"      // Peach
 
-    // Scrollbar
-    property color scrollbar: "#4a5268"
-
-    // Selection
-    property color selectionBg: "#214b78"
-    property color selectionFg: "#ffffff"
-
-    // Close button
-    property color closeBtnHover: "#3a4152"
-
-    // Tree view
-    property color treeChevron: "#8f99aa"
-    property color treeBullet: "#6e7787"
+    // Catppuccin Mocha - UI elements
+    property color scrollbar: "#585b70"         // Surface2
+    property color selectionBg: "#45475a"       // Surface1
+    property color selectionFg: "#cdd6f4"       // Text
+    property color closeBtnHover: "#313244"     // Surface0
+    property color treeChevron: "#7f849c"       // Overlay1
+    property color treeBullet: "#6c7086"        // Overlay0
 }
