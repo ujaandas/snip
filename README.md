@@ -1,14 +1,12 @@
 <h1 align="center">parity</h1>
 
 <p align="center">
-  <i>Nix-backed IDE for fully reproducible development environments</i>
+  <i>A Nix-backed IDE for fully reproducible development environments</i>
 </p>
 
 <p align="center">
   Open a project and get <i>exactly</i> the tooling that project requires.
 </p>
-
-<br />
 
 ---
 
@@ -33,8 +31,6 @@ The goal is simple:
 - Fast local workflows
 - Minimal operational overhead
 
-<br />
-
 ---
 
 ## Why parity?
@@ -50,15 +46,13 @@ On average, it uses <100MB of memory across <12 threads, whereas VSCode uses >1G
   <img src="assets/img/c2.png" width="48%" />
 </p>
 
-The editor is native, cross-platform, and designed around a minimal core rather than an ever-growing plugin ecosystem.
+It's is native, cross-platform, and designed around a minimal core rather than an ever-growing plugin ecosystem.
 
 Features are added because they're necessary, not because they're fashionable.
 
-<br />
-
 ---
 
-## What You Get
+## Out of the Box...
 
 <table>
   <tr>
@@ -82,5 +76,3 @@ Features are added because they're necessary, not because they're fashionable.
     <td>Fully reproducible environments</td>
   </tr>
 </table>
-
-<br />
